@@ -18,7 +18,7 @@ Until the formula is accepted into homebrew-cask, you can install directly:
 
 ```bash
 # Download the latest release
-curl -LO https://github.com/yourusername/weakup/releases/latest/download/Weakup-1.0.0.zip
+curl -LO https://github.com/Zzzode/weakup/releases/latest/download/Weakup-1.0.0.zip
 
 # Extract and install
 unzip Weakup-1.0.0.zip
@@ -31,7 +31,7 @@ For development or testing:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/weakup.git
+git clone https://github.com/Zzzode/weakup.git
 cd weakup
 
 # Build the app
@@ -81,7 +81,7 @@ To submit Weakup to the official homebrew-cask repository:
    ```
 
 4. **Update the formula** with correct values:
-   - Replace `yourusername` with actual GitHub username
+   - Replace `Zzzode` with actual GitHub username
    - Update SHA256 with actual checksum
    - Verify version matches latest release
 

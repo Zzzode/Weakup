@@ -13,10 +13,10 @@ cask "weakup" do
   version "1.0.0"
   sha256 "PLACEHOLDER_SHA256"  # Update with actual SHA256 of the ZIP file
 
-  url "https://github.com/yourusername/weakup/releases/download/v#{version}/Weakup-#{version}.zip"
+  url "https://github.com/Zzzode/weakup/releases/download/v#{version}/Weakup-#{version}.zip"
   name "Weakup"
   desc "Lightweight macOS utility to prevent your Mac from sleeping"
-  homepage "https://github.com/yourusername/weakup"
+  homepage "https://github.com/Zzzode/weakup"
 
   livecheck do
     url :url

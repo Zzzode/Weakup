@@ -54,7 +54,7 @@ if [ "$LOCAL_MODE" = true ]; then
     echo "Local ZIP: $ZIP_FILE"
 else
     # Download from GitHub releases
-    URL="https://github.com/yourusername/weakup/releases/download/v${VERSION}/Weakup-${VERSION}.zip"
+    URL="https://github.com/Zzzode/weakup/releases/download/v${VERSION}/Weakup-${VERSION}.zip"
     echo "Downloading: $URL"
 
     TEMP_FILE=$(mktemp)

@@ -99,7 +99,7 @@ Weakup is open source. You can:
 - Verify privacy claims
 - Build from source yourself
 
-Repository: [GitHub](https://github.com/yourusername/weakup)
+Repository: [GitHub](https://github.com/Zzzode/weakup)
 
 ## Children's Privacy
 

@@ -35,7 +35,7 @@ Thank you for your interest in contributing to Weakup! This document provides gu
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/weakup.git
+git clone https://github.com/Zzzode/weakup.git
 cd weakup
 
 # Build the app

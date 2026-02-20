@@ -5,6 +5,7 @@ This guide explains how to code sign Weakup for distribution.
 ## Overview
 
 macOS requires apps to be code signed for:
+
 - **Gatekeeper**: Allows users to run the app without security warnings
 - **Notarization**: Required for distribution outside the Mac App Store on macOS 10.15+
 - **Hardened Runtime**: Security feature that protects against code injection
@@ -34,6 +35,7 @@ For distribution, you need an Apple Developer account and a "Developer ID Applic
    - In Xcode: Preferences > Accounts > Manage Certificates > + > Developer ID Application
 
 2. **Sign the app**:
+
    ```bash
    # Auto-detect certificate
    ./scripts/sign.sh
@@ -63,6 +65,7 @@ export APPLE_TEAM_ID="XXXXXXXXXX"
 ```
 
 The script will:
+
 1. Sign the app with hardened runtime
 2. Create a ZIP archive
 3. Submit to Apple for notarization
@@ -154,6 +157,7 @@ xattr -cr Weakup.app
 ### "Developer cannot be verified"
 
 The app is signed but not notarized. Either:
+
 - Notarize the app: `./scripts/sign.sh --notarize`
 - Users can allow it: System Preferences > Security & Privacy > "Open Anyway"
 
@@ -169,6 +173,7 @@ xcrun notarytool log <submission-id> \
 ```
 
 Common issues:
+
 - Missing hardened runtime
 - Unsigned nested code
 - Invalid entitlements

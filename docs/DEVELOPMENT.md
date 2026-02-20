@@ -24,7 +24,7 @@ swift --version
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/weakup.git
+git clone https://github.com/Zzzode/weakup.git
 cd weakup
 ```
 
@@ -119,6 +119,7 @@ Contains the core application components:
 ### L10n.swift
 
 Localization system:
+
 - `AppLanguage` enum - Supported languages
 - `L10n` class - Localization manager
 - String accessors for all UI text
@@ -128,21 +129,25 @@ Localization system:
 ### Adding a New Setting
 
 1. Add state property to `CaffeineViewModel`:
+
 ```swift
 @Published var newSetting = false
 ```
 
-2. Add UI in `SettingsView`:
+1. Add UI in `SettingsView`:
+
 ```swift
 Toggle("New Setting", isOn: $viewModel.newSetting)
 ```
 
-3. Add localized strings to both `.strings` files:
+1. Add localized strings to both `.strings` files:
+
 ```
 "new_setting" = "New Setting";
 ```
 
-4. Add accessor in `L10n`:
+1. Add accessor in `L10n`:
+
 ```swift
 var newSetting: String { string(forKey: "new_setting") }
 ```
@@ -150,6 +155,7 @@ var newSetting: String { string(forKey: "new_setting") }
 ### Adding a New Menu Item
 
 In `AppDelegate.updateMenu()`:
+
 ```swift
 menu.addItem(NSMenuItem(
     title: L10n.shared.newMenuItem,
@@ -161,6 +167,7 @@ menu.addItem(NSMenuItem(
 ### Adding a New Keyboard Shortcut
 
 In `AppDelegate.setupHotkeys()`:
+
 ```swift
 if event.modifierFlags.contains([.command, .shift]) && event.keyCode == 0x00 {
     // Handle Cmd+Shift+A
@@ -184,6 +191,7 @@ The `build.sh` script performs these steps:
 ### Console Logging
 
 Add print statements for debugging:
+
 ```swift
 print("Debug: isActive = \(isActive)")
 ```
@@ -193,15 +201,18 @@ View logs in Console.app or Terminal when running directly.
 ### Common Issues
 
 **App doesn't appear in menu bar:**
+
 - Check that `app.setActivationPolicy(.accessory)` is called
 - Ensure `statusItem` is retained (not deallocated)
 
 **Localization not working:**
+
 - Verify `.lproj` folders are copied to app bundle
 - Check `CFBundleLocalizations` in Info.plist
 - Ensure bundle path resolution is correct
 
 **Sleep prevention not working:**
+
 - Check IOPMAssertion return value
 - Verify the app has necessary permissions
 - Test with `pmset -g assertions` in Terminal
@@ -228,11 +239,13 @@ pmset -g assertions
 ### Xcode
 
 1. Generate Xcode project:
+
 ```bash
 swift package generate-xcodeproj
 ```
 
-2. Open in Xcode:
+1. Open in Xcode:
+
 ```bash
 open Weakup.xcodeproj
 ```
@@ -240,6 +253,7 @@ open Weakup.xcodeproj
 ### VS Code
 
 Recommended extensions:
+
 - Swift (sswg.swift-lang)
 - SwiftLint (vknabel.vscode-swiftlint)
 
