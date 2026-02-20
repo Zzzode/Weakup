@@ -2,7 +2,10 @@
 
 <div align="center">
 
-![Weakup](https://img.shields.io/badge/macOS-13%2B-blue)
+[![CI](https://github.com/yourusername/weakup/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/weakup/actions/workflows/ci.yml)
+[![Release](https://github.com/yourusername/weakup/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/weakup/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/yourusername/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/weakup)
+![macOS](https://img.shields.io/badge/macOS-13%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 
@@ -14,12 +17,28 @@ A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
 
 - **One-Toggle Control** - Enable/disable sleep prevention with a single click
 - **Menu Bar App** - Lives in menu bar, no dock clutter
-- **Timer Mode** - Set auto-shutdown timer (15min, 30min, 1hr, 2hrs, 3hrs)
-- **Visual Status** - Clear filled/empty power circle icon indicator
+- **Timer Mode** - Set auto-shutdown timer (15min, 30min, 1hr, 2hrs, 3hrs, or custom duration up to 24 hours)
+- **Visual Status** - Clear filled/empty icon indicator with multiple icon styles
 - **Keyboard Shortcut** - `Cmd + Ctrl + 0` to toggle anywhere
 - **Native Performance** - Uses IOPMAssertion API for minimal overhead
-- **Real-time Language Switch** - Switch between English and Chinese instantly without restart
+- **Dark/Light Theme** - Supports system theme, light mode, and dark mode
+- **Sound Feedback** - Optional audio feedback when toggling
+- **Icon Customization** - Choose from Power, Bolt, Coffee, Moon, or Eye icons
+- **Multi-Language Support** - 8 languages with real-time switching
 - **SwiftUI + AppKit** - Modern, clean codebase
+
+## Supported Languages
+
+| Language | Display Name |
+|----------|--------------|
+| English | English |
+| Chinese (Simplified) | 简体中文 |
+| Chinese (Traditional) | 繁體中文 |
+| Japanese | 日本語 |
+| Korean | 한국어 |
+| French | Francais |
+| German | Deutsch |
+| Spanish | Espanol |
 
 ## Screenshots
 
@@ -28,6 +47,20 @@ A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
 | ![English](screenshots/english.png) | ![Chinese](screenshots/chinese.png) |
 
 ## Installation
+
+### Homebrew (Recommended)
+
+```bash
+brew install --cask weakup
+```
+
+### Download Release
+
+Download the latest release from [GitHub Releases](https://github.com/yourusername/weakup/releases):
+
+1. Download `Weakup-x.x.x.dmg`
+2. Open the DMG and drag Weakup to Applications
+3. Launch from Applications folder
 
 ### From Source
 
@@ -53,9 +86,18 @@ open Weakup.app
 ## Usage
 
 1. Click the menu bar icon to toggle sleep prevention
-2. Click "Settings" / "设置" to access timer and language options
+2. Right-click or select "Settings" to access options
 3. Use `Cmd + Ctrl + 0` keyboard shortcut to toggle from anywhere
-4. Switch language instantly in the top-right corner of settings
+4. Switch language instantly in the settings panel
+
+### Settings Options
+
+- **Timer Mode** - Enable automatic shutdown after a set duration
+- **Duration** - Choose from preset times or set a custom duration (up to 24 hours)
+- **Theme** - System, Light, or Dark
+- **Sound Feedback** - Toggle audio feedback on/off
+- **Icon Style** - Choose your preferred menu bar icon
+- **Language** - Switch between 8 supported languages
 
 ## Keyboard Shortcuts
 
@@ -65,10 +107,38 @@ open Weakup.app
 
 ## Roadmap
 
-- [ ] White/black theme support
-- [ ] Custom timer duration
-- [ ] macOS notification when timer expires
-- [ ] Menu bar icon customization
+### Completed
+
+- [x] Dark/Light theme support
+- [x] Custom timer duration
+- [x] Sound feedback for toggle actions
+- [x] Menu bar icon customization
+- [x] Multi-language support (8 languages)
+- [x] MVVM architecture refactoring
+- [x] CI/CD pipeline
+- [x] SwiftLint and SwiftFormat integration
+
+### Planned
+
+- [ ] Launch at login preference
+- [ ] Activity history and statistics
+- [ ] Keyboard shortcut conflict detection
+
+### Recently Completed
+
+- [x] macOS notification when timer expires
+- [x] Display countdown in menu bar
+- [x] Homebrew Cask formula
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) - System architecture overview
+- [Development](docs/DEVELOPMENT.md) - Setup and development workflow
+- [Testing](docs/TESTING.md) - Testing guidelines
+- [Translations](docs/TRANSLATIONS.md) - Guide for adding new languages
+- [Code Signing](docs/CODE_SIGNING.md) - Code signing and notarization guide
+- [Homebrew](docs/HOMEBREW.md) - Homebrew installation guide
+- [Privacy](docs/PRIVACY.md) - Privacy policy
 
 ## Contributing
 
@@ -84,9 +154,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with [Swift](https://swift.org)
 - UI framework: [SwiftUI](https://developer.apple.com/xcode/swiftui/)
-- Sleep prevention: [IOPMAssertion](https://developer.apple.com/documentation/iokit/iopmaassertioncreatewithname)
-
-## Documentation
-
-- [English Documentation](README.en.md)
-- [中文文档](README.zh.md)
+- Sleep prevention: [IOPMAssertion](https://developer.apple.com/documentation/iokit/iopmassertion)
