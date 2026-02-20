@@ -1,0 +1,31 @@
+/* English Localization */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "Settings";
+"menu_quit" = "Quit Weakup";
+
+// Status
+"status_on" = "Weakup: On";
+"status_off" = "Weakup: Off";
+"status_preventing" = "Preventing Sleep";
+"status_sleep_enabled" = "Sleep Enabled";
+
+// Settings
+"timer_mode" = "Timer Mode";
+"duration" = "Duration";
+"duration_off" = "Off";
+"duration_15m" = "15m";
+"duration_30m" = "30m";
+"duration_1h" = "1h";
+"duration_2h" = "2h";
+"duration_3h" = "3h";
+
+// Actions
+"turn_on" = "Turn On";
+"turn_off" = "Turn Off";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 to toggle";

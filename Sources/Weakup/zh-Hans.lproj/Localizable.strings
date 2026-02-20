@@ -1,0 +1,31 @@
+/* Chinese Simplified Localization - 简体中文 */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "设置";
+"menu_quit" = "退出 Weakup";
+
+// Status
+"status_on" = "Weakup: 开启";
+"status_off" = "Weakup: 关闭";
+"status_preventing" = "正在防止休眠";
+"status_sleep_enabled" = "休眠已启用";
+
+// Settings
+"timer_mode" = "定时模式";
+"duration" = "时长";
+"duration_off" = "关闭";
+"duration_15m" = "15 分钟";
+"duration_30m" = "30 分钟";
+"duration_1h" = "1 小时";
+"duration_2h" = "2 小时";
+"duration_3h" = "3 小时";
+
+// Actions
+"turn_on" = "开启";
+"turn_off" = "关闭";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 快捷切换";
