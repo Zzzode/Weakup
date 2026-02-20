@@ -1,0 +1,56 @@
+/* French Localization - Francais */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "Preferences";
+"menu_quit" = "Quitter Weakup";
+
+// Status
+"status_on" = "Weakup : Active";
+"status_off" = "Weakup : Desactive";
+"status_preventing" = "Veille desactivee";
+"status_sleep_enabled" = "Veille activee";
+
+// Settings
+"timer_mode" = "Mode minuterie";
+"sound_feedback" = "Retour sonore";
+"theme" = "Theme";
+"theme_system" = "Systeme";
+"theme_light" = "Clair";
+"theme_dark" = "Sombre";
+"icon_style" = "Style d'icone";
+"icon_power" = "Alimentation";
+"icon_bolt" = "Eclair";
+"icon_cup" = "Cafe";
+"icon_moon" = "Lune";
+"icon_eye" = "Oeil";
+"duration" = "Duree";
+"duration_off" = "Desactive";
+"duration_15m" = "15 min";
+"duration_30m" = "30 min";
+"duration_1h" = "1 h";
+"duration_2h" = "2 h";
+"duration_3h" = "3 h";
+"duration_custom" = "Personnalise";
+"custom_duration_title" = "Duree personnalisee";
+"hours" = "Heures";
+"minutes" = "Minutes";
+"set" = "Definir";
+"cancel" = "Annuler";
+"max_duration_hint" = "Max : 24 heures";
+
+// Actions
+"turn_on" = "Activer";
+"turn_off" = "Desactiver";
+
+// Notifications
+"notifications" = "Notifications";
+"notification_timer_expired_title" = "Minuterie terminee";
+"notification_timer_expired_body" = "La prevention de veille a ete desactivee.";
+"notification_action_restart" = "Redemarrer";
+"notification_action_dismiss" = "Fermer";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 pour basculer";

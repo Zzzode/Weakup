@@ -1,0 +1,56 @@
+/* German Localization - Deutsch */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "Einstellungen";
+"menu_quit" = "Weakup beenden";
+
+// Status
+"status_on" = "Weakup: Ein";
+"status_off" = "Weakup: Aus";
+"status_preventing" = "Ruhezustand verhindert";
+"status_sleep_enabled" = "Ruhezustand erlaubt";
+
+// Settings
+"timer_mode" = "Timer-Modus";
+"sound_feedback" = "Ton-Feedback";
+"theme" = "Design";
+"theme_system" = "System";
+"theme_light" = "Hell";
+"theme_dark" = "Dunkel";
+"icon_style" = "Symbol-Stil";
+"icon_power" = "Ein/Aus";
+"icon_bolt" = "Blitz";
+"icon_cup" = "Kaffee";
+"icon_moon" = "Mond";
+"icon_eye" = "Auge";
+"duration" = "Dauer";
+"duration_off" = "Aus";
+"duration_15m" = "15 Min";
+"duration_30m" = "30 Min";
+"duration_1h" = "1 Std";
+"duration_2h" = "2 Std";
+"duration_3h" = "3 Std";
+"duration_custom" = "Benutzerdefiniert";
+"custom_duration_title" = "Benutzerdefinierte Dauer";
+"hours" = "Stunden";
+"minutes" = "Minuten";
+"set" = "Festlegen";
+"cancel" = "Abbrechen";
+"max_duration_hint" = "Max: 24 Stunden";
+
+// Actions
+"turn_on" = "Einschalten";
+"turn_off" = "Ausschalten";
+
+// Notifications
+"notifications" = "Benachrichtigungen";
+"notification_timer_expired_title" = "Timer abgelaufen";
+"notification_timer_expired_body" = "Ruhezustand-Verhinderung wurde deaktiviert.";
+"notification_action_restart" = "Timer neu starten";
+"notification_action_dismiss" = "Schliessen";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 zum Umschalten";

@@ -15,6 +15,17 @@
 
 // Settings
 "timer_mode" = "Timer Mode";
+"sound_feedback" = "Sound Feedback";
+"theme" = "Theme";
+"theme_system" = "System";
+"theme_light" = "Light";
+"theme_dark" = "Dark";
+"icon_style" = "Icon Style";
+"icon_power" = "Power";
+"icon_bolt" = "Bolt";
+"icon_cup" = "Coffee";
+"icon_moon" = "Moon";
+"icon_eye" = "Eye";
 "duration" = "Duration";
 "duration_off" = "Off";
 "duration_15m" = "15m";
@@ -22,10 +33,54 @@
 "duration_1h" = "1h";
 "duration_2h" = "2h";
 "duration_3h" = "3h";
+"duration_custom" = "Custom";
+"custom_duration_title" = "Custom Duration";
+"hours" = "Hours";
+"minutes" = "Minutes";
+"set" = "Set";
+"cancel" = "Cancel";
+"max_duration_hint" = "Max: 24 hours";
 
 // Actions
 "turn_on" = "Turn On";
 "turn_off" = "Turn Off";
+
+// Menu Bar
+"show_countdown_in_menu_bar" = "Show Countdown";
+
+// Startup
+"launch_at_login" = "Launch at Login";
+
+// Notifications
+"notifications" = "Notifications";
+"notification_timer_expired_title" = "Timer Expired";
+"notification_timer_expired_body" = "Sleep prevention has been turned off.";
+"notification_action_restart" = "Restart Timer";
+"notification_action_dismiss" = "Dismiss";
+
+// History
+"history_title" = "Activity History";
+"history_today" = "Today";
+"history_this_week" = "This Week";
+"history_total" = "Total";
+"history_average" = "Average";
+"history_sessions" = "sessions";
+"history_per_session" = "per session";
+"history_recent_sessions" = "Recent Sessions";
+"history_clear" = "Clear";
+"history_clear_confirm_title" = "Clear History?";
+"history_clear_confirm_message" = "This will delete all activity history. This action cannot be undone.";
+"history_no_sessions" = "No sessions recorded yet";
+"history_timer_mode" = "Timer";
+"history_privacy_note" = "History is stored locally on your device";
+
+// Hotkey
+"hotkey" = "Hotkey";
+"hotkey_current" = "Current";
+"hotkey_record" = "Record New";
+"hotkey_reset" = "Reset";
+"hotkey_recording" = "Press keys...";
+"hotkey_conflict_message" = "This shortcut may conflict with another app";
 
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 to toggle";

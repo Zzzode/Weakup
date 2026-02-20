@@ -1,0 +1,56 @@
+/* Chinese Traditional Localization - 繁體中文 */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "設定";
+"menu_quit" = "結束 Weakup";
+
+// Status
+"status_on" = "Weakup: 開啟";
+"status_off" = "Weakup: 關閉";
+"status_preventing" = "正在防止休眠";
+"status_sleep_enabled" = "休眠已啟用";
+
+// Settings
+"timer_mode" = "計時模式";
+"sound_feedback" = "聲音回饋";
+"theme" = "主題";
+"theme_system" = "跟隨系統";
+"theme_light" = "淺色";
+"theme_dark" = "深色";
+"icon_style" = "圖示樣式";
+"icon_power" = "電源";
+"icon_bolt" = "閃電";
+"icon_cup" = "咖啡";
+"icon_moon" = "月亮";
+"icon_eye" = "眼睛";
+"duration" = "時長";
+"duration_off" = "關閉";
+"duration_15m" = "15 分鐘";
+"duration_30m" = "30 分鐘";
+"duration_1h" = "1 小時";
+"duration_2h" = "2 小時";
+"duration_3h" = "3 小時";
+"duration_custom" = "自訂";
+"custom_duration_title" = "自訂時長";
+"hours" = "小時";
+"minutes" = "分鐘";
+"set" = "設定";
+"cancel" = "取消";
+"max_duration_hint" = "最長: 24 小時";
+
+// Actions
+"turn_on" = "開啟";
+"turn_off" = "關閉";
+
+// Notifications
+"notifications" = "通知";
+"notification_timer_expired_title" = "計時器已結束";
+"notification_timer_expired_body" = "防休眠已關閉。";
+"notification_action_restart" = "重新開始";
+"notification_action_dismiss" = "關閉";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 快捷切換";

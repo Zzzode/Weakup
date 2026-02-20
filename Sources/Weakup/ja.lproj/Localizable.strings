@@ -1,0 +1,56 @@
+/* Japanese Localization - 日本語 */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "設定";
+"menu_quit" = "Weakup を終了";
+
+// Status
+"status_on" = "Weakup: オン";
+"status_off" = "Weakup: オフ";
+"status_preventing" = "スリープを防止中";
+"status_sleep_enabled" = "スリープ有効";
+
+// Settings
+"timer_mode" = "タイマーモード";
+"sound_feedback" = "サウンドフィードバック";
+"theme" = "テーマ";
+"theme_system" = "システム";
+"theme_light" = "ライト";
+"theme_dark" = "ダーク";
+"icon_style" = "アイコンスタイル";
+"icon_power" = "電源";
+"icon_bolt" = "稲妻";
+"icon_cup" = "コーヒー";
+"icon_moon" = "月";
+"icon_eye" = "目";
+"duration" = "時間";
+"duration_off" = "オフ";
+"duration_15m" = "15分";
+"duration_30m" = "30分";
+"duration_1h" = "1時間";
+"duration_2h" = "2時間";
+"duration_3h" = "3時間";
+"duration_custom" = "カスタム";
+"custom_duration_title" = "カスタム時間";
+"hours" = "時間";
+"minutes" = "分";
+"set" = "設定";
+"cancel" = "キャンセル";
+"max_duration_hint" = "最大: 24時間";
+
+// Actions
+"turn_on" = "オンにする";
+"turn_off" = "オフにする";
+
+// Notifications
+"notifications" = "通知";
+"notification_timer_expired_title" = "タイマー終了";
+"notification_timer_expired_body" = "スリープ防止がオフになりました。";
+"notification_action_restart" = "タイマー再開";
+"notification_action_dismiss" = "閉じる";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 で切り替え";

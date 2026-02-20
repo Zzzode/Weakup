@@ -1,0 +1,56 @@
+/* Korean Localization - 한국어 */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "설정";
+"menu_quit" = "Weakup 종료";
+
+// Status
+"status_on" = "Weakup: 켜짐";
+"status_off" = "Weakup: 꺼짐";
+"status_preventing" = "잠자기 방지 중";
+"status_sleep_enabled" = "잠자기 허용됨";
+
+// Settings
+"timer_mode" = "타이머 모드";
+"sound_feedback" = "소리 피드백";
+"theme" = "테마";
+"theme_system" = "시스템";
+"theme_light" = "라이트";
+"theme_dark" = "다크";
+"icon_style" = "아이콘 스타일";
+"icon_power" = "전원";
+"icon_bolt" = "번개";
+"icon_cup" = "커피";
+"icon_moon" = "달";
+"icon_eye" = "눈";
+"duration" = "시간";
+"duration_off" = "끔";
+"duration_15m" = "15분";
+"duration_30m" = "30분";
+"duration_1h" = "1시간";
+"duration_2h" = "2시간";
+"duration_3h" = "3시간";
+"duration_custom" = "사용자 지정";
+"custom_duration_title" = "사용자 지정 시간";
+"hours" = "시간";
+"minutes" = "분";
+"set" = "설정";
+"cancel" = "취소";
+"max_duration_hint" = "최대: 24시간";
+
+// Actions
+"turn_on" = "켜기";
+"turn_off" = "끄기";
+
+// Notifications
+"notifications" = "알림";
+"notification_timer_expired_title" = "타이머 종료";
+"notification_timer_expired_body" = "잠자기 방지가 꺼졌습니다.";
+"notification_action_restart" = "타이머 재시작";
+"notification_action_dismiss" = "닫기";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 으로 전환";

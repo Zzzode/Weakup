@@ -1,0 +1,56 @@
+/* Spanish Localization - Espanol */
+
+// App
+"app_name" = "Weakup";
+
+// Menu
+"menu_settings" = "Ajustes";
+"menu_quit" = "Salir de Weakup";
+
+// Status
+"status_on" = "Weakup: Activado";
+"status_off" = "Weakup: Desactivado";
+"status_preventing" = "Evitando suspension";
+"status_sleep_enabled" = "Suspension permitida";
+
+// Settings
+"timer_mode" = "Modo temporizador";
+"sound_feedback" = "Sonido de respuesta";
+"theme" = "Tema";
+"theme_system" = "Sistema";
+"theme_light" = "Claro";
+"theme_dark" = "Oscuro";
+"icon_style" = "Estilo de icono";
+"icon_power" = "Encendido";
+"icon_bolt" = "Rayo";
+"icon_cup" = "Cafe";
+"icon_moon" = "Luna";
+"icon_eye" = "Ojo";
+"duration" = "Duracion";
+"duration_off" = "Desactivado";
+"duration_15m" = "15 min";
+"duration_30m" = "30 min";
+"duration_1h" = "1 h";
+"duration_2h" = "2 h";
+"duration_3h" = "3 h";
+"duration_custom" = "Personalizado";
+"custom_duration_title" = "Duracion personalizada";
+"hours" = "Horas";
+"minutes" = "Minutos";
+"set" = "Establecer";
+"cancel" = "Cancelar";
+"max_duration_hint" = "Max: 24 horas";
+
+// Actions
+"turn_on" = "Activar";
+"turn_off" = "Desactivar";
+
+// Notifications
+"notifications" = "Notificaciones";
+"notification_timer_expired_title" = "Temporizador finalizado";
+"notification_timer_expired_body" = "La prevencion de suspension se ha desactivado.";
+"notification_action_restart" = "Reiniciar temporizador";
+"notification_action_dismiss" = "Cerrar";
+
+// Hints
+"shortcut_hint" = "Cmd + Ctrl + 0 para alternar";

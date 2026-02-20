@@ -15,6 +15,17 @@
 
 // Settings
 "timer_mode" = "定时模式";
+"sound_feedback" = "声音反馈";
+"theme" = "主题";
+"theme_system" = "跟随系统";
+"theme_light" = "浅色";
+"theme_dark" = "深色";
+"icon_style" = "图标样式";
+"icon_power" = "电源";
+"icon_bolt" = "闪电";
+"icon_cup" = "咖啡";
+"icon_moon" = "月亮";
+"icon_eye" = "眼睛";
 "duration" = "时长";
 "duration_off" = "关闭";
 "duration_15m" = "15 分钟";
@@ -22,10 +33,54 @@
 "duration_1h" = "1 小时";
 "duration_2h" = "2 小时";
 "duration_3h" = "3 小时";
+"duration_custom" = "自定义";
+"custom_duration_title" = "自定义时长";
+"hours" = "小时";
+"minutes" = "分钟";
+"set" = "设置";
+"cancel" = "取消";
+"max_duration_hint" = "最长: 24 小时";
 
 // Actions
 "turn_on" = "开启";
 "turn_off" = "关闭";
+
+// Menu Bar
+"show_countdown_in_menu_bar" = "显示倒计时";
+
+// Startup
+"launch_at_login" = "开机启动";
+
+// Notifications
+"notifications" = "通知";
+"notification_timer_expired_title" = "定时器已结束";
+"notification_timer_expired_body" = "防休眠已关闭。";
+"notification_action_restart" = "重新开始";
+"notification_action_dismiss" = "关闭";
+
+// History
+"history_title" = "活动历史";
+"history_today" = "今日";
+"history_this_week" = "本周";
+"history_total" = "总计";
+"history_average" = "平均";
+"history_sessions" = "次会话";
+"history_per_session" = "每次会话";
+"history_recent_sessions" = "最近会话";
+"history_clear" = "清除";
+"history_clear_confirm_title" = "清除历史记录？";
+"history_clear_confirm_message" = "这将删除所有活动历史记录。此操作无法撤销。";
+"history_no_sessions" = "暂无会话记录";
+"history_timer_mode" = "定时";
+"history_privacy_note" = "历史记录仅存储在本地设备上";
+
+// Hotkey
+"hotkey" = "快捷键";
+"hotkey_current" = "当前";
+"hotkey_record" = "录制新快捷键";
+"hotkey_reset" = "重置";
+"hotkey_recording" = "请按键...";
+"hotkey_conflict_message" = "此快捷键可能与其他应用冲突";
 
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 快捷切换";
