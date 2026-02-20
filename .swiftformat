@@ -1,0 +1,70 @@
+# SwiftFormat configuration for Weakup
+
+# File options
+--exclude .build,Package.swift
+
+# Format options
+--swiftversion 6.0
+
+# Indentation
+--indent 4
+--tabwidth 4
+--smarttabs enabled
+--indentcase false
+--ifdef indent
+
+# Wrapping
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--wrapconditions after-first
+--wrapreturntype if-multiline
+--closingparen balanced
+--maxwidth 120
+
+# Spacing
+--operatorfunc spaced
+--nospaceoperators ..<,...
+--ranges spaced
+
+# Braces
+--allman false
+--elseposition same-line
+--guardelse same-line
+
+# Blank lines
+--emptybraces no-space
+--trimwhitespace always
+
+# Semicolons
+--semicolons inline
+
+# Imports
+--importgrouping alpha
+
+# Redundancy
+--self init-only
+--selfrequired
+
+# Other
+--commas always
+--decimalgrouping 3
+--binarygrouping 4,8
+--octalgrouping 4,8
+--hexgrouping 4,8
+--fractiongrouping disabled
+--exponentgrouping disabled
+--hexliteralcase uppercase
+--exponentcase lowercase
+--header strip
+--stripunusedargs closure-only
+--patternlet hoist
+--enumnamespaces always
+--markextensions always
+--extensionacl on-declarations
+--marktypes always
+
+# Disabled rules
+--disable blankLinesAtStartOfScope
+--disable blankLinesAtEndOfScope
+--disable redundantRawValues

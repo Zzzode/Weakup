@@ -1,0 +1,39 @@
+#!/bin/bash
+# Pre-commit hook for SwiftLint and SwiftFormat
+# To install: cp scripts/hooks/pre-commit .git/hooks/pre-commit
+
+set -e
+
+# Get list of staged Swift files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.swift$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+echo "Running pre-commit checks on staged Swift files..."
+
+# Run SwiftFormat if available
+if command -v swiftformat &> /dev/null; then
+    echo "Formatting with SwiftFormat..."
+    echo "$STAGED_FILES" | xargs swiftformat --config .swiftformat 2>/dev/null || true
+    # Re-add formatted files
+    echo "$STAGED_FILES" | xargs git add
+fi
+
+# Run SwiftLint if available
+if command -v swiftlint &> /dev/null; then
+    echo "Linting with SwiftLint..."
+    LINT_RESULT=0
+    echo "$STAGED_FILES" | xargs swiftlint lint --config .swiftlint.yml --strict 2>/dev/null || LINT_RESULT=$?
+
+    if [ $LINT_RESULT -ne 0 ]; then
+        echo ""
+        echo "SwiftLint found issues. Please fix them before committing."
+        echo "Run 'swiftlint lint Sources' to see all issues."
+        exit 1
+    fi
+fi
+
+echo "Pre-commit checks passed!"
+exit 0

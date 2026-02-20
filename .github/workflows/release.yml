@@ -1,0 +1,219 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build Release
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.0"
+
+      - name: Get Version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Build App Bundle
+        run: ./build.sh
+
+      - name: Update Version in Info.plist
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" Weakup.app/Contents/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" Weakup.app/Contents/Info.plist
+
+      - name: Import Code Signing Certificate
+        if: ${{ env.APPLE_CERTIFICATE_BASE64 != '' }}
+        env:
+          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          # Create temporary keychain
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Import certificate
+          echo "$APPLE_CERTIFICATE_BASE64" | base64 --decode > $RUNNER_TEMP/certificate.p12
+          security import $RUNNER_TEMP/certificate.p12 -P "$APPLE_CERTIFICATE_PASSWORD" \
+            -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+
+          # Set keychain search list
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+          # Allow codesign to access the certificate
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+      - name: Code Sign App
+        if: ${{ env.APPLE_CERTIFICATE_BASE64 != '' }}
+        env:
+          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+        run: |
+          # Find the signing identity
+          IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | sed 's/.*"\(.*\)".*/\1/')
+
+          if [ -n "$IDENTITY" ]; then
+            echo "Signing with: $IDENTITY"
+
+            # Sign the binary
+            codesign --force --options runtime --timestamp \
+              --sign "$IDENTITY" \
+              --entitlements Sources/Weakup/Weakup.entitlements \
+              Weakup.app/Contents/MacOS/weakup
+
+            # Sign the app bundle
+            codesign --force --options runtime --timestamp \
+              --sign "$IDENTITY" \
+              --entitlements Sources/Weakup/Weakup.entitlements \
+              Weakup.app
+
+            # Verify
+            codesign --verify --verbose=2 Weakup.app
+          else
+            echo "No signing identity found, skipping code signing"
+          fi
+
+      - name: Notarize App
+        if: ${{ env.APPLE_ID != '' && env.APPLE_PASSWORD != '' && env.APPLE_TEAM_ID != '' }}
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          # Create ZIP for notarization
+          ditto -c -k --keepParent Weakup.app Weakup-notarize.zip
+
+          # Submit for notarization
+          xcrun notarytool submit Weakup-notarize.zip \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+
+          # Staple the ticket
+          xcrun stapler staple Weakup.app
+
+          # Clean up
+          rm -f Weakup-notarize.zip
+
+      - name: Verify Notarization
+        if: ${{ env.APPLE_ID != '' }}
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+        run: |
+          xcrun stapler validate Weakup.app || echo "Notarization verification skipped"
+
+      - name: Create DMG
+        run: |
+          mkdir -p dmg-contents
+          cp -R Weakup.app dmg-contents/
+          ln -s /Applications dmg-contents/Applications
+          hdiutil create -volname "Weakup" -srcfolder dmg-contents -ov -format UDZO Weakup-${{ steps.version.outputs.version }}.dmg
+
+      - name: Create ZIP
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent Weakup.app Weakup-${{ steps.version.outputs.version }}.zip
+
+      - name: Generate Checksums
+        run: |
+          shasum -a 256 Weakup-${{ steps.version.outputs.version }}.dmg > checksums.txt
+          shasum -a 256 Weakup-${{ steps.version.outputs.version }}.zip >> checksums.txt
+          cat checksums.txt
+
+      - name: Extract Release Notes from CHANGELOG
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Extract release notes for this version from CHANGELOG.md
+          # Look for ## [version] or ## [Unreleased] section
+          NOTES=$(awk -v ver="$VERSION" '
+            /^## \[/ {
+              if (found) exit
+              if ($0 ~ "\\[" ver "\\]" || ($0 ~ "\\[Unreleased\\]" && ver == "")) {
+                found = 1
+                next
+              }
+            }
+            found { print }
+          ' CHANGELOG.md)
+
+          # If no version-specific notes found, try Unreleased section
+          if [ -z "$NOTES" ]; then
+            NOTES=$(awk '
+              /^## \[Unreleased\]/ { found = 1; next }
+              /^## \[/ { if (found) exit }
+              found { print }
+            ' CHANGELOG.md)
+          fi
+
+          # Write to file for use in release body
+          echo "$NOTES" > release_notes.md
+
+          # Also output for debugging
+          echo "Release notes:"
+          cat release_notes.md
+
+      - name: Generate Release Body
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          DMG_SHA=$(shasum -a 256 Weakup-${VERSION}.dmg | cut -d' ' -f1)
+          ZIP_SHA=$(shasum -a 256 Weakup-${VERSION}.zip | cut -d' ' -f1)
+
+          cat > release_body.md << EOF
+          ## Weakup v${VERSION}
+
+          $(cat release_notes.md)
+
+          ---
+
+          ### Installation
+
+          **Option 1: DMG (Recommended)**
+          1. Download \`Weakup-${VERSION}.dmg\`
+          2. Open the DMG and drag Weakup to Applications
+
+          **Option 2: ZIP**
+          1. Download \`Weakup-${VERSION}.zip\`
+          2. Extract and move Weakup.app to Applications
+
+          ### Requirements
+          - macOS 13.0 or later
+
+          ### Checksums (SHA-256)
+          | File | SHA-256 |
+          |------|---------|
+          | Weakup-${VERSION}.dmg | \`${DMG_SHA}\` |
+          | Weakup-${VERSION}.zip | \`${ZIP_SHA}\` |
+          EOF
+
+          cat release_body.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Weakup v${{ steps.version.outputs.version }}
+          body_path: release_body.md
+          files: |
+            Weakup-${{ steps.version.outputs.version }}.dmg
+            Weakup-${{ steps.version.outputs.version }}.zip
+            checksums.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
