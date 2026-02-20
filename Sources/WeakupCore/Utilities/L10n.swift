@@ -2,19 +2,19 @@ import Foundation
 
 // MARK: - Language Management
 
-enum AppLanguage: String, CaseIterable, Identifiable {
+public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
     case english = "en"
     case chinese = "zh-Hans"
 
-    var id: String { rawValue }
-    var displayName: String {
+    public var id: String { rawValue }
+    public var displayName: String {
         switch self {
         case .english: return "English"
         case .chinese: return "中文"
         }
     }
 
-    var bundle: Bundle {
+    public var bundle: Bundle {
         let bundle = Bundle.main
         if let path = bundle.path(forResource: rawValue, ofType: "lproj") {
             return Bundle(path: path) ?? bundle
@@ -24,10 +24,10 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 }
 
 @MainActor
-class L10n: ObservableObject {
-    static let shared = L10n()
+public class L10n: ObservableObject {
+    public static let shared = L10n()
 
-    @Published var currentLanguage: AppLanguage = .english
+    @Published public var currentLanguage: AppLanguage = .english
 
     private let userDefaultsKey = "WeakupLanguage"
 
@@ -50,21 +50,37 @@ class L10n: ObservableObject {
         }
     }
 
-    func setLanguage(_ language: AppLanguage) {
+    public func setLanguage(_ language: AppLanguage) {
         currentLanguage = language
         UserDefaults.standard.set(language.rawValue, forKey: userDefaultsKey)
         UserDefaults.standard.synchronize()
     }
 
-    func string(forKey key: String, comment: String = "") -> String {
+    public func string(forKey key: String, comment: String = "") -> String {
         let bundle = currentLanguage.bundle
-        return NSLocalizedString(key, bundle: bundle, comment: comment)
+        let localizedString = NSLocalizedString(key, bundle: bundle, comment: comment)
+
+        // If the key wasn't found (returns the key itself), try English fallback
+        if localizedString == key && currentLanguage != .english {
+            let englishBundle = AppLanguage.english.bundle
+            let fallbackString = NSLocalizedString(key, bundle: englishBundle, comment: comment)
+            if fallbackString != key {
+                return fallbackString
+            }
+        }
+
+        // If still not found, return a readable version of the key
+        if localizedString == key {
+            return key.replacingOccurrences(of: "_", with: " ").capitalized
+        }
+
+        return localizedString
     }
 }
 
 // MARK: - Localized Strings
 
-extension L10n {
+public extension L10n {
     // App
     var appName: String { string(forKey: "app_name") }
 
@@ -80,6 +96,11 @@ extension L10n {
 
     // Settings
     var timerMode: String { string(forKey: "timer_mode") }
+    var soundFeedback: String { string(forKey: "sound_feedback") }
+    var theme: String { string(forKey: "theme") }
+    var themeSystem: String { string(forKey: "theme_system") }
+    var themeLight: String { string(forKey: "theme_light") }
+    var themeDark: String { string(forKey: "theme_dark") }
     var duration: String { string(forKey: "duration") }
     var durationOff: String { string(forKey: "duration_off") }
     var duration15m: String { string(forKey: "duration_15m") }
@@ -87,6 +108,13 @@ extension L10n {
     var duration1h: String { string(forKey: "duration_1h") }
     var duration2h: String { string(forKey: "duration_2h") }
     var duration3h: String { string(forKey: "duration_3h") }
+    var durationCustom: String { string(forKey: "duration_custom") }
+    var customDurationTitle: String { string(forKey: "custom_duration_title") }
+    var hours: String { string(forKey: "hours") }
+    var minutes: String { string(forKey: "minutes") }
+    var set: String { string(forKey: "set") }
+    var cancel: String { string(forKey: "cancel") }
+    var maxDurationHint: String { string(forKey: "max_duration_hint") }
 
     // Actions
     var turnOn: String { string(forKey: "turn_on") }
@@ -94,4 +122,5 @@ extension L10n {
 
     // Hints
     var shortcutHint: String { string(forKey: "shortcut_hint") }
+    var hotkeyConflictMessage: String { string(forKey: "hotkey_conflict_message") }
 }
