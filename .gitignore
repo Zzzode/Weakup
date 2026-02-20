@@ -4,6 +4,7 @@
 .LSOverride
 
 # Xcode
+*.xcodeproj/
 DerivedData/
 *.pbxuser
 !default.pbxuser
