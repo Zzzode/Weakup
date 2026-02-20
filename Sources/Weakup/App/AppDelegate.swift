@@ -9,7 +9,7 @@ import WeakupCore
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
-    private var popover: NSPopover?
+    private var settingsWindow: NSWindow?
     private var viewModel = CaffeineViewModel()
     @StateObject private var l10n = L10n.shared
     private let iconManager = IconManager.shared
@@ -102,18 +102,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func showSettings() {
-        if popover == nil {
-            popover = NSPopover()
-            popover?.behavior = .transient
-            let rootView = SettingsView(
-                viewModel: viewModel
+        if settingsWindow == nil {
+            let rootView = SettingsView(viewModel: viewModel)
+            let hostingController = NSHostingController(rootView: rootView)
+            
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 340, height: 480),
+                styleMask: [.titled, .closable, .miniaturizable, .fullSizeContentView],
+                backing: .buffered,
+                defer: false
             )
-            popover?.contentViewController = NSHostingController(rootView: rootView)
+            
+            window.center()
+            window.setFrameAutosaveName("SettingsWindow")
+            window.title = L10n.shared.menuSettings
+            window.contentViewController = hostingController
+            window.isReleasedWhenClosed = false
+            window.titlebarAppearsTransparent = true
+            window.titleVisibility = .hidden
+            
+            // Allow window to be moved by dragging background
+            window.isMovableByWindowBackground = true
+            
+            settingsWindow = window
         }
-
-        if let button = statusItem?.button {
-            popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-        }
+        
+        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
     private func setupIconChangeCallback() {
@@ -167,8 +182,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if viewModel.isActive {
             viewModel.stop()
         }
-        // Close popover if open
-        popover?.close()
-        popover = nil
+        // Close settings window if open
+        settingsWindow?.close()
+        settingsWindow = nil
     }
 }

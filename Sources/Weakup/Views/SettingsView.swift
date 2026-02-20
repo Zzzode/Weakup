@@ -46,8 +46,8 @@ struct SettingsView: View {
             mainButtonSection
             shortcutHintSection
         }
-        .padding(16)
-        .frame(width: 240)
+        .padding(20)
+        .frame(width: 300)
         .id("SettingsView")
         .preferredColorScheme(themeManager.effectiveColorScheme)
         .sheet(isPresented: $showCustomDuration) {
