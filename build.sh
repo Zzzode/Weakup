@@ -1,8 +1,25 @@
 #!/bin/bash
 set -e
 
+# Read version from VERSION file
+VERSION_FILE="$(pwd)/VERSION"
+if [ -f "$VERSION_FILE" ]; then
+    APP_VERSION=$(cat "$VERSION_FILE" | tr -d '[:space:]')
+else
+    APP_VERSION="1.0.0"
+fi
+
+# Extract version components
+VERSION_MAJOR=$(echo "$APP_VERSION" | cut -d. -f1)
+VERSION_MINOR=$(echo "$APP_VERSION" | cut -d. -f2)
+VERSION_PATCH=$(echo "$APP_VERSION" | cut -d. -f3)
+
+# Build number (can be overridden via BUILD_NUMBER env var)
+BUILD_NUMBER="${BUILD_NUMBER:-1}"
+
+echo "Building Weakup v$APP_VERSION (build $BUILD_NUMBER)..."
+
 # Build project
-echo "Building Weakup..."
 swift build -c release
 
 # Create app bundle
@@ -20,10 +37,11 @@ mkdir -p "$APP_PATH/Contents/MacOS"
 mkdir -p "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset"
 
 # Copy localization files
-mkdir -p "$APP_PATH/Contents/Resources/en.lproj"
-mkdir -p "$APP_PATH/Contents/Resources/zh-Hans.lproj"
-cp "Sources/Weakup/en.lproj/Localizable.strings" "$APP_PATH/Contents/Resources/en.lproj/"
-cp "Sources/Weakup/zh-Hans.lproj/Localizable.strings" "$APP_PATH/Contents/Resources/zh-Hans.lproj/"
+LANGUAGES=("en" "zh-Hans" "zh-Hant" "ja" "ko" "fr" "de" "es")
+for lang in "${LANGUAGES[@]}"; do
+    mkdir -p "$APP_PATH/Contents/Resources/${lang}.lproj"
+    cp "Sources/Weakup/${lang}.lproj/Localizable.strings" "$APP_PATH/Contents/Resources/${lang}.lproj/"
+done
 
 # Copy binary
 cp "$BINARY_PATH" "$APP_PATH/Contents/MacOS/weakup"
@@ -89,13 +107,19 @@ cat > "$APP_PATH/Contents/Info.plist" << EOF
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>$APP_VERSION</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>$BUILD_NUMBER</string>
     <key>CFBundleLocalizations</key>
     <array>
         <string>en</string>
         <string>zh-Hans</string>
+        <string>zh-Hant</string>
+        <string>ja</string>
+        <string>ko</string>
+        <string>fr</string>
+        <string>de</string>
+        <string>es</string>
     </array>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
@@ -112,5 +136,34 @@ EOF
 # Clean up temp file
 rm -f /tmp/weakup_icon.svg
 
+# Code signing (optional)
+# Set CODESIGN_IDENTITY to sign the app, e.g.:
+#   CODESIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" ./build.sh
+# Or use "-" for ad-hoc signing (local testing only)
+if [ -n "$CODESIGN_IDENTITY" ]; then
+    echo "Signing app with identity: $CODESIGN_IDENTITY"
+
+    # Sign the binary first
+    codesign --force --options runtime --timestamp \
+        --sign "$CODESIGN_IDENTITY" \
+        "$APP_PATH/Contents/MacOS/weakup"
+
+    # Sign the app bundle
+    codesign --force --options runtime --timestamp \
+        --sign "$CODESIGN_IDENTITY" \
+        "$APP_PATH"
+
+    # Verify signature
+    echo "Verifying signature..."
+    codesign --verify --verbose=2 "$APP_PATH"
+
+    echo "App signed successfully!"
+else
+    echo "Note: App is not code signed. Set CODESIGN_IDENTITY to sign."
+    echo "  For ad-hoc signing: CODESIGN_IDENTITY='-' ./build.sh"
+    echo "  For distribution:   CODESIGN_IDENTITY='Developer ID Application: ...' ./build.sh"
+fi
+
+echo ""
 echo "Done! App created at: $APP_PATH"
 echo "You can now run it with: open $APP_PATH"
