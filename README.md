@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![CI](https://github.com/yourusername/weakup/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/weakup/actions/workflows/ci.yml)
-[![Release](https://github.com/yourusername/weakup/actions/workflows/release.yml/badge.svg)](https://github.com/yourusername/weakup/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/yourusername/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/weakup)
+[![CI](https://github.com/Zzzode/weakup/actions/workflows/ci.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/ci.yml)
+[![Release](https://github.com/Zzzode/weakup/actions/workflows/release.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
 ![macOS](https://img.shields.io/badge/macOS-13%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
@@ -56,7 +56,7 @@ brew install --cask weakup
 
 ### Download Release
 
-Download the latest release from [GitHub Releases](https://github.com/yourusername/weakup/releases):
+Download the latest release from [GitHub Releases](https://github.com/Zzzode/weakup/releases):
 
 1. Download `Weakup-x.x.x.dmg`
 2. Open the DMG and drag Weakup to Applications
@@ -66,7 +66,7 @@ Download the latest release from [GitHub Releases](https://github.com/youruserna
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/weakup.git
+git clone https://github.com/Zzzode/weakup.git
 cd weakup
 
 # Build the app
