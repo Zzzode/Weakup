@@ -2,7 +2,7 @@ import Foundation
 import IOKit.pwr_mgt
 import AppKit
 
-// MARK: - Caffeine View Model
+// Caffeine View Model
 
 @MainActor
 public final class CaffeineViewModel: ObservableObject {
@@ -14,27 +14,51 @@ public final class CaffeineViewModel: ObservableObject {
             UserDefaults.standard.set(soundEnabled, forKey: Keys.soundEnabled)
         }
     }
+    @Published public var showCountdownInMenuBar: Bool {
+        didSet {
+            UserDefaults.standard.set(showCountdownInMenuBar, forKey: Keys.showCountdownInMenuBar)
+        }
+    }
+    @Published public var notificationsEnabled: Bool {
+        didSet {
+            NotificationManager.shared.notificationsEnabled = notificationsEnabled
+        }
+    }
     public private(set) var timerDuration: TimeInterval = 0
 
     private var timer: Timer?
     private var assertionID: IOPMAssertionID = 0
     private var timerStartDate: Date?
+    private var timerExpiredByTimer = false
 
-    // MARK: - Constants
+    // Constants
 
     private enum Keys {
         static let soundEnabled = "WeakupSoundEnabled"
         static let timerMode = "WeakupTimerMode"
         static let timerDuration = "WeakupTimerDuration"
+        static let showCountdownInMenuBar = "WeakupShowCountdownInMenuBar"
     }
 
-    // MARK: - Initialization
+    // Initialization
 
     public init() {
         // Safely load preferences with fallbacks
         self.soundEnabled = Self.loadBool(forKey: Keys.soundEnabled, default: true)
+        self.showCountdownInMenuBar = Self.loadBool(forKey: Keys.showCountdownInMenuBar, default: true)
         self.timerMode = Self.loadBool(forKey: Keys.timerMode, default: false)
         self.timerDuration = Self.loadDouble(forKey: Keys.timerDuration, default: 0)
+        self.notificationsEnabled = NotificationManager.shared.notificationsEnabled
+
+        // Setup notification restart callback
+        NotificationManager.shared.onRestartRequested = { [weak self] in
+            Task { @MainActor [weak self] in
+                self?.restartTimer()
+            }
+        }
+
+        // Request notification permissions on first launch
+        NotificationManager.shared.requestAuthorization()
 
         // Register for app termination to clean up
         NotificationCenter.default.addObserver(
@@ -52,7 +76,7 @@ public final class CaffeineViewModel: ObservableObject {
         // Note: deinit runs on arbitrary thread, cleanup should be done via notification
     }
 
-    // MARK: - Public Methods
+    // Public Methods
 
     public func toggle() {
         isActive ? stop() : start()
@@ -104,7 +128,7 @@ public final class CaffeineViewModel: ObservableObject {
         UserDefaults.standard.set(timerMode, forKey: Keys.timerMode)
     }
 
-    // MARK: - Private Methods
+    // Private Methods
 
     private func cleanup() {
         releaseAssertion()
@@ -151,11 +175,22 @@ public final class CaffeineViewModel: ObservableObject {
         let remaining = timerDuration - elapsed
 
         if remaining <= 0 {
+            timerExpiredByTimer = true
             stop()
+            // Send notification when timer expires
+            NotificationManager.shared.scheduleTimerExpiryNotification()
+            timerExpiredByTimer = false
         } else {
             timeRemaining = remaining
             notifyChange()
         }
+    }
+
+    /// Restart the timer with the same duration (called from notification action)
+    public func restartTimer() {
+        guard timerDuration > 0 else { return }
+        timerMode = true
+        start()
     }
 
     private func notifyChange() {
@@ -168,7 +203,7 @@ public final class CaffeineViewModel: ObservableObject {
         NSSound(named: NSSound.Name(soundName))?.play()
     }
 
-    // MARK: - Safe UserDefaults Loading
+    // Safe UserDefaults Loading
 
     private static func loadBool(forKey key: String, default defaultValue: Bool) -> Bool {
         guard let value = UserDefaults.standard.object(forKey: key) else {
