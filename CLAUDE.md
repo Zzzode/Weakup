@@ -15,23 +15,27 @@ This file provides context for AI assistants working on the Weakup codebase.
 
 ## Architecture
 
-### Single-File Design
+### Modular Design
 
-The main application code is in `Sources/Weakup/main.swift` containing:
+The project is split into two targets:
+1. **WeakupCore**: Library containing business logic, view models, and utilities.
+2. **Weakup**: Main executable containing UI views and app lifecycle management.
 
-| Component | Lines | Purpose |
-|-----------|-------|---------|
-| `WeakupApp` | 8-16 | Entry point, sets up NSApplication |
-| `AppDelegate` | 20-94 | Menu bar, hotkeys, system integration |
-| `CaffeineViewModel` | 98-174 | State management, IOPMAssertion |
-| `SettingsView` | 178-294 | SwiftUI settings popover |
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `WeakupApp` | `Sources/Weakup/main.swift` | Entry point |
+| `AppDelegate` | `Sources/Weakup/App/AppDelegate.swift` | Menu bar, system integration |
+| `SettingsView` | `Sources/Weakup/Views/SettingsView.swift` | Settings UI |
+| `CaffeineViewModel` | `Sources/WeakupCore/ViewModels/CaffeineViewModel.swift` | Sleep prevention logic |
+| `NotificationManager` | `Sources/WeakupCore/Utilities/NotificationManager.swift` | Notification handling |
+| `L10n` | `Sources/WeakupCore/Utilities/L10n.swift` | Localization system |
 
 ### Localization
 
-`Sources/Weakup/L10n.swift` handles internationalization:
+`Sources/WeakupCore/Utilities/L10n.swift` handles internationalization:
 - `AppLanguage` enum defines supported languages
 - `L10n` singleton manages current language
-- Strings stored in `.lproj/Localizable.strings` files
+- Strings stored in `.lproj/Localizable.strings` files in `Sources/Weakup/`
 
 ## Key Technical Decisions
 
@@ -66,11 +70,16 @@ Built with SPM instead of Xcode project for simplicity. The `build.sh` script cr
 ## Important File Locations
 
 ```
-Sources/Weakup/
-├── main.swift              # All app code
-├── L10n.swift              # Localization system
-├── en.lproj/Localizable.strings    # English strings
-└── zh-Hans.lproj/Localizable.strings # Chinese strings
+Sources/
+├── Weakup/                 # App UI and Executable
+│   ├── App/                # App Delegate
+│   ├── Views/              # SwiftUI Views
+│   ├── main.swift          # Entry point
+│   └── *.lproj/            # Localization strings
+└── WeakupCore/             # Business Logic Library
+    ├── Models/             # Data models
+    ├── Utilities/          # Managers (Hotkey, Icon, Theme, etc.)
+    └── ViewModels/         # View Models (CaffeineViewModel)
 
 build.sh                    # Build script (creates .app bundle)
 Package.swift               # SPM configuration
