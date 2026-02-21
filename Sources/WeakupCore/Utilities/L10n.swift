@@ -1,16 +1,28 @@
 import Foundation
 
-// MARK: - Language Management
+// Language Management
 
-public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+public enum AppLanguage: String, CaseIterable, Identifiable {
     case english = "en"
     case chinese = "zh-Hans"
+    case chineseTraditional = "zh-Hant"
+    case japanese = "ja"
+    case korean = "ko"
+    case french = "fr"
+    case german = "de"
+    case spanish = "es"
 
     public var id: String { rawValue }
     public var displayName: String {
         switch self {
         case .english: return "English"
-        case .chinese: return "中文"
+        case .chinese: return "简体中文"
+        case .chineseTraditional: return "繁體中文"
+        case .japanese: return "日本語"
+        case .korean: return "한국어"
+        case .french: return "Francais"
+        case .german: return "Deutsch"
+        case .spanish: return "Espanol"
         }
     }
 
@@ -42,8 +54,25 @@ public class L10n: ObservableObject {
         } else {
             // Detect system language
             let systemLang = Locale.current.language.languageCode?.identifier ?? "en"
-            if systemLang.hasPrefix("zh") {
-                currentLanguage = .chinese
+            let regionCode = Locale.current.region?.identifier ?? ""
+
+            if systemLang == "zh" {
+                // Distinguish between Simplified and Traditional Chinese
+                if regionCode == "TW" || regionCode == "HK" || regionCode == "MO" {
+                    currentLanguage = .chineseTraditional
+                } else {
+                    currentLanguage = .chinese
+                }
+            } else if systemLang == "ja" {
+                currentLanguage = .japanese
+            } else if systemLang == "ko" {
+                currentLanguage = .korean
+            } else if systemLang == "fr" {
+                currentLanguage = .french
+            } else if systemLang == "de" {
+                currentLanguage = .german
+            } else if systemLang == "es" {
+                currentLanguage = .spanish
             } else {
                 currentLanguage = .english
             }
@@ -78,7 +107,7 @@ public class L10n: ObservableObject {
     }
 }
 
-// MARK: - Localized Strings
+// Localized Strings
 
 public extension L10n {
     // App
@@ -101,6 +130,8 @@ public extension L10n {
     var themeSystem: String { string(forKey: "theme_system") }
     var themeLight: String { string(forKey: "theme_light") }
     var themeDark: String { string(forKey: "theme_dark") }
+    var iconStyle: String { string(forKey: "icon_style") }
+    var showCountdownInMenuBar: String { string(forKey: "show_countdown_in_menu_bar") }
     var duration: String { string(forKey: "duration") }
     var durationOff: String { string(forKey: "duration_off") }
     var duration15m: String { string(forKey: "duration_15m") }
@@ -120,7 +151,40 @@ public extension L10n {
     var turnOn: String { string(forKey: "turn_on") }
     var turnOff: String { string(forKey: "turn_off") }
 
+    // Startup
+    var launchAtLogin: String { string(forKey: "launch_at_login") }
+
+    // Notifications
+    var notifications: String { string(forKey: "notifications") }
+    var notificationTimerExpiredTitle: String { string(forKey: "notification_timer_expired_title") }
+    var notificationTimerExpiredBody: String { string(forKey: "notification_timer_expired_body") }
+    var notificationActionRestart: String { string(forKey: "notification_action_restart") }
+    var notificationActionDismiss: String { string(forKey: "notification_action_dismiss") }
+
+    // History
+    var historyTitle: String { string(forKey: "history_title") }
+    var historyToday: String { string(forKey: "history_today") }
+    var historyThisWeek: String { string(forKey: "history_this_week") }
+    var historyTotal: String { string(forKey: "history_total") }
+    var historyAverage: String { string(forKey: "history_average") }
+    var historySessions: String { string(forKey: "history_sessions") }
+    var historyPerSession: String { string(forKey: "history_per_session") }
+    var historyRecentSessions: String { string(forKey: "history_recent_sessions") }
+    var historyClear: String { string(forKey: "history_clear") }
+    var historyClearConfirmTitle: String { string(forKey: "history_clear_confirm_title") }
+    var historyClearConfirmMessage: String { string(forKey: "history_clear_confirm_message") }
+    var historyNoSessions: String { string(forKey: "history_no_sessions") }
+    var historyTimerMode: String { string(forKey: "history_timer_mode") }
+    var historyPrivacyNote: String { string(forKey: "history_privacy_note") }
+
+    // Hotkey
+    var hotkey: String { string(forKey: "hotkey") }
+    var hotkeyCurrent: String { string(forKey: "hotkey_current") }
+    var hotkeyRecord: String { string(forKey: "hotkey_record") }
+    var hotkeyReset: String { string(forKey: "hotkey_reset") }
+    var hotkeyRecording: String { string(forKey: "hotkey_recording") }
+    var hotkeyConflictMessage: String { string(forKey: "hotkey_conflict_message") }
+
     // Hints
     var shortcutHint: String { string(forKey: "shortcut_hint") }
-    var hotkeyConflictMessage: String { string(forKey: "hotkey_conflict_message") }
 }
