@@ -2,11 +2,11 @@ import XCTest
 import Carbon
 @testable import WeakupCore
 
-// MARK: - HotkeyConfig Tests
+// HotkeyConfig Tests
 
 final class HotkeyConfigTests: XCTestCase {
 
-    // MARK: - Default Config Tests
+    // Default Config Tests
 
     func testDefaultConfig_hasExpectedKeyCode() {
         let config = HotkeyConfig.defaultConfig
@@ -19,7 +19,7 @@ final class HotkeyConfigTests: XCTestCase {
         XCTAssertEqual(config.modifiers, expectedModifiers)
     }
 
-    // MARK: - Equatable Tests
+    // Equatable Tests
 
     func testEquatable_sameConfigs_areEqual() {
         let config1 = HotkeyConfig(keyCode: 10, modifiers: 256)
@@ -39,7 +39,7 @@ final class HotkeyConfigTests: XCTestCase {
         XCTAssertNotEqual(config1, config2)
     }
 
-    // MARK: - Display String Tests
+    // Display String Tests
 
     func testDisplayString_defaultConfig() {
         let config = HotkeyConfig.defaultConfig
@@ -77,7 +77,7 @@ final class HotkeyConfigTests: XCTestCase {
         XCTAssertTrue(escConfig.displayString.contains("Esc"))
     }
 
-    // MARK: - Codable Tests
+    // Codable Tests
 
     func testCodable_encodesAndDecodes() throws {
         let original = HotkeyConfig(keyCode: 42, modifiers: 1024)
@@ -92,7 +92,7 @@ final class HotkeyConfigTests: XCTestCase {
     }
 }
 
-// MARK: - HotkeyManager Tests
+// HotkeyManager Tests
 
 @MainActor
 final class HotkeyManagerTests: XCTestCase {
@@ -102,7 +102,7 @@ final class HotkeyManagerTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "WeakupHotkeyConfig")
     }
 
-    // MARK: - Singleton Tests
+    // Singleton Tests
 
     func testShared_returnsSameInstance() {
         let instance1 = HotkeyManager.shared
@@ -110,7 +110,7 @@ final class HotkeyManagerTests: XCTestCase {
         XCTAssertTrue(instance1 === instance2)
     }
 
-    // MARK: - Recording State Tests
+    // Recording State Tests
 
     func testStartRecording_setsIsRecordingTrue() {
         let manager = HotkeyManager.shared
@@ -132,7 +132,7 @@ final class HotkeyManagerTests: XCTestCase {
         XCTAssertFalse(manager.isRecording)
     }
 
-    // MARK: - Reset Tests
+    // Reset Tests
 
     func testResetToDefault_restoresDefaultConfig() {
         let manager = HotkeyManager.shared
@@ -145,7 +145,7 @@ final class HotkeyManagerTests: XCTestCase {
         XCTAssertEqual(manager.currentConfig, HotkeyConfig.defaultConfig)
     }
 
-    // MARK: - Conflict Detection Tests
+    // Conflict Detection Tests
 
     func testHasConflict_initiallyFalse() {
         let manager = HotkeyManager.shared
@@ -155,7 +155,7 @@ final class HotkeyManagerTests: XCTestCase {
         _ = manager.conflictMessage
     }
 
-    // MARK: - Callback Tests
+    // Callback Tests
 
     func testOnHotkeyPressed_canBeSet() {
         let manager = HotkeyManager.shared

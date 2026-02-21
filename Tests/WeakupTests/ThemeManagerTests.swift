@@ -4,7 +4,7 @@ import SwiftUI
 
 final class AppThemeTests: XCTestCase {
 
-    // MARK: - Enum Cases Tests
+    // Enum Cases Tests
 
     func testAllCases_containsExpectedThemes() {
         let allCases = AppTheme.allCases
@@ -26,7 +26,7 @@ final class AppThemeTests: XCTestCase {
         XCTAssertEqual(AppTheme.dark.rawValue, "dark")
     }
 
-    // MARK: - Identifiable Tests
+    // Identifiable Tests
 
     func testId_matchesRawValue() {
         for theme in AppTheme.allCases {
@@ -34,7 +34,7 @@ final class AppThemeTests: XCTestCase {
         }
     }
 
-    // MARK: - Localization Key Tests
+    // Localization Key Tests
 
     func testLocalizationKey_system() {
         XCTAssertEqual(AppTheme.system.localizationKey, "theme_system")
@@ -48,7 +48,7 @@ final class AppThemeTests: XCTestCase {
         XCTAssertEqual(AppTheme.dark.localizationKey, "theme_dark")
     }
 
-    // MARK: - Color Scheme Tests
+    // Color Scheme Tests
 
     func testColorScheme_system_returnsNil() {
         XCTAssertNil(AppTheme.system.colorScheme, "System theme should return nil color scheme")
@@ -62,7 +62,7 @@ final class AppThemeTests: XCTestCase {
         XCTAssertEqual(AppTheme.dark.colorScheme, .dark)
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     func testInit_fromValidRawValue() {
         XCTAssertEqual(AppTheme(rawValue: "system"), .system)

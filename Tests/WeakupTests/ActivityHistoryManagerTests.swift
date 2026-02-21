@@ -17,7 +17,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Singleton Tests
+    // Singleton Tests
 
     func testShared_returnsSameInstance() {
         let instance1 = ActivityHistoryManager.shared
@@ -25,7 +25,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
         XCTAssertTrue(instance1 === instance2)
     }
 
-    // MARK: - Session Management Tests
+    // Session Management Tests
 
     func testStartSession_createsCurrentSession() {
         let manager = ActivityHistoryManager.shared
@@ -83,7 +83,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
         XCTAssertEqual(manager.sessions.count, initialCount)
     }
 
-    // MARK: - Clear History Tests
+    // Clear History Tests
 
     func testClearHistory_removesAllSessions() {
         let manager = ActivityHistoryManager.shared
@@ -101,7 +101,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
         XCTAssertEqual(manager.sessions.count, 0)
     }
 
-    // MARK: - Statistics Tests
+    // Statistics Tests
 
     func testStatistics_emptyHistory_returnsZeros() {
         let manager = ActivityHistoryManager.shared

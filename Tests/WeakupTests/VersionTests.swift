@@ -3,7 +3,7 @@ import XCTest
 
 final class AppVersionTests: XCTestCase {
 
-    // MARK: - String Tests
+    // String Tests
 
     func testString_returnsValidVersion() {
         let version = AppVersion.string
@@ -20,14 +20,14 @@ final class AppVersionTests: XCTestCase {
         XCTAssertNotNil(match, "Version '\(version)' should match semantic version format")
     }
 
-    // MARK: - Build Tests
+    // Build Tests
 
     func testBuild_returnsValidBuild() {
         let build = AppVersion.build
         XCTAssertFalse(build.isEmpty, "Build string should not be empty")
     }
 
-    // MARK: - Full String Tests
+    // Full String Tests
 
     func testFullString_containsVersionAndBuild() {
         let fullString = AppVersion.fullString
@@ -43,7 +43,7 @@ final class AppVersionTests: XCTestCase {
         XCTAssertEqual(fullString, expected, "Full string should match expected format")
     }
 
-    // MARK: - Components Tests
+    // Components Tests
 
     func testComponents_returnsTuple() {
         let components = AppVersion.components

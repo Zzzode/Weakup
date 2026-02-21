@@ -3,7 +3,7 @@ import XCTest
 
 final class AppLanguageTests: XCTestCase {
 
-    // MARK: - Enum Cases Tests
+    // Enum Cases Tests
 
     func testAllCases_containsExpectedLanguages() {
         let allCases = AppLanguage.allCases
@@ -20,7 +20,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertEqual(AppLanguage.chinese.rawValue, "zh-Hans")
     }
 
-    // MARK: - Identifiable Tests
+    // Identifiable Tests
 
     func testId_matchesRawValue() {
         for language in AppLanguage.allCases {
@@ -28,7 +28,7 @@ final class AppLanguageTests: XCTestCase {
         }
     }
 
-    // MARK: - Display Name Tests
+    // Display Name Tests
 
     func testDisplayName_english() {
         XCTAssertEqual(AppLanguage.english.displayName, "English")
@@ -44,7 +44,7 @@ final class AppLanguageTests: XCTestCase {
         }
     }
 
-    // MARK: - Bundle Tests
+    // Bundle Tests
 
     func testBundle_returnsBundle() {
         for language in AppLanguage.allCases {
@@ -53,7 +53,7 @@ final class AppLanguageTests: XCTestCase {
         }
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     func testInit_fromValidRawValue() {
         let english = AppLanguage(rawValue: "en")

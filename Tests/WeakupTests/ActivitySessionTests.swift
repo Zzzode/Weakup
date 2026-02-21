@@ -3,7 +3,7 @@ import XCTest
 
 final class ActivitySessionTests: XCTestCase {
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     func testInit_setsDefaultValues() {
         let session = ActivitySession()
@@ -28,7 +28,7 @@ final class ActivitySessionTests: XCTestCase {
         XCTAssertNotEqual(session1.id, session2.id)
     }
 
-    // MARK: - isActive Tests
+    // isActive Tests
 
     func testIsActive_trueWhenNoEndTime() {
         let session = ActivitySession()
@@ -41,7 +41,7 @@ final class ActivitySessionTests: XCTestCase {
         XCTAssertFalse(session.isActive)
     }
 
-    // MARK: - Duration Tests
+    // Duration Tests
 
     func testDuration_calculatesFromStartToEnd() {
         let startTime = Date().addingTimeInterval(-60) // 1 minute ago
@@ -58,7 +58,7 @@ final class ActivitySessionTests: XCTestCase {
         XCTAssertEqual(session.duration, 30, accuracy: 2)
     }
 
-    // MARK: - End Tests
+    // End Tests
 
     func testEnd_setsEndTime() {
         var session = ActivitySession()
@@ -78,7 +78,7 @@ final class ActivitySessionTests: XCTestCase {
         XCTAssertLessThanOrEqual(session.endTime!, afterEnd)
     }
 
-    // MARK: - Codable Tests
+    // Codable Tests
 
     func testCodable_encodesAndDecodes() throws {
         let original = ActivitySession(wasTimerMode: true, timerDuration: 1800)
@@ -95,7 +95,7 @@ final class ActivitySessionTests: XCTestCase {
     }
 }
 
-// MARK: - Activity Statistics Tests
+// Activity Statistics Tests
 
 final class ActivityStatisticsTests: XCTestCase {
 

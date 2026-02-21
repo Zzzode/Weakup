@@ -24,7 +24,7 @@ final class CaffeineViewModelTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Initial State Tests
+    // Initial State Tests
 
     func testInitialState_isInactive() {
         XCTAssertFalse(viewModel.isActive, "ViewModel should start inactive")
@@ -46,7 +46,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.soundEnabled, "Sound should be enabled by default")
     }
 
-    // MARK: - Toggle Tests
+    // Toggle Tests
 
     func testToggle_startsWhenInactive() {
         XCTAssertFalse(viewModel.isActive)
@@ -73,7 +73,7 @@ final class CaffeineViewModelTests: XCTestCase {
         }
     }
 
-    // MARK: - Start/Stop Tests
+    // Start/Stop Tests
 
     func testStart_activatesViewModel() {
         viewModel.start()
@@ -101,7 +101,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive)
     }
 
-    // MARK: - Timer Duration Tests
+    // Timer Duration Tests
 
     func testSetTimerDuration_updatesValue() {
         viewModel.setTimerDuration(3600)
@@ -126,7 +126,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertEqual(storedValue, 7200, "Duration should be persisted to UserDefaults")
     }
 
-    // MARK: - Timer Mode Tests
+    // Timer Mode Tests
 
     func testSetTimerMode_updatesValue() {
         viewModel.setTimerMode(true)
@@ -162,7 +162,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.timeRemaining, 0, "Time remaining should be zero when timer mode is disabled")
     }
 
-    // MARK: - Sound Enabled Tests
+    // Sound Enabled Tests
 
     func testSoundEnabled_persistsValue() {
         viewModel.soundEnabled = false

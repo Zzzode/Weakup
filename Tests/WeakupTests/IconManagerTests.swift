@@ -4,7 +4,7 @@ import AppKit
 
 final class IconStyleTests: XCTestCase {
 
-    // MARK: - Enum Cases Tests
+    // Enum Cases Tests
 
     func testAllCases_containsExpectedStyles() {
         let allCases = IconStyle.allCases
@@ -16,7 +16,7 @@ final class IconStyleTests: XCTestCase {
         XCTAssertTrue(allCases.contains(.eye), "Should contain eye")
     }
 
-    // MARK: - Raw Value Tests
+    // Raw Value Tests
 
     func testRawValues() {
         XCTAssertEqual(IconStyle.power.rawValue, "power")
@@ -26,7 +26,7 @@ final class IconStyleTests: XCTestCase {
         XCTAssertEqual(IconStyle.eye.rawValue, "eye")
     }
 
-    // MARK: - Identifiable Tests
+    // Identifiable Tests
 
     func testId_matchesRawValue() {
         for style in IconStyle.allCases {
@@ -34,7 +34,7 @@ final class IconStyleTests: XCTestCase {
         }
     }
 
-    // MARK: - Localization Key Tests
+    // Localization Key Tests
 
     func testLocalizationKey_format() {
         for style in IconStyle.allCases {
@@ -42,7 +42,7 @@ final class IconStyleTests: XCTestCase {
         }
     }
 
-    // MARK: - Symbol Tests
+    // Symbol Tests
 
     func testInactiveSymbol_power() {
         XCTAssertEqual(IconStyle.power.inactiveSymbol, "power.circle")
@@ -91,7 +91,7 @@ final class IconStyleTests: XCTestCase {
         }
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     func testInit_fromValidRawValue() {
         XCTAssertEqual(IconStyle(rawValue: "power"), .power)
