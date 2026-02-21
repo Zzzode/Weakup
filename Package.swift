@@ -18,6 +18,7 @@ let package = Package(
                 .linkedFramework("AppKit"),
                 .linkedFramework("Foundation"),
                 .linkedFramework("IOKit"),
+                .linkedFramework("UserNotifications"),
             ]
         ),
         // Main executable
