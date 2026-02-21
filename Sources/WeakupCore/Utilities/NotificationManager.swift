@@ -1,19 +1,19 @@
 import Foundation
 import UserNotifications
 
-// MARK: - Notification Manager
+// Notification Manager
 
 @MainActor
-final class NotificationManager: NSObject, ObservableObject {
-    static let shared = NotificationManager()
+public final class NotificationManager: NSObject, ObservableObject {
+    public static let shared = NotificationManager()
 
-    @Published var notificationsEnabled: Bool {
+    @Published public var notificationsEnabled: Bool {
         didSet {
             UserDefaults.standard.set(notificationsEnabled, forKey: Keys.notificationsEnabled)
         }
     }
 
-    @Published var isAuthorized = false
+    @Published public var isAuthorized = false
 
     private enum Keys {
         static let notificationsEnabled = "WeakupNotificationsEnabled"
@@ -33,7 +33,7 @@ final class NotificationManager: NSObject, ObservableObject {
     }
 
     // Callback for restart action
-    var onRestartRequested: (() -> Void)?
+    public var onRestartRequested: (() -> Void)?
 
     private override init() {
         self.notificationsEnabled = UserDefaults.standard.object(forKey: Keys.notificationsEnabled) as? Bool ?? true
@@ -42,9 +42,9 @@ final class NotificationManager: NSObject, ObservableObject {
         checkAuthorizationStatus()
     }
 
-    // MARK: - Public Methods
+    // Public Methods
 
-    func requestAuthorization() {
+    public func requestAuthorization() {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
             Task { @MainActor [weak self] in
@@ -56,7 +56,7 @@ final class NotificationManager: NSObject, ObservableObject {
         }
     }
 
-    func scheduleTimerExpiryNotification() {
+    public func scheduleTimerExpiryNotification() {
         guard notificationsEnabled && isAuthorized else { return }
 
         let content = UNMutableNotificationContent()
@@ -78,13 +78,13 @@ final class NotificationManager: NSObject, ObservableObject {
         }
     }
 
-    func cancelPendingNotifications() {
+    public func cancelPendingNotifications() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(
             withIdentifiers: [NotificationIdentifier.timerExpired]
         )
     }
 
-    // MARK: - Private Methods
+    // Private Methods
 
     private func setupNotificationCategories() {
         let restartAction = UNNotificationAction(
@@ -120,10 +120,10 @@ final class NotificationManager: NSObject, ObservableObject {
     }
 }
 
-// MARK: - UNUserNotificationCenterDelegate
+// UNUserNotificationCenterDelegate
 
 extension NotificationManager: UNUserNotificationCenterDelegate {
-    nonisolated func userNotificationCenter(
+    nonisolated public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
@@ -143,7 +143,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         completionHandler()
     }
 
-    nonisolated func userNotificationCenter(
+    nonisolated public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
