@@ -1,6 +1,7 @@
 import SwiftUI
+import WeakupCore
 
-// MARK: - Settings View
+// Settings View
 
 struct SettingsView: View {
     @ObservedObject var viewModel: CaffeineViewModel
@@ -55,7 +56,7 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - View Components
+    // View Components
 
     private var headerSection: some View {
         HStack {
@@ -346,7 +347,7 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Helper Methods
+    // Helper Methods
 
     private func formatTime(_ time: TimeInterval) -> String {
         let totalSeconds = Int(time)

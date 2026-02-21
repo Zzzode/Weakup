@@ -4,7 +4,7 @@ import Combine
 import Carbon
 import WeakupCore
 
-// MARK: - App Delegate
+// App Delegate
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -14,13 +14,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @StateObject private var l10n = L10n.shared
     private let iconManager = IconManager.shared
     private let hotkeyManager = HotkeyManager.shared
+    private let historyManager = ActivityHistoryManager.shared
     private var viewModelObserver: Any?
+    private var lastIsActive = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
         setupHotkeys()
         setupIconChangeCallback()
         setupViewModelObserver()
+        
+        // Initialize lastIsActive state
+        lastIsActive = viewModel.isActive
     }
 
     private func setupStatusBar() {
@@ -140,11 +145,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setupViewModelObserver() {
-        // Observe viewModel changes to update status bar countdown
+        // Observe viewModel changes
         viewModelObserver = viewModel.objectWillChange.sink { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.updateStatusIcon()
+                guard let self = self else { return }
+                self.updateStatusIcon()
+                self.handleStateChange()
             }
+        }
+    }
+
+    private func handleStateChange() {
+        if viewModel.isActive != lastIsActive {
+            if viewModel.isActive {
+                // Session started
+                historyManager.startSession(
+                    timerMode: viewModel.timerMode,
+                    timerDuration: viewModel.timerMode ? viewModel.timerDuration : nil
+                )
+            } else {
+                // Session ended
+                historyManager.endSession()
+            }
+            lastIsActive = viewModel.isActive
         }
     }
 

@@ -1,6 +1,7 @@
 import SwiftUI
+import WeakupCore
 
-// MARK: - History View
+// History View
 
 struct HistoryView: View {
     @StateObject private var historyManager = ActivityHistoryManager.shared
@@ -31,7 +32,7 @@ struct HistoryView: View {
         }
     }
 
-    // MARK: - View Components
+    // View Components
 
     private var headerSection: some View {
         HStack {
@@ -95,7 +96,7 @@ struct HistoryView: View {
             .multilineTextAlignment(.center)
     }
 
-    // MARK: - Helper Methods
+    // Helper Methods
 
     private func formatDuration(_ duration: TimeInterval) -> String {
         let hours = Int(duration) / 3600
@@ -111,7 +112,7 @@ struct HistoryView: View {
     }
 }
 
-// MARK: - Stat Card
+// Stat Card
 
 private struct StatCard: View {
     let title: String
@@ -136,7 +137,7 @@ private struct StatCard: View {
     }
 }
 
-// MARK: - Session Row
+// Session Row
 
 private struct SessionRow: View {
     let session: ActivitySession

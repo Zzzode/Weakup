@@ -1,7 +1,7 @@
 import AppKit
 import WeakupCore
 
-// MARK: - App Entry Point
+// App Entry Point
 
 @MainActor
 struct WeakupApp {
