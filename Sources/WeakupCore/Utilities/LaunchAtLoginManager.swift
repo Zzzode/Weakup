@@ -1,7 +1,7 @@
 import Foundation
 import ServiceManagement
 
-// MARK: - Launch At Login Manager
+// Launch At Login Manager
 
 @MainActor
 public final class LaunchAtLoginManager: ObservableObject {
@@ -19,14 +19,14 @@ public final class LaunchAtLoginManager: ObservableObject {
         self.isEnabled = SMAppService.mainApp.status == .enabled
     }
 
-    // MARK: - Public Methods
+    // Public Methods
 
     /// Check current launch at login status
     public func refreshStatus() {
         isEnabled = SMAppService.mainApp.status == .enabled
     }
 
-    // MARK: - Private Methods
+    // Private Methods
 
     private func setLaunchAtLogin(_ enabled: Bool) {
         do {

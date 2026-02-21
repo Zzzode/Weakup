@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Activity History Manager
+// Activity History Manager
 
 @MainActor
 public final class ActivityHistoryManager: ObservableObject {
@@ -16,7 +16,7 @@ public final class ActivityHistoryManager: ObservableObject {
         loadSessions()
     }
 
-    // MARK: - Session Management
+    // Session Management
 
     public func startSession(timerMode: Bool, timerDuration: TimeInterval?) {
         let session = ActivitySession(
@@ -46,7 +46,7 @@ public final class ActivityHistoryManager: ObservableObject {
         saveSessions()
     }
 
-    // MARK: - Statistics
+    // Statistics
 
     public var statistics: ActivityStatistics {
         let calendar = Calendar.current
@@ -76,7 +76,7 @@ public final class ActivityHistoryManager: ObservableObject {
         )
     }
 
-    // MARK: - Persistence
+    // Persistence
 
     private func loadSessions() {
         guard let data = UserDefaults.standard.data(forKey: userDefaultsKey) else { return }

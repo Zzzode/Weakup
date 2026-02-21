@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - App Version
+// App Version
 
 public enum AppVersion {
     // Default version (used as fallback)

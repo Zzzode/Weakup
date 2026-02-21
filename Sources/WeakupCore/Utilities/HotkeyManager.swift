@@ -1,7 +1,7 @@
 import AppKit
 import Carbon
 
-// MARK: - Hotkey Configuration
+// Hotkey Configuration
 
 public struct HotkeyConfig: Codable, Equatable, Sendable {
     public var keyCode: UInt32
@@ -85,7 +85,7 @@ public struct HotkeyConfig: Codable, Equatable, Sendable {
     }
 }
 
-// MARK: - Hotkey Manager
+// Hotkey Manager
 
 @MainActor
 public final class HotkeyManager: ObservableObject {
@@ -112,7 +112,7 @@ public final class HotkeyManager: ObservableObject {
         currentConfig = Self.loadConfig()
     }
 
-    // MARK: - Public Methods
+    // Public Methods
 
     public func registerHotkey() {
         unregisterHotkey()
@@ -200,7 +200,7 @@ public final class HotkeyManager: ObservableObject {
         currentConfig = .defaultConfig
     }
 
-    // MARK: - Private Methods
+    // Private Methods
 
     private func reregisterHotkey() {
         registerHotkey()

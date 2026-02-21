@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Activity Session
+// Activity Session
 
 public struct ActivitySession: Codable, Identifiable, Sendable {
     public let id: UUID
@@ -33,7 +33,7 @@ public struct ActivitySession: Codable, Identifiable, Sendable {
     }
 }
 
-// MARK: - Activity Statistics
+// Activity Statistics
 
 public struct ActivityStatistics: Sendable {
     public let totalSessions: Int

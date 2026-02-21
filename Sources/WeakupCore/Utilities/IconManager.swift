@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-// MARK: - Icon Style
+// Icon Style
 
 public enum IconStyle: String, CaseIterable, Identifiable, Sendable {
     case power = "power"
@@ -39,7 +39,7 @@ public enum IconStyle: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-// MARK: - Icon Manager
+// Icon Manager
 
 @MainActor
 public final class IconManager: ObservableObject {

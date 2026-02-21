@@ -1,7 +1,7 @@
 import SwiftUI
 import AppKit
 
-// MARK: - Theme Options
+// Theme Options
 
 public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
     case system = "system"
@@ -27,7 +27,7 @@ public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-// MARK: - Theme Manager
+// Theme Manager
 
 @MainActor
 public final class ThemeManager: ObservableObject {
