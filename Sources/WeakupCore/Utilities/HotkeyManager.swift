@@ -1,6 +1,45 @@
 import AppKit
 import Carbon
 
+// MARK: - Hotkey Conflict Information
+
+/// Information about a detected keyboard shortcut conflict.
+///
+/// When a user attempts to set a hotkey that conflicts with a known system
+/// or application shortcut, a `HotkeyConflict` is created to describe the conflict.
+public struct HotkeyConflict: Equatable, Sendable {
+    public let conflictingApp: String
+    public let description: String
+    public let severity: ConflictSeverity
+    public let suggestion: String?
+
+    public enum ConflictSeverity: Int, Sendable {
+        case low = 0 // May conflict with less common shortcuts
+        case medium = 1 // Conflicts with common app shortcuts
+        case high = 2 // Conflicts with system shortcuts
+    }
+
+    public init(
+        conflictingApp: String, description: String, severity: ConflictSeverity,
+        suggestion: String? = nil
+    ) {
+        self.conflictingApp = conflictingApp
+        self.description = description
+        self.severity = severity
+        self.suggestion = suggestion
+    }
+}
+
+// Known System Shortcut
+
+private struct KnownShortcut {
+    let keyCode: UInt32
+    let modifiers: UInt32
+    let app: String
+    let description: String
+    let severity: HotkeyConflict.ConflictSeverity
+}
+
 // Hotkey Configuration
 
 public struct HotkeyConfig: Codable, Equatable, Sendable {
@@ -8,7 +47,7 @@ public struct HotkeyConfig: Codable, Equatable, Sendable {
     public var modifiers: UInt32
 
     public static let defaultConfig = HotkeyConfig(
-        keyCode: UInt32(kVK_ANSI_0),  // 0 key
+        keyCode: UInt32(kVK_ANSI_0), // 0 key
         modifiers: UInt32(cmdKey | controlKey)
     )
 
@@ -26,62 +65,63 @@ public struct HotkeyConfig: Codable, Equatable, Sendable {
         return parts.joined(separator: " + ")
     }
 
+    private static let keyCodeMap: [Int: String] = [
+        kVK_ANSI_0: "0",
+        kVK_ANSI_1: "1",
+        kVK_ANSI_2: "2",
+        kVK_ANSI_3: "3",
+        kVK_ANSI_4: "4",
+        kVK_ANSI_5: "5",
+        kVK_ANSI_6: "6",
+        kVK_ANSI_7: "7",
+        kVK_ANSI_8: "8",
+        kVK_ANSI_9: "9",
+        kVK_ANSI_A: "A",
+        kVK_ANSI_B: "B",
+        kVK_ANSI_C: "C",
+        kVK_ANSI_D: "D",
+        kVK_ANSI_E: "E",
+        kVK_ANSI_F: "F",
+        kVK_ANSI_G: "G",
+        kVK_ANSI_H: "H",
+        kVK_ANSI_I: "I",
+        kVK_ANSI_J: "J",
+        kVK_ANSI_K: "K",
+        kVK_ANSI_L: "L",
+        kVK_ANSI_M: "M",
+        kVK_ANSI_N: "N",
+        kVK_ANSI_O: "O",
+        kVK_ANSI_P: "P",
+        kVK_ANSI_Q: "Q",
+        kVK_ANSI_R: "R",
+        kVK_ANSI_S: "S",
+        kVK_ANSI_T: "T",
+        kVK_ANSI_U: "U",
+        kVK_ANSI_V: "V",
+        kVK_ANSI_W: "W",
+        kVK_ANSI_X: "X",
+        kVK_ANSI_Y: "Y",
+        kVK_ANSI_Z: "Z",
+        kVK_Space: "Space",
+        kVK_Return: "Return",
+        kVK_Tab: "Tab",
+        kVK_Escape: "Esc",
+        kVK_F1: "F1",
+        kVK_F2: "F2",
+        kVK_F3: "F3",
+        kVK_F4: "F4",
+        kVK_F5: "F5",
+        kVK_F6: "F6",
+        kVK_F7: "F7",
+        kVK_F8: "F8",
+        kVK_F9: "F9",
+        kVK_F10: "F10",
+        kVK_F11: "F11",
+        kVK_F12: "F12"
+    ]
+
     private func keyCodeToString(_ code: UInt32) -> String {
-        switch Int(code) {
-        case kVK_ANSI_0: return "0"
-        case kVK_ANSI_1: return "1"
-        case kVK_ANSI_2: return "2"
-        case kVK_ANSI_3: return "3"
-        case kVK_ANSI_4: return "4"
-        case kVK_ANSI_5: return "5"
-        case kVK_ANSI_6: return "6"
-        case kVK_ANSI_7: return "7"
-        case kVK_ANSI_8: return "8"
-        case kVK_ANSI_9: return "9"
-        case kVK_ANSI_A: return "A"
-        case kVK_ANSI_B: return "B"
-        case kVK_ANSI_C: return "C"
-        case kVK_ANSI_D: return "D"
-        case kVK_ANSI_E: return "E"
-        case kVK_ANSI_F: return "F"
-        case kVK_ANSI_G: return "G"
-        case kVK_ANSI_H: return "H"
-        case kVK_ANSI_I: return "I"
-        case kVK_ANSI_J: return "J"
-        case kVK_ANSI_K: return "K"
-        case kVK_ANSI_L: return "L"
-        case kVK_ANSI_M: return "M"
-        case kVK_ANSI_N: return "N"
-        case kVK_ANSI_O: return "O"
-        case kVK_ANSI_P: return "P"
-        case kVK_ANSI_Q: return "Q"
-        case kVK_ANSI_R: return "R"
-        case kVK_ANSI_S: return "S"
-        case kVK_ANSI_T: return "T"
-        case kVK_ANSI_U: return "U"
-        case kVK_ANSI_V: return "V"
-        case kVK_ANSI_W: return "W"
-        case kVK_ANSI_X: return "X"
-        case kVK_ANSI_Y: return "Y"
-        case kVK_ANSI_Z: return "Z"
-        case kVK_Space: return "Space"
-        case kVK_Return: return "Return"
-        case kVK_Tab: return "Tab"
-        case kVK_Escape: return "Esc"
-        case kVK_F1: return "F1"
-        case kVK_F2: return "F2"
-        case kVK_F3: return "F3"
-        case kVK_F4: return "F4"
-        case kVK_F5: return "F5"
-        case kVK_F6: return "F6"
-        case kVK_F7: return "F7"
-        case kVK_F8: return "F8"
-        case kVK_F9: return "F9"
-        case kVK_F10: return "F10"
-        case kVK_F11: return "F11"
-        case kVK_F12: return "F12"
-        default: return "Key(\(code))"
-        }
+        HotkeyConfig.keyCodeMap[Int(code)] ?? "Key(\(code))"
     }
 }
 
@@ -94,22 +134,308 @@ public final class HotkeyManager: ObservableObject {
     @Published public var currentConfig: HotkeyConfig {
         didSet {
             saveConfig()
+            checkForConflicts()
             reregisterHotkey()
         }
     }
+
     @Published public var isRecording = false
     @Published public var hasConflict = false
     @Published public var conflictMessage: String?
+    @Published public var detectedConflicts: [HotkeyConflict] = []
+    @Published public var overrideConflicts = false
 
     public var onHotkeyPressed: (() -> Void)?
 
     private var hotkeyRef: EventHotKeyRef?
     private var eventHandler: EventHandlerRef?
-    private let userDefaultsKey = "WeakupHotkeyConfig"
-    private let hotkeyID = EventHotKeyID(signature: OSType(0x57454B55), id: 1)  // "WEKU"
+    private let hotkeyID = EventHotKeyID(
+        signature: AppConstants.Hotkey.signature,
+        id: AppConstants.Hotkey.id
+    )
+
+    /// Known system and common app shortcuts
+    private let knownShortcuts: [KnownShortcut] = [
+        // macOS System Shortcuts (High severity)
+        KnownShortcut(
+            keyCode: UInt32(kVK_Space),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Spotlight Search",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_Space),
+            modifiers: UInt32(cmdKey | optionKey),
+            app: "macOS",
+            description: "Finder Search",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_Tab),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "App Switcher",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_Q),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Quit App",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_W),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Close Window",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_H),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Hide App",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_M),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Minimize Window",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_C),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Copy",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_V),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Paste",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_X),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Cut",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_Z),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Undo",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_A),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Select All",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_S),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Save",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_N),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "New",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_O),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Open",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_P),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Print",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_F),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Find",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_Comma),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "Preferences",
+            severity: .high
+        ),
+
+        // Mission Control / Spaces (High severity)
+        KnownShortcut(
+            keyCode: UInt32(kVK_UpArrow),
+            modifiers: UInt32(controlKey),
+            app: "Mission Control",
+            description: "Mission Control",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_DownArrow),
+            modifiers: UInt32(controlKey),
+            app: "Mission Control",
+            description: "App Windows",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_LeftArrow),
+            modifiers: UInt32(controlKey),
+            app: "Mission Control",
+            description: "Move Left Space",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_RightArrow),
+            modifiers: UInt32(controlKey),
+            app: "Mission Control",
+            description: "Move Right Space",
+            severity: .high
+        ),
+
+        // Screenshot shortcuts (High severity)
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_3),
+            modifiers: UInt32(cmdKey | shiftKey),
+            app: "macOS",
+            description: "Screenshot Full",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_4),
+            modifiers: UInt32(cmdKey | shiftKey),
+            app: "macOS",
+            description: "Screenshot Selection",
+            severity: .high
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_5),
+            modifiers: UInt32(cmdKey | shiftKey),
+            app: "macOS",
+            description: "Screenshot Options",
+            severity: .high
+        ),
+
+        // Common App Shortcuts (Medium severity)
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_T),
+            modifiers: UInt32(cmdKey),
+            app: "Browsers/Terminals",
+            description: "New Tab",
+            severity: .medium
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_R),
+            modifiers: UInt32(cmdKey),
+            app: "Browsers",
+            description: "Refresh",
+            severity: .medium
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_L),
+            modifiers: UInt32(cmdKey),
+            app: "Browsers",
+            description: "Address Bar",
+            severity: .medium
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_B),
+            modifiers: UInt32(cmdKey),
+            app: "Browsers",
+            description: "Bookmarks",
+            severity: .medium
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_D),
+            modifiers: UInt32(cmdKey),
+            app: "Browsers",
+            description: "Bookmark Page",
+            severity: .medium
+        ),
+
+        // Developer Tools (Medium severity)
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_I),
+            modifiers: UInt32(cmdKey | optionKey),
+            app: "Browsers",
+            description: "Developer Tools",
+            severity: .medium
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_B),
+            modifiers: UInt32(cmdKey),
+            app: "Xcode",
+            description: "Build",
+            severity: .medium
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_R),
+            modifiers: UInt32(cmdKey),
+            app: "Xcode",
+            description: "Run",
+            severity: .medium
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_ANSI_U),
+            modifiers: UInt32(cmdKey),
+            app: "Xcode",
+            description: "Test",
+            severity: .medium
+        ),
+
+        // Accessibility (High severity)
+        KnownShortcut(
+            keyCode: UInt32(kVK_F5),
+            modifiers: UInt32(cmdKey),
+            app: "macOS",
+            description: "VoiceOver",
+            severity: .high
+        ),
+
+        // Function keys with modifiers (Low severity - less common)
+        KnownShortcut(
+            keyCode: UInt32(kVK_F11),
+            modifiers: 0,
+            app: "macOS",
+            description: "Show Desktop",
+            severity: .low
+        ),
+        KnownShortcut(
+            keyCode: UInt32(kVK_F12),
+            modifiers: 0,
+            app: "macOS",
+            description: "Dashboard/Notification",
+            severity: .low
+        )
+    ]
 
     private init() {
-        currentConfig = Self.loadConfig()
+        self.currentConfig = Self.loadConfig()
+        self.overrideConflicts = UserDefaults.standard.bool(
+            forKey: UserDefaultsKeys.hotkeyOverrideConflicts
+        )
+        checkForConflicts()
     }
 
     // Public Methods
@@ -118,12 +444,14 @@ public final class HotkeyManager: ObservableObject {
         unregisterHotkey()
 
         // Install event handler
-        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
+        var eventType = EventTypeSpec(
+            eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed)
+        )
 
         let status = InstallEventHandler(
             GetApplicationEventTarget(),
-            { (_, event, userData) -> OSStatus in
-                guard let userData = userData else { return noErr }
+            { _, _, userData -> OSStatus in
+                guard let userData else { return noErr }
                 let manager = Unmanaged<HotkeyManager>.fromOpaque(userData).takeUnretainedValue()
                 Task { @MainActor in
                     manager.onHotkeyPressed?()
@@ -200,21 +528,98 @@ public final class HotkeyManager: ObservableObject {
         currentConfig = .defaultConfig
     }
 
+    public func setOverrideConflicts(_ override: Bool) {
+        overrideConflicts = override
+        UserDefaults.standard.set(override, forKey: UserDefaultsKeys.hotkeyOverrideConflicts)
+        if override {
+            // Re-register hotkey when user chooses to override conflicts
+            reregisterHotkey()
+        }
+    }
+
+    /// Check a specific hotkey config for conflicts without setting it
+    public func checkConflicts(for config: HotkeyConfig) -> [HotkeyConflict] {
+        var conflicts: [HotkeyConflict] = []
+
+        for shortcut in knownShortcuts {
+            if shortcut.keyCode == config.keyCode, shortcut.modifiers == config.modifiers {
+                let suggestion = generateSuggestion(for: shortcut)
+                let conflict = HotkeyConflict(
+                    conflictingApp: shortcut.app,
+                    description: shortcut.description,
+                    severity: shortcut.severity,
+                    suggestion: suggestion
+                )
+                conflicts.append(conflict)
+            }
+        }
+
+        // Sort by severity (highest first)
+        return conflicts.sorted { $0.severity.rawValue > $1.severity.rawValue }
+    }
+
+    /// Get the highest severity conflict for the current config
+    public var highestSeverityConflict: HotkeyConflict? {
+        detectedConflicts.first
+    }
+
     // Private Methods
 
     private func reregisterHotkey() {
         registerHotkey()
     }
 
+    private func checkForConflicts() {
+        detectedConflicts = checkConflicts(for: currentConfig)
+        hasConflict = !detectedConflicts.isEmpty
+
+        if let highestConflict = detectedConflicts.first {
+            conflictMessage = formatConflictMessage(highestConflict)
+        } else {
+            conflictMessage = nil
+        }
+    }
+
+    private func formatConflictMessage(_ conflict: HotkeyConflict) -> String {
+        let l10n = L10n.shared
+        switch conflict.severity {
+        case .high:
+            return l10n.hotkeyConflictSystem(
+                app: conflict.conflictingApp, action: conflict.description
+            )
+        case .medium:
+            return l10n.hotkeyConflictApp(
+                app: conflict.conflictingApp, action: conflict.description
+            )
+        case .low:
+            return l10n.hotkeyConflictPossible(
+                app: conflict.conflictingApp, action: conflict.description
+            )
+        }
+    }
+
+    private func generateSuggestion(for shortcut: KnownShortcut) -> String {
+        let l10n = L10n.shared
+        switch shortcut.severity {
+        case .high:
+            return l10n.hotkeyConflictSuggestionHigh
+        case .medium:
+            return l10n.hotkeyConflictSuggestionMedium
+        case .low:
+            return l10n.hotkeyConflictSuggestionLow
+        }
+    }
+
     private func saveConfig() {
         if let data = try? JSONEncoder().encode(currentConfig) {
-            UserDefaults.standard.set(data, forKey: userDefaultsKey)
+            UserDefaults.standard.set(data, forKey: UserDefaultsKeys.hotkeyConfig)
         }
     }
 
     private static func loadConfig() -> HotkeyConfig {
-        guard let data = UserDefaults.standard.data(forKey: "WeakupHotkeyConfig"),
-              let config = try? JSONDecoder().decode(HotkeyConfig.self, from: data) else {
+        let storedData = UserDefaults.standard.data(forKey: UserDefaultsKeys.hotkeyConfig)
+        let decodedConfig = storedData.flatMap { try? JSONDecoder().decode(HotkeyConfig.self, from: $0) }
+        guard let config = decodedConfig else {
             return .defaultConfig
         }
         return config
