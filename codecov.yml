@@ -1,0 +1,12 @@
+codecov:
+  require_ci_to_pass: true
+coverage:
+  status:
+    project:
+      default:
+        target: 0.8
+    patch:
+      default:
+        target: 0.8
+ignore:
+  - "Tests/**"
