@@ -432,7 +432,7 @@ public final class HotkeyManager: ObservableObject {
 
     private init() {
         self.currentConfig = Self.loadConfig()
-        self.overrideConflicts = UserDefaults.standard.bool(
+        self.overrideConflicts = UserDefaultsStore.shared.bool(
             forKey: UserDefaultsKeys.hotkeyOverrideConflicts
         )
         checkForConflicts()
@@ -530,7 +530,7 @@ public final class HotkeyManager: ObservableObject {
 
     public func setOverrideConflicts(_ override: Bool) {
         overrideConflicts = override
-        UserDefaults.standard.set(override, forKey: UserDefaultsKeys.hotkeyOverrideConflicts)
+        UserDefaultsStore.shared.set(override, forKey: UserDefaultsKeys.hotkeyOverrideConflicts)
         if override {
             // Re-register hotkey when user chooses to override conflicts
             reregisterHotkey()
@@ -612,12 +612,13 @@ public final class HotkeyManager: ObservableObject {
 
     private func saveConfig() {
         if let data = try? JSONEncoder().encode(currentConfig) {
-            UserDefaults.standard.set(data, forKey: UserDefaultsKeys.hotkeyConfig)
+            UserDefaultsStore.shared.set(data, forKey: UserDefaultsKeys.hotkeyConfig)
+            UserDefaultsStore.shared.synchronize()
         }
     }
 
     private static func loadConfig() -> HotkeyConfig {
-        let storedData = UserDefaults.standard.data(forKey: UserDefaultsKeys.hotkeyConfig)
+        let storedData = UserDefaultsStore.shared.data(forKey: UserDefaultsKeys.hotkeyConfig)
         let decodedConfig = storedData.flatMap { try? JSONDecoder().decode(HotkeyConfig.self, from: $0) }
         guard let config = decodedConfig else {
             return .defaultConfig

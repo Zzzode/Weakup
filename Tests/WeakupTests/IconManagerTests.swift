@@ -186,14 +186,14 @@ final class IconManagerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // Clear UserDefaults before each test
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
         // Reset callback
         IconManager.shared.onIconChanged = nil
     }
 
     override func tearDown() async throws {
         // Clean up after tests
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
         IconManager.shared.onIconChanged = nil
         try await super.tearDown()
     }
@@ -215,7 +215,7 @@ final class IconManagerTests: XCTestCase {
     func testSetStyle_persistsValue() {
         let manager = IconManager.shared
         manager.currentStyle = .bolt
-        let storedValue = UserDefaults.standard.string(forKey: userDefaultsKey)
+        let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
         XCTAssertEqual(storedValue, "bolt", "Style should be persisted to UserDefaults")
     }
 
@@ -223,7 +223,7 @@ final class IconManagerTests: XCTestCase {
         let manager = IconManager.shared
         for style in IconStyle.allCases {
             manager.currentStyle = style
-            let storedValue = UserDefaults.standard.string(forKey: userDefaultsKey)
+            let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
             XCTAssertEqual(storedValue, style.rawValue, "Style \(style) should be persisted")
         }
     }

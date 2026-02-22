@@ -10,14 +10,14 @@ final class PersistenceIntegrationTests: XCTestCase {
         try await super.setUp()
         // Clear all UserDefaults before each test
         for key in UserDefaultsKeys.all {
-            UserDefaults.standard.removeObject(forKey: key)
+            UserDefaultsStore.shared.removeObject(forKey: key)
         }
     }
 
     override func tearDown() async throws {
         // Clean up
         for key in UserDefaultsKeys.all {
-            UserDefaults.standard.removeObject(forKey: key)
+            UserDefaultsStore.shared.removeObject(forKey: key)
         }
         try await super.tearDown()
     }
@@ -29,7 +29,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         L10n.shared.setLanguage(.japanese)
 
         // Verify it's stored in UserDefaults
-        let storedValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.language)
+        let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language)
         XCTAssertEqual(storedValue, "ja")
 
         // Simulate reading on "restart" - L10n reads from UserDefaults on init
@@ -41,7 +41,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         for language in AppLanguage.allCases {
             L10n.shared.setLanguage(language)
 
-            let storedValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.language)
+            let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language)
             XCTAssertEqual(storedValue, language.rawValue,
                            "Language \(language) should persist correctly")
         }
@@ -54,7 +54,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         viewModel.setTimerDuration(1800) // 30 minutes
 
         // Verify stored
-        let storedValue = UserDefaults.standard.double(forKey: UserDefaultsKeys.timerDuration)
+        let storedValue = UserDefaultsStore.shared.double(forKey: UserDefaultsKeys.timerDuration)
         XCTAssertEqual(storedValue, 1800)
 
         // Create new view model (simulating restart)
@@ -67,7 +67,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         viewModel.setTimerMode(true)
 
         // Verify stored
-        let storedValue = UserDefaults.standard.bool(forKey: UserDefaultsKeys.timerMode)
+        let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.timerMode)
         XCTAssertTrue(storedValue)
 
         // Create new view model
@@ -93,7 +93,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         viewModel.soundEnabled = false
 
         // Verify stored
-        let storedValue = UserDefaults.standard.bool(forKey: UserDefaultsKeys.soundEnabled)
+        let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled)
         XCTAssertFalse(storedValue)
 
         // Create new view model
@@ -106,13 +106,13 @@ final class PersistenceIntegrationTests: XCTestCase {
 
         // Toggle multiple times
         viewModel.soundEnabled = true
-        XCTAssertTrue(UserDefaults.standard.bool(forKey: UserDefaultsKeys.soundEnabled))
+        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
 
         viewModel.soundEnabled = false
-        XCTAssertFalse(UserDefaults.standard.bool(forKey: UserDefaultsKeys.soundEnabled))
+        XCTAssertFalse(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
 
         viewModel.soundEnabled = true
-        XCTAssertTrue(UserDefaults.standard.bool(forKey: UserDefaultsKeys.soundEnabled))
+        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
     }
 
     // Icon Style Persistence Tests
@@ -121,7 +121,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         IconManager.shared.currentStyle = .bolt
 
         // Verify stored
-        let storedValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.iconStyle)
+        let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle)
         XCTAssertEqual(storedValue, "bolt")
 
         // Verify current style
@@ -132,7 +132,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         for style in IconStyle.allCases {
             IconManager.shared.currentStyle = style
 
-            let storedValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.iconStyle)
+            let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle)
             XCTAssertEqual(storedValue, style.rawValue,
                            "Icon style \(style) should persist correctly")
         }
@@ -144,7 +144,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         ThemeManager.shared.currentTheme = .dark
 
         // Verify stored
-        let storedValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.theme)
+        let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.theme)
         XCTAssertEqual(storedValue, "dark")
 
         // Verify current theme
@@ -155,7 +155,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         for theme in AppTheme.allCases {
             ThemeManager.shared.currentTheme = theme
 
-            let storedValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.theme)
+            let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.theme)
             XCTAssertEqual(storedValue, theme.rawValue,
                            "Theme \(theme) should persist correctly")
         }
@@ -168,7 +168,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         HotkeyManager.shared.currentConfig = customConfig
 
         // Verify stored
-        let storedData = UserDefaults.standard.data(forKey: UserDefaultsKeys.hotkeyConfig)
+        let storedData = UserDefaultsStore.shared.data(forKey: UserDefaultsKeys.hotkeyConfig)
         XCTAssertNotNil(storedData, "Hotkey config should be stored as data")
 
         // Verify current config
@@ -196,7 +196,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         NotificationManager.shared.notificationsEnabled = false
 
         // Verify stored
-        let storedValue = UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsEnabled)
+        let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.notificationsEnabled)
         XCTAssertFalse(storedValue)
 
         // Verify current value
@@ -210,7 +210,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         viewModel.showCountdownInMenuBar = true
 
         // Verify stored
-        let storedValue = UserDefaults.standard.bool(forKey: UserDefaultsKeys.showCountdownInMenuBar)
+        let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.showCountdownInMenuBar)
         XCTAssertTrue(storedValue)
 
         // Create new view model
@@ -234,14 +234,14 @@ final class PersistenceIntegrationTests: XCTestCase {
         NotificationManager.shared.notificationsEnabled = true
 
         // Verify all stored
-        XCTAssertTrue(UserDefaults.standard.bool(forKey: UserDefaultsKeys.timerMode))
-        XCTAssertEqual(UserDefaults.standard.double(forKey: UserDefaultsKeys.timerDuration), 1800)
-        XCTAssertFalse(UserDefaults.standard.bool(forKey: UserDefaultsKeys.soundEnabled))
-        XCTAssertTrue(UserDefaults.standard.bool(forKey: UserDefaultsKeys.showCountdownInMenuBar))
-        XCTAssertEqual(UserDefaults.standard.string(forKey: UserDefaultsKeys.language), "ko")
-        XCTAssertEqual(UserDefaults.standard.string(forKey: UserDefaultsKeys.iconStyle), "cup")
-        XCTAssertEqual(UserDefaults.standard.string(forKey: UserDefaultsKeys.theme), "light")
-        XCTAssertTrue(UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsEnabled))
+        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.timerMode))
+        XCTAssertEqual(UserDefaultsStore.shared.double(forKey: UserDefaultsKeys.timerDuration), 1800)
+        XCTAssertFalse(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
+        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.showCountdownInMenuBar))
+        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language), "ko")
+        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle), "cup")
+        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.theme), "light")
+        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.notificationsEnabled))
     }
 
     // Default Values Tests
@@ -249,7 +249,7 @@ final class PersistenceIntegrationTests: XCTestCase {
     func testDefaultValues_whenNoStoredData() {
         // Ensure no stored data
         for key in UserDefaultsKeys.all {
-            UserDefaults.standard.removeObject(forKey: key)
+            UserDefaultsStore.shared.removeObject(forKey: key)
         }
 
         // Create fresh view model
@@ -268,8 +268,8 @@ final class PersistenceIntegrationTests: XCTestCase {
 
     func testInvalidStoredData_handledGracefully() {
         // Store invalid data
-        UserDefaults.standard.set("invalid", forKey: UserDefaultsKeys.timerDuration)
-        UserDefaults.standard.set("invalid", forKey: UserDefaultsKeys.timerMode)
+        UserDefaultsStore.shared.set("invalid", forKey: UserDefaultsKeys.timerDuration)
+        UserDefaultsStore.shared.set("invalid", forKey: UserDefaultsKeys.timerMode)
 
         // Create view model - should not crash
         let viewModel = CaffeineViewModel()

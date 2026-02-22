@@ -99,7 +99,7 @@ final class HotkeyManagerTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        UserDefaults.standard.removeObject(forKey: "WeakupHotkeyConfig")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupHotkeyConfig")
     }
 
     // Singleton Tests
@@ -305,7 +305,7 @@ final class HotkeyManagerTests: XCTestCase {
         manager.currentConfig = newConfig
 
         // Verify it was saved
-        guard let data = UserDefaults.standard.data(forKey: "WeakupHotkeyConfig") else {
+        guard let data = UserDefaultsStore.shared.data(forKey: "WeakupHotkeyConfig") else {
             XCTFail("Config not saved to UserDefaults")
             manager.currentConfig = originalConfig
             return
@@ -538,7 +538,7 @@ final class HotkeyManagerTests: XCTestCase {
 
         manager.setOverrideConflicts(true)
 
-        let savedValue = UserDefaults.standard.bool(forKey: "WeakupOverrideConflicts")
+        let savedValue = UserDefaultsStore.shared.bool(forKey: "WeakupOverrideConflicts")
         XCTAssertTrue(savedValue)
 
         // Restore

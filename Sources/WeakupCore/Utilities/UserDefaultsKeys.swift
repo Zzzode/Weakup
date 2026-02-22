@@ -1,5 +1,16 @@
 import Foundation
 
+@MainActor
+public enum UserDefaultsStore {
+    public static let shared: UserDefaults = {
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            let suiteName = "WeakupTests.\(ProcessInfo.processInfo.processIdentifier)"
+            return UserDefaults(suiteName: suiteName) ?? .standard
+        }
+        return .standard
+    }()
+}
+
 // UserDefaults Keys
 
 /// Centralized UserDefaults key management for the Weakup application.
@@ -69,7 +80,8 @@ public enum UserDefaultsKeys {
 
     /// Removes all Weakup-related keys from the given UserDefaults instance.
     /// - Parameter defaults: The UserDefaults instance to clean.
-    public static func removeAll(from defaults: UserDefaults = .standard) {
+    @MainActor
+    public static func removeAll(from defaults: UserDefaults = UserDefaultsStore.shared) {
         for key in all {
             defaults.removeObject(forKey: key)
         }

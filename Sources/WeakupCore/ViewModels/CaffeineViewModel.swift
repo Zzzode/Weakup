@@ -63,7 +63,7 @@ public final class CaffeineViewModel: ObservableObject {
     /// The value is persisted to UserDefaults.
     @Published public var soundEnabled: Bool {
         didSet {
-            UserDefaults.standard.set(soundEnabled, forKey: UserDefaultsKeys.soundEnabled)
+            UserDefaultsStore.shared.set(soundEnabled, forKey: UserDefaultsKeys.soundEnabled)
             Logger.preferenceChanged(key: UserDefaultsKeys.soundEnabled, value: soundEnabled)
         }
     }
@@ -74,7 +74,7 @@ public final class CaffeineViewModel: ObservableObject {
     /// next to the status icon in the menu bar.
     @Published public var showCountdownInMenuBar: Bool {
         didSet {
-            UserDefaults.standard.set(
+            UserDefaultsStore.shared.set(
                 showCountdownInMenuBar, forKey: UserDefaultsKeys.showCountdownInMenuBar
             )
             Logger.preferenceChanged(
@@ -240,7 +240,7 @@ public final class CaffeineViewModel: ObservableObject {
     ///   The value is persisted to UserDefaults.
     public func setTimerDuration(_ seconds: TimeInterval) {
         timerDuration = max(0, seconds)
-        UserDefaults.standard.set(timerDuration, forKey: UserDefaultsKeys.timerDuration)
+        UserDefaultsStore.shared.set(timerDuration, forKey: UserDefaultsKeys.timerDuration)
         if isActive {
             stop()
         }
@@ -256,7 +256,7 @@ public final class CaffeineViewModel: ObservableObject {
     /// - Note: If disabling timer mode while sleep prevention is active, the session will be stopped.
     public func setTimerMode(_ enabled: Bool) {
         timerMode = enabled
-        UserDefaults.standard.set(timerMode, forKey: UserDefaultsKeys.timerMode)
+        UserDefaultsStore.shared.set(timerMode, forKey: UserDefaultsKeys.timerMode)
 
         // If disabling timer mode while active, stop the session
         if !enabled, isActive {
@@ -354,26 +354,26 @@ public final class CaffeineViewModel: ObservableObject {
     // Safe UserDefaults Loading
 
     private static func loadBool(forKey key: String, default defaultValue: Bool) -> Bool {
-        guard let value = UserDefaults.standard.object(forKey: key) else {
+        guard let value = UserDefaultsStore.shared.object(forKey: key) else {
             return defaultValue
         }
         if let boolValue = value as? Bool {
             return boolValue
         }
         // Handle potential corruption - reset to default
-        UserDefaults.standard.removeObject(forKey: key)
+        UserDefaultsStore.shared.removeObject(forKey: key)
         return defaultValue
     }
 
     private static func loadDouble(forKey key: String, default defaultValue: Double) -> Double {
-        guard let value = UserDefaults.standard.object(forKey: key) else {
+        guard let value = UserDefaultsStore.shared.object(forKey: key) else {
             return defaultValue
         }
         if let doubleValue = value as? Double {
             return max(0, doubleValue) // Ensure non-negative
         }
         // Handle potential corruption - reset to default
-        UserDefaults.standard.removeObject(forKey: key)
+        UserDefaultsStore.shared.removeObject(forKey: key)
         return defaultValue
     }
 }

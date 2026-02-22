@@ -8,7 +8,7 @@ final class NotificationManagerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // Clear notification settings before each test
-        UserDefaults.standard.removeObject(forKey: "WeakupNotificationsEnabled")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupNotificationsEnabled")
     }
 
     override func tearDown() async throws {
@@ -42,7 +42,7 @@ final class NotificationManagerTests: XCTestCase {
 
         // Toggle the value
         manager.notificationsEnabled = !originalValue
-        let storedValue = UserDefaults.standard.bool(forKey: "WeakupNotificationsEnabled")
+        let storedValue = UserDefaultsStore.shared.bool(forKey: "WeakupNotificationsEnabled")
         XCTAssertEqual(storedValue, !originalValue)
 
         // Restore original value

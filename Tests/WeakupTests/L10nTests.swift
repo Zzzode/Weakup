@@ -41,7 +41,7 @@ final class L10nTests: XCTestCase {
 
     func testSetLanguage_persistsToUserDefaults() {
         L10n.shared.setLanguage(.japanese)
-        let storedValue = UserDefaults.standard.string(forKey: "WeakupLanguage")
+        let storedValue = UserDefaultsStore.shared.string(forKey: "WeakupLanguage")
         XCTAssertEqual(storedValue, "ja")
     }
 
@@ -56,7 +56,7 @@ final class L10nTests: XCTestCase {
     func testSetLanguage_persistsAllLanguages() {
         for language in AppLanguage.allCases {
             L10n.shared.setLanguage(language)
-            let storedValue = UserDefaults.standard.string(forKey: "WeakupLanguage")
+            let storedValue = UserDefaultsStore.shared.string(forKey: "WeakupLanguage")
             XCTAssertEqual(storedValue, language.rawValue,
                            "Stored value should match language raw value for \(language)")
         }
