@@ -116,7 +116,7 @@ final class CaffeineViewModelTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Initial State Tests
+    // Initial State Tests
 
     func testInitialState_isInactive() {
         XCTAssertFalse(viewModel.isActive)
@@ -130,7 +130,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.timeRemaining, 0)
     }
 
-    // MARK: - Toggle Tests
+    // Toggle Tests
 
     func testToggle_startsWhenInactive() {
         XCTAssertFalse(viewModel.isActive)
@@ -145,7 +145,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive)
     }
 
-    // MARK: - Timer Tests
+    // Timer Tests
 
     func testSetTimerDuration_updatesValue() {
         viewModel.setTimerDuration(3600)

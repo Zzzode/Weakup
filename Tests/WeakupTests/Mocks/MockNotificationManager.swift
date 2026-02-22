@@ -1,7 +1,7 @@
 import Foundation
 @testable import WeakupCore
 
-// MARK: - Mock Notification Manager
+// Mock Notification Manager
 
 /// A mock implementation of `NotificationManaging` for testing.
 ///
@@ -22,13 +22,13 @@ import Foundation
 @MainActor
 public final class MockNotificationManager: NotificationManaging {
 
-    // MARK: - Properties
+    // Properties
 
     public var notificationsEnabled: Bool = true
     public var isAuthorized: Bool = true
     public var onRestartRequested: (() -> Void)?
 
-    // MARK: - Call Tracking
+    // Call Tracking
 
     /// Whether `requestAuthorization()` was called.
     public private(set) var requestAuthorizationCalled = false
@@ -48,7 +48,7 @@ public final class MockNotificationManager: NotificationManaging {
     /// Number of times `cancelPendingNotifications()` was called.
     public private(set) var cancelPendingNotificationsCallCount = 0
 
-    // MARK: - Initialization
+    // Initialization
 
     public init(
         notificationsEnabled: Bool = true,
@@ -58,7 +58,7 @@ public final class MockNotificationManager: NotificationManaging {
         self.isAuthorized = isAuthorized
     }
 
-    // MARK: - NotificationManaging
+    // NotificationManaging
 
     public func requestAuthorization() {
         requestAuthorizationCalled = true
@@ -75,7 +75,7 @@ public final class MockNotificationManager: NotificationManaging {
         cancelPendingNotificationsCallCount += 1
     }
 
-    // MARK: - Test Helpers
+    // Test Helpers
 
     /// Resets all call tracking state.
     public func reset() {

@@ -18,7 +18,7 @@ final class MenuBarUITests: XCTestCase {
         app = nil
     }
 
-    // MARK: - Status Icon Tests
+    // Status Icon Tests
 
     func testStatusIcon_showsInMenuBar() throws {
         // The status item should be visible in the menu bar
@@ -58,7 +58,7 @@ final class MenuBarUITests: XCTestCase {
         XCTAssertTrue(statusItem.exists)
     }
 
-    // MARK: - Left Click Tests
+    // Left Click Tests
 
     func testLeftClick_togglesCaffeine() throws {
         let menuBar = app.menuBars
@@ -81,7 +81,7 @@ final class MenuBarUITests: XCTestCase {
         XCTAssertTrue(statusItem.exists, "Status item should still exist after toggling")
     }
 
-    // MARK: - Right Click Menu Tests
+    // Right Click Menu Tests
 
     func testRightClickMenu_showsSettingsAndQuit() throws {
         let menuBar = app.menuBars
@@ -110,7 +110,7 @@ final class MenuBarUITests: XCTestCase {
         app.windows.firstMatch.click()
     }
 
-    // MARK: - Tooltip Tests
+    // Tooltip Tests
 
     func testTooltip_updatesOnToggle() throws {
         // Note: Testing tooltips in XCUITest is limited
@@ -140,7 +140,7 @@ final class MenuBarUITests: XCTestCase {
         XCTAssertTrue(statusItem.exists)
     }
 
-    // MARK: - Countdown Display Tests
+    // Countdown Display Tests
 
     func testCountdown_showsInMenuBar() throws {
         // This test would verify countdown display when timer mode is active

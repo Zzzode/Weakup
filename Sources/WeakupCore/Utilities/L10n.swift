@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Language Management
+// Language Management
 
 /// Represents the supported languages in the application.
 ///
@@ -58,7 +58,7 @@ public enum AppLanguage: String, CaseIterable, Identifiable {
     }
 }
 
-// MARK: - Localization Manager
+// Localization Manager
 
 /// Manages localization and provides access to localized strings.
 ///
@@ -181,7 +181,7 @@ public class L10n: ObservableObject {
     }
 }
 
-// MARK: - Localized String Accessors
+// Localized String Accessors
 
 /// Convenience accessors for all localized strings used in the application.
 ///

@@ -5,7 +5,7 @@ import Combine
 
 final class AppThemeTests: XCTestCase {
 
-    // MARK: - Enum Cases Tests (TM-001)
+    // Enum Cases Tests (TM-001)
 
     func testAllCases_containsExpectedThemes() {
         let allCases = AppTheme.allCases
@@ -19,7 +19,7 @@ final class AppThemeTests: XCTestCase {
         XCTAssertEqual(AppTheme.allCases.count, 3)
     }
 
-    // MARK: - Raw Value Tests (TM-002)
+    // Raw Value Tests (TM-002)
 
     func testRawValue_system() {
         XCTAssertEqual(AppTheme.system.rawValue, "system")
@@ -39,7 +39,7 @@ final class AppThemeTests: XCTestCase {
         XCTAssertEqual(rawValues.count, uniqueRawValues.count, "All raw values should be unique")
     }
 
-    // MARK: - Identifiable Tests (TM-003)
+    // Identifiable Tests (TM-003)
 
     func testId_matchesRawValue() {
         for theme in AppTheme.allCases {
@@ -59,7 +59,7 @@ final class AppThemeTests: XCTestCase {
         XCTAssertEqual(AppTheme.dark.id, "dark")
     }
 
-    // MARK: - Localization Key Tests (TM-004)
+    // Localization Key Tests (TM-004)
 
     func testLocalizationKey_system() {
         XCTAssertEqual(AppTheme.system.localizationKey, "theme_system")
@@ -80,7 +80,7 @@ final class AppThemeTests: XCTestCase {
         }
     }
 
-    // MARK: - Color Scheme Tests (TM-005, TM-006, TM-007)
+    // Color Scheme Tests (TM-005, TM-006, TM-007)
 
     func testColorScheme_system_returnsNil() {
         XCTAssertNil(AppTheme.system.colorScheme, "System theme should return nil color scheme")
@@ -104,7 +104,7 @@ final class AppThemeTests: XCTestCase {
         }
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     func testInit_fromValidRawValue() {
         XCTAssertEqual(AppTheme(rawValue: "system"), .system)
@@ -128,7 +128,7 @@ final class AppThemeTests: XCTestCase {
         XCTAssertNil(AppTheme(rawValue: "Dark"), "Raw value should be case sensitive")
     }
 
-    // MARK: - Sendable Conformance
+    // Sendable Conformance
 
     func testAppTheme_isSendable() {
         let theme: AppTheme = .system
@@ -137,7 +137,7 @@ final class AppThemeTests: XCTestCase {
         }
     }
 
-    // MARK: - CaseIterable Tests
+    // CaseIterable Tests
 
     func testCaseIterable_orderIsConsistent() {
         let cases1 = AppTheme.allCases
@@ -163,7 +163,7 @@ final class ThemeManagerTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Singleton Tests (TM-008)
+    // Singleton Tests (TM-008)
 
     func testShared_returnsSameInstance() {
         let instance1 = ThemeManager.shared
@@ -175,7 +175,7 @@ final class ThemeManagerTests: XCTestCase {
         XCTAssertNotNil(ThemeManager.shared, "Shared instance should not be nil")
     }
 
-    // MARK: - Default Theme Tests (TM-009)
+    // Default Theme Tests (TM-009)
 
     func testDefaultTheme_isSystem() {
         // After clearing UserDefaults, a new instance should default to system
@@ -192,7 +192,7 @@ final class ThemeManagerTests: XCTestCase {
         XCTAssertTrue(AppTheme.allCases.contains(manager.currentTheme), "Current theme should be a valid theme")
     }
 
-    // MARK: - Theme Persistence Tests (TM-010)
+    // Theme Persistence Tests (TM-010)
 
     func testSetTheme_persistsValue() {
         let manager = ThemeManager.shared
@@ -239,7 +239,7 @@ final class ThemeManagerTests: XCTestCase {
         }
     }
 
-    // MARK: - Effective Color Scheme Tests (TM-011)
+    // Effective Color Scheme Tests (TM-011)
 
     func testEffectiveColorScheme_matchesTheme() {
         let manager = ThemeManager.shared
@@ -284,7 +284,7 @@ final class ThemeManagerTests: XCTestCase {
         }
     }
 
-    // MARK: - Theme Switching Tests
+    // Theme Switching Tests
 
     func testThemeSwitching_systemToLight() {
         let manager = ThemeManager.shared
@@ -351,7 +351,7 @@ final class ThemeManagerTests: XCTestCase {
         }
     }
 
-    // MARK: - Rapid Theme Changes
+    // Rapid Theme Changes
 
     func testRapidThemeChanges() {
         let manager = ThemeManager.shared
@@ -364,7 +364,7 @@ final class ThemeManagerTests: XCTestCase {
         }
     }
 
-    // MARK: - ObservableObject Tests
+    // ObservableObject Tests
 
     func testThemeManager_isObservableObject() {
         let manager = ThemeManager.shared
@@ -409,7 +409,7 @@ final class ThemeManagerTests: XCTestCase {
         cancellable.cancel()
     }
 
-    // MARK: - Persistence Verification Tests
+    // Persistence Verification Tests
 
     func testPersistence_survivesClear() {
         let manager = ThemeManager.shared

@@ -176,7 +176,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertNotEqual(viewModel.soundEnabled, initial, "Sound enabled should toggle")
     }
 
-    // MARK: - Show Countdown In Menu Bar Tests (CVM-024)
+    // Show Countdown In Menu Bar Tests (CVM-024)
 
     func testShowCountdownInMenuBar_persistsValue() {
         // Default should be true
@@ -193,7 +193,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertTrue(storedValueTrue, "Show countdown true should be persisted to UserDefaults")
     }
 
-    // MARK: - Notifications Enabled Tests (CVM-025)
+    // Notifications Enabled Tests (CVM-025)
 
     func testNotificationsEnabled_syncsWithManager() {
         // Get the initial value from NotificationManager
@@ -212,7 +212,7 @@ final class CaffeineViewModelTests: XCTestCase {
         viewModel.notificationsEnabled = managerValue
     }
 
-    // MARK: - Restart Timer Tests (CVM-026)
+    // Restart Timer Tests (CVM-026)
 
     func testRestartTimer_startsWithSameDuration() {
         // Setup timer with a duration
@@ -245,7 +245,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive, "Restart with zero duration should not activate")
     }
 
-    // MARK: - Timer Countdown Accuracy Tests (CVM-027)
+    // Timer Countdown Accuracy Tests (CVM-027)
 
     func testTimerCountdown_accuracy() async throws {
         // Use a short duration for testing
@@ -268,7 +268,7 @@ final class CaffeineViewModelTests: XCTestCase {
         viewModel.stop()
     }
 
-    // MARK: - Timer Expiry Tests (CVM-028)
+    // Timer Expiry Tests (CVM-028)
 
     func testTimerExpiry_stopsAutomatically() async throws {
         // Use a very short duration
@@ -287,7 +287,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.timeRemaining, 0, "Time remaining should be zero after expiry")
     }
 
-    // MARK: - IOPMAssertion Tests (CVM-029, CVM-030)
+    // IOPMAssertion Tests (CVM-029, CVM-030)
 
     func testIOPMAssertion_createdOnStart() {
         // Start sleep prevention
@@ -331,7 +331,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive, "Should be inactive after cleanup")
     }
 
-    // MARK: - Edge Case Tests
+    // Edge Case Tests
 
     func testStart_withoutTimerMode() {
         viewModel.setTimerMode(false)
@@ -376,7 +376,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.timerMode, "Timer mode should be disabled")
     }
 
-    // MARK: - All Timer Duration Presets Tests
+    // All Timer Duration Presets Tests
 
     func testAllTimerDurationPresets() {
         for duration in TestTimerDurations.allValid {
@@ -391,7 +391,7 @@ final class CaffeineViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.timerDuration, largeDuration, "Large duration should be accepted")
     }
 
-    // MARK: - UserDefaults Loading Tests
+    // UserDefaults Loading Tests
 
     func testInitialState_loadsPersistedTimerMode() {
         // Set a value in UserDefaults

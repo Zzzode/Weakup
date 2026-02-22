@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Export Format
+// Export Format
 
 /// Supported formats for exporting activity history.
 public enum ExportFormat: String, CaseIterable, Identifiable, Sendable {
@@ -30,7 +30,7 @@ public enum ExportFormat: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-// MARK: - Export Result
+// Export Result
 
 /// Contains the result of an export operation.
 public struct ExportResult: Sendable {
@@ -42,7 +42,7 @@ public struct ExportResult: Sendable {
     public let format: ExportFormat
 }
 
-// MARK: - Import Result
+// Import Result
 
 /// The result of an import operation.
 public enum ImportResult: Sendable {
@@ -52,7 +52,7 @@ public enum ImportResult: Sendable {
     case failure(String)
 }
 
-// MARK: - Activity History Manager
+// Activity History Manager
 
 /// Manages the history of sleep prevention sessions.
 ///

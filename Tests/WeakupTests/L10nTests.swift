@@ -17,7 +17,7 @@ final class L10nTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Singleton Tests (L10N-001)
+    // Singleton Tests (L10N-001)
 
     func testShared_returnsSameInstance() {
         let instance1 = L10n.shared
@@ -29,7 +29,7 @@ final class L10nTests: XCTestCase {
         XCTAssertNotNil(L10n.shared)
     }
 
-    // MARK: - Language Setting Tests (L10N-003, L10N-004)
+    // Language Setting Tests (L10N-003, L10N-004)
 
     func testSetLanguage_updatesCurrentLanguage() {
         L10n.shared.setLanguage(.chinese)
@@ -73,7 +73,7 @@ final class L10nTests: XCTestCase {
         XCTAssertEqual(L10n.shared.currentLanguage, .japanese)
     }
 
-    // MARK: - String Retrieval Tests (L10N-005, L10N-006, L10N-007)
+    // String Retrieval Tests (L10N-005, L10N-006, L10N-007)
 
     func testStringForKey_returnsLocalizedString() {
         L10n.shared.setLanguage(.english)
@@ -114,7 +114,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(result.isEmpty)
     }
 
-    // MARK: - All String Properties Tests (L10N-008)
+    // All String Properties Tests (L10N-008)
 
     func testAllStringProperties_returnNonEmpty() {
         L10n.shared.setLanguage(.english)
@@ -200,7 +200,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(L10n.shared.shortcutHint.isEmpty, "shortcutHint should not be empty")
     }
 
-    // MARK: - Language Switch Tests (L10N-009)
+    // Language Switch Tests (L10N-009)
 
     func testLanguageSwitch_updatesStrings() {
         // Get English string
@@ -239,7 +239,7 @@ final class L10nTests: XCTestCase {
         XCTAssertEqual(L10n.shared.currentLanguage, .japanese)
     }
 
-    // MARK: - Chinese Detection Tests (L10N-010, L10N-011)
+    // Chinese Detection Tests (L10N-010, L10N-011)
 
     func testChineseSimplified_hasCorrectStrings() {
         L10n.shared.setLanguage(.chinese)
@@ -270,7 +270,7 @@ final class L10nTests: XCTestCase {
         XCTAssertNotEqual(AppLanguage.chinese.rawValue, AppLanguage.chineseTraditional.rawValue)
     }
 
-    // MARK: - Japanese Detection Tests (L10N-012)
+    // Japanese Detection Tests (L10N-012)
 
     func testJapanese_hasCorrectStrings() {
         L10n.shared.setLanguage(.japanese)
@@ -280,7 +280,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - Korean Detection Tests (L10N-013)
+    // Korean Detection Tests (L10N-013)
 
     func testKorean_hasCorrectStrings() {
         L10n.shared.setLanguage(.korean)
@@ -290,7 +290,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - French Detection Tests (L10N-014)
+    // French Detection Tests (L10N-014)
 
     func testFrench_hasCorrectStrings() {
         L10n.shared.setLanguage(.french)
@@ -300,7 +300,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - German Detection Tests (L10N-015)
+    // German Detection Tests (L10N-015)
 
     func testGerman_hasCorrectStrings() {
         L10n.shared.setLanguage(.german)
@@ -310,7 +310,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - Spanish Detection Tests (L10N-016)
+    // Spanish Detection Tests (L10N-016)
 
     func testSpanish_hasCorrectStrings() {
         L10n.shared.setLanguage(.spanish)
@@ -320,7 +320,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - Observable Tests
+    // Observable Tests
 
     func testL10n_isObservableObject() {
         // Verify L10n conforms to ObservableObject
@@ -355,7 +355,7 @@ final class L10nTests: XCTestCase {
         cancellable.cancel()
     }
 
-    // MARK: - Required Keys Tests
+    // Required Keys Tests
 
     func testEnglish_hasAllRequiredKeys() {
         L10n.shared.setLanguage(.english)
@@ -412,7 +412,7 @@ final class L10nTests: XCTestCase {
         }
     }
 
-    // MARK: - All Languages Have Core Keys Tests
+    // All Languages Have Core Keys Tests
 
     func testAllLanguages_haveCoreKeys() {
         let coreKeys = [
@@ -434,7 +434,7 @@ final class L10nTests: XCTestCase {
         }
     }
 
-    // MARK: - Specific String Value Tests
+    // Specific String Value Tests
 
     func testAppName_returnsNonEmpty() {
         XCTAssertFalse(L10n.shared.appName.isEmpty)
@@ -507,7 +507,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(L10n.shared.hotkeyReset.isEmpty)
     }
 
-    // MARK: - English Specific Value Tests
+    // English Specific Value Tests
 
     func testEnglish_appName() {
         L10n.shared.setLanguage(.english)
@@ -546,7 +546,7 @@ final class L10nTests: XCTestCase {
                       "Should return localized or fallback value")
     }
 
-    // MARK: - Edge Cases
+    // Edge Cases
 
     func testEmptyKey_returnsFormattedEmpty() {
         let result = L10n.shared.string(forKey: "")
@@ -565,7 +565,7 @@ final class L10nTests: XCTestCase {
         XCTAssertFalse(result.isEmpty)
     }
 
-    // MARK: - Thread Safety Tests
+    // Thread Safety Tests
 
     func testConcurrentLanguageAccess() async {
         // Test that concurrent access doesn't crash

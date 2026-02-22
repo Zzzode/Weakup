@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Activity Session
+// Activity Session
 
 /// Represents a single sleep prevention session.
 ///
@@ -83,7 +83,7 @@ public struct ActivitySession: Codable, Identifiable, Sendable {
     }
 }
 
-// MARK: - Activity Statistics
+// Activity Statistics
 
 /// Aggregated statistics about activity sessions.
 ///

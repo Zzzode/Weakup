@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 
-// MARK: - Notification Manager
+// Notification Manager
 
 /// Manages system notifications for the Weakup application.
 ///
@@ -77,7 +77,7 @@ public final class NotificationManager: NSObject, ObservableObject, Notification
         checkAuthorizationStatus()
     }
 
-    // MARK: - Public Methods
+    // Public Methods
 
     /// Requests notification authorization from the user.
     ///

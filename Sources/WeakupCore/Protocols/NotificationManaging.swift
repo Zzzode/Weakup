@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Notification Managing Protocol
+// Notification Managing Protocol
 
 /// Protocol defining the notification management interface.
 ///

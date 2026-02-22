@@ -5,7 +5,7 @@ import Combine
 
 final class IconStyleTests: XCTestCase {
 
-    // MARK: - Enum Cases Tests (IM-001)
+    // Enum Cases Tests (IM-001)
 
     func testAllCases_containsExpectedStyles() {
         let allCases = IconStyle.allCases
@@ -17,7 +17,7 @@ final class IconStyleTests: XCTestCase {
         XCTAssertTrue(allCases.contains(.eye), "Should contain eye")
     }
 
-    // MARK: - Raw Value Tests (IM-002)
+    // Raw Value Tests (IM-002)
 
     func testRawValues() {
         XCTAssertEqual(IconStyle.power.rawValue, "power")
@@ -27,7 +27,7 @@ final class IconStyleTests: XCTestCase {
         XCTAssertEqual(IconStyle.eye.rawValue, "eye")
     }
 
-    // MARK: - Identifiable Tests (IM-003)
+    // Identifiable Tests (IM-003)
 
     func testId_matchesRawValue() {
         for style in IconStyle.allCases {
@@ -35,7 +35,7 @@ final class IconStyleTests: XCTestCase {
         }
     }
 
-    // MARK: - Localization Key Tests (IM-004)
+    // Localization Key Tests (IM-004)
 
     func testLocalizationKey_format() {
         for style in IconStyle.allCases {
@@ -63,7 +63,7 @@ final class IconStyleTests: XCTestCase {
         XCTAssertEqual(IconStyle.eye.localizationKey, "icon_eye")
     }
 
-    // MARK: - Inactive Symbol Tests (IM-005)
+    // Inactive Symbol Tests (IM-005)
 
     func testInactiveSymbol_power() {
         XCTAssertEqual(IconStyle.power.inactiveSymbol, "power.circle")
@@ -85,7 +85,7 @@ final class IconStyleTests: XCTestCase {
         XCTAssertEqual(IconStyle.eye.inactiveSymbol, "eye")
     }
 
-    // MARK: - Active Symbol Tests (IM-006)
+    // Active Symbol Tests (IM-006)
 
     func testActiveSymbol_power() {
         XCTAssertEqual(IconStyle.power.activeSymbol, "power.circle.fill")
@@ -114,7 +114,7 @@ final class IconStyleTests: XCTestCase {
         }
     }
 
-    // MARK: - Symbol Differentiation Tests
+    // Symbol Differentiation Tests
 
     func testActiveAndInactiveSymbols_areDifferent() {
         for style in IconStyle.allCases {
@@ -135,7 +135,7 @@ final class IconStyleTests: XCTestCase {
         }
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     func testInit_fromValidRawValue() {
         XCTAssertEqual(IconStyle(rawValue: "power"), .power)
@@ -160,7 +160,7 @@ final class IconStyleTests: XCTestCase {
         XCTAssertNil(IconStyle(rawValue: "BOLT"), "Raw value should be case sensitive")
     }
 
-    // MARK: - Sendable Conformance
+    // Sendable Conformance
 
     func testIconStyle_isSendable() {
         let style: IconStyle = .power
@@ -169,7 +169,7 @@ final class IconStyleTests: XCTestCase {
         }
     }
 
-    // MARK: - CaseIterable Tests
+    // CaseIterable Tests
 
     func testCaseIterable_orderIsConsistent() {
         let cases1 = IconStyle.allCases
@@ -198,7 +198,7 @@ final class IconManagerTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Singleton Tests (IM-007)
+    // Singleton Tests (IM-007)
 
     func testShared_returnsSameInstance() {
         let instance1 = IconManager.shared
@@ -210,7 +210,7 @@ final class IconManagerTests: XCTestCase {
         XCTAssertNotNil(IconManager.shared, "Shared instance should not be nil")
     }
 
-    // MARK: - Style Persistence Tests (IM-008)
+    // Style Persistence Tests (IM-008)
 
     func testSetStyle_persistsValue() {
         let manager = IconManager.shared
@@ -236,7 +236,7 @@ final class IconManagerTests: XCTestCase {
         }
     }
 
-    // MARK: - Image Generation Tests (IM-009)
+    // Image Generation Tests (IM-009)
 
     func testImage_returnsImage() {
         let manager = IconManager.shared
@@ -320,7 +320,7 @@ final class IconManagerTests: XCTestCase {
         }
     }
 
-    // MARK: - Current Image Tests (IM-010)
+    // Current Image Tests (IM-010)
 
     func testCurrentImage_usesCurrentStyle() {
         let manager = IconManager.shared
@@ -353,7 +353,7 @@ final class IconManagerTests: XCTestCase {
         }
     }
 
-    // MARK: - Callback Tests (IM-011)
+    // Callback Tests (IM-011)
 
     func testOnIconChanged_calledWhenStyleChanges() {
         let manager = IconManager.shared
@@ -420,7 +420,7 @@ final class IconManagerTests: XCTestCase {
         XCTAssertTrue(secondCallbackCalled)
     }
 
-    // MARK: - Style Cycling Tests
+    // Style Cycling Tests
 
     func testStyleCycling_throughAllStyles() {
         let manager = IconManager.shared
@@ -449,7 +449,7 @@ final class IconManagerTests: XCTestCase {
         XCTAssertEqual(callCount, 50, "Callback should be called for each rapid style change")
     }
 
-    // MARK: - ObservableObject Tests
+    // ObservableObject Tests
 
     func testIconManager_isObservableObject() {
         let manager = IconManager.shared

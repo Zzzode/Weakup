@@ -22,7 +22,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Language Persistence Tests
+    // Language Persistence Tests
 
     func testLanguagePreference_persistsAcrossLaunches() {
         // Set language
@@ -47,7 +47,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Timer Settings Persistence Tests
+    // Timer Settings Persistence Tests
 
     func testTimerDuration_persistsAcrossLaunches() {
         let viewModel = CaffeineViewModel()
@@ -86,7 +86,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertEqual(newViewModel.timerDuration, 3600)
     }
 
-    // MARK: - Sound Settings Persistence Tests
+    // Sound Settings Persistence Tests
 
     func testSoundEnabled_persistsAcrossLaunches() {
         let viewModel = CaffeineViewModel()
@@ -115,7 +115,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertTrue(UserDefaults.standard.bool(forKey: UserDefaultsKeys.soundEnabled))
     }
 
-    // MARK: - Icon Style Persistence Tests
+    // Icon Style Persistence Tests
 
     func testIconStyle_persistsAcrossLaunches() {
         IconManager.shared.currentStyle = .bolt
@@ -138,7 +138,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Theme Persistence Tests
+    // Theme Persistence Tests
 
     func testTheme_persistsAcrossLaunches() {
         ThemeManager.shared.currentTheme = .dark
@@ -161,7 +161,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Hotkey Persistence Tests
+    // Hotkey Persistence Tests
 
     func testHotkeyConfig_persistsAcrossLaunches() {
         let customConfig = HotkeyConfig(keyCode: 0, modifiers: 256) // A with Cmd
@@ -190,7 +190,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertEqual(HotkeyManager.shared.currentConfig.modifiers, defaultConfig.modifiers)
     }
 
-    // MARK: - Notifications Persistence Tests
+    // Notifications Persistence Tests
 
     func testNotificationsEnabled_persistsAcrossLaunches() {
         NotificationManager.shared.notificationsEnabled = false
@@ -203,7 +203,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertFalse(NotificationManager.shared.notificationsEnabled)
     }
 
-    // MARK: - Menu Bar Countdown Persistence Tests
+    // Menu Bar Countdown Persistence Tests
 
     func testShowCountdownInMenuBar_persistsAcrossLaunches() {
         let viewModel = CaffeineViewModel()
@@ -218,7 +218,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertTrue(newViewModel.showCountdownInMenuBar, "Menu bar countdown setting should persist")
     }
 
-    // MARK: - Combined Settings Tests
+    // Combined Settings Tests
 
     func testAllSettings_persistTogether() {
         // Set all settings
@@ -244,7 +244,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertTrue(UserDefaults.standard.bool(forKey: UserDefaultsKeys.notificationsEnabled))
     }
 
-    // MARK: - Default Values Tests
+    // Default Values Tests
 
     func testDefaultValues_whenNoStoredData() {
         // Ensure no stored data
@@ -264,7 +264,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertTrue(viewModel.soundEnabled)
     }
 
-    // MARK: - Data Migration Tests
+    // Data Migration Tests
 
     func testInvalidStoredData_handledGracefully() {
         // Store invalid data

@@ -18,7 +18,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - String Existence Tests
+    // String Existence Tests
 
     func testAllStrings_existInEnglish() {
         L10n.shared.setLanguage(.english)
@@ -74,7 +74,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Language Switch Tests
+    // Language Switch Tests
 
     func testLanguageSwitch_updatesAllUI() {
         // Get English strings
@@ -132,7 +132,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         XCTAssertEqual(L10n.shared.currentLanguage, .english)
     }
 
-    // MARK: - Fallback Tests
+    // Fallback Tests
 
     func testFallback_unknownKey() {
         L10n.shared.setLanguage(.english)
@@ -156,7 +156,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Duration String Tests
+    // Duration String Tests
 
     func testDurationStrings_allExist() {
         for language in AppLanguage.allCases {
@@ -177,7 +177,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Theme String Tests
+    // Theme String Tests
 
     func testThemeStrings_allExist() {
         for language in AppLanguage.allCases {
@@ -192,7 +192,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Notification String Tests
+    // Notification String Tests
 
     func testNotificationStrings_allExist() {
         for language in AppLanguage.allCases {
@@ -209,7 +209,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Language Detection Tests
+    // Language Detection Tests
 
     func testLanguageDetection_englishVariants() {
         // Test that English variants are detected correctly
@@ -251,7 +251,7 @@ final class LocalizationIntegrationTests: XCTestCase {
         XCTAssertEqual(L10n.shared.currentLanguage, .spanish)
     }
 
-    // MARK: - Observable Tests
+    // Observable Tests
 
     func testLanguageChange_triggersObservation() {
         var changeCount = 0

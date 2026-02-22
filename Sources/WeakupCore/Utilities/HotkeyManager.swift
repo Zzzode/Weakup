@@ -1,7 +1,7 @@
 import AppKit
 import Carbon
 
-// MARK: - Hotkey Conflict Information
+// Hotkey Conflict Information
 
 /// Information about a detected keyboard shortcut conflict.
 ///

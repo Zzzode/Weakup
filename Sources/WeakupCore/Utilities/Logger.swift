@@ -1,34 +1,34 @@
 import Foundation
-import os.log
+import os
 
-// MARK: - Logger
+// Logger
 
 /// Centralized logging framework for the Weakup application.
 /// Uses Apple's unified logging system (os.log) for efficient, privacy-aware logging.
 public enum Logger {
 
-    // MARK: - Subsystem
+    // Subsystem
 
     private static let subsystem = "com.weakup.app"
 
-    // MARK: - Categories
+    // Categories
 
-    private static let general = OSLog(subsystem: subsystem, category: "general")
-    private static let power = OSLog(subsystem: subsystem, category: "power")
-    private static let timer = OSLog(subsystem: subsystem, category: "timer")
-    private static let notifications = OSLog(subsystem: subsystem, category: "notifications")
-    private static let hotkey = OSLog(subsystem: subsystem, category: "hotkey")
-    private static let history = OSLog(subsystem: subsystem, category: "history")
-    private static let preferences = OSLog(subsystem: subsystem, category: "preferences")
+    private static let general = os.Logger(subsystem: subsystem, category: "general")
+    private static let power = os.Logger(subsystem: subsystem, category: "power")
+    private static let timer = os.Logger(subsystem: subsystem, category: "timer")
+    private static let notifications = os.Logger(subsystem: subsystem, category: "notifications")
+    private static let hotkey = os.Logger(subsystem: subsystem, category: "hotkey")
+    private static let history = os.Logger(subsystem: subsystem, category: "history")
+    private static let preferences = os.Logger(subsystem: subsystem, category: "preferences")
 
-    // MARK: - Log Levels
+    // Log Levels
 
     /// Log a debug message.
     /// - Parameters:
     ///   - message: The message to log.
     ///   - category: The log category.
     public static func debug(_ message: String, category: Category = .general) {
-        os_log(.debug, log: category.osLog, "%{public}@", message)
+        category.logger.debug("\(message, privacy: .public)")
     }
 
     /// Log an info message.
@@ -36,7 +36,7 @@ public enum Logger {
     ///   - message: The message to log.
     ///   - category: The log category.
     public static func info(_ message: String, category: Category = .general) {
-        os_log(.info, log: category.osLog, "%{public}@", message)
+        category.logger.info("\(message, privacy: .public)")
     }
 
     /// Log a warning message.
@@ -44,7 +44,7 @@ public enum Logger {
     ///   - message: The message to log.
     ///   - category: The log category.
     public static func warning(_ message: String, category: Category = .general) {
-        os_log(.default, log: category.osLog, "⚠️ %{public}@", message)
+        category.logger.log(level: .default, "⚠️ \(message, privacy: .public)")
     }
 
     /// Log an error message.
@@ -52,7 +52,7 @@ public enum Logger {
     ///   - message: The message to log.
     ///   - category: The log category.
     public static func error(_ message: String, category: Category = .general) {
-        os_log(.error, log: category.osLog, "%{public}@", message)
+        category.logger.error("\(message, privacy: .public)")
     }
 
     /// Log an error with an Error object.
@@ -61,7 +61,7 @@ public enum Logger {
     ///   - error: The error object.
     ///   - category: The log category.
     public static func error(_ message: String, error: Error, category: Category = .general) {
-        os_log(.error, log: category.osLog, "%{public}@: %{public}@", message, error.localizedDescription)
+        category.logger.error("\(message, privacy: .public): \(error.localizedDescription, privacy: .public)")
     }
 
     /// Log a fault (critical error).
@@ -69,10 +69,10 @@ public enum Logger {
     ///   - message: The message to log.
     ///   - category: The log category.
     public static func fault(_ message: String, category: Category = .general) {
-        os_log(.fault, log: category.osLog, "%{public}@", message)
+        category.logger.fault("\(message, privacy: .public)")
     }
 
-    // MARK: - Category
+    // Category
 
     /// Log categories for organizing log messages.
     public enum Category {
@@ -84,7 +84,7 @@ public enum Logger {
         case history
         case preferences
 
-        var osLog: OSLog {
+        var logger: os.Logger {
             switch self {
             case .general: Logger.general
             case .power: Logger.power
@@ -98,7 +98,7 @@ public enum Logger {
     }
 }
 
-// MARK: - Convenience Extensions
+// Convenience Extensions
 
 extension Logger {
 
