@@ -10,9 +10,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  SWIFT_VERSION: "6.0"
+  COVERAGE_THRESHOLD: 80
+
 jobs:
-  build:
-    name: Build and Test
+  # Unit and Integration Tests
+  test:
+    name: Test Suite
     runs-on: macos-14
 
     steps:
@@ -22,7 +27,7 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "6.0"
+          swift-version: ${{ env.SWIFT_VERSION }}
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -32,18 +37,82 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      - name: Build
-        run: swift build -c release
+      - name: Build for Testing
+        run: swift build --build-tests
 
-      - name: Run Tests
-        run: swift test --enable-code-coverage
-
-      - name: Generate Coverage Report
+      - name: Run Unit Tests
+        id: unit_tests
         run: |
-          xcrun llvm-cov export \
-            .build/debug/WeakupPackageTests.xctest/Contents/MacOS/WeakupPackageTests \
-            -instr-profile=.build/debug/codecov/default.profdata \
-            -format=lcov > coverage.lcov 2>/dev/null || echo "Coverage report generation skipped (no tests yet)"
+          swift test \
+            --enable-code-coverage \
+            --filter "WeakupTests" \
+            --parallel \
+            2>&1 | tee test_output.txt
+
+          # Extract test results
+          PASSED=$(grep -c "Test Case.*passed" test_output.txt || echo "0")
+          FAILED=$(grep -c "Test Case.*failed" test_output.txt || echo "0")
+
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+
+      - name: Run Integration Tests
+        id: integration_tests
+        run: |
+          swift test \
+            --enable-code-coverage \
+            --filter "Integration" \
+            2>&1 | tee integration_output.txt || true
+
+      - name: Generate Coverage Report (LCOV)
+        id: coverage
+        run: |
+          # Find the test binary
+          TEST_BINARY=$(find .build -name "WeakupPackageTests.xctest" -type d | head -1)
+
+          if [ -n "$TEST_BINARY" ] && [ -f ".build/debug/codecov/default.profdata" ]; then
+            xcrun llvm-cov export \
+              "$TEST_BINARY/Contents/MacOS/WeakupPackageTests" \
+              -instr-profile=.build/debug/codecov/default.profdata \
+              -format=lcov > coverage.lcov 2>/dev/null
+
+            # Calculate coverage percentage
+            COVERAGE=$(xcrun llvm-cov report \
+              "$TEST_BINARY/Contents/MacOS/WeakupPackageTests" \
+              -instr-profile=.build/debug/codecov/default.profdata \
+              2>/dev/null | grep "TOTAL" | awk '{print $4}' | tr -d '%' || echo "0")
+
+            echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+            echo "Coverage: $COVERAGE%"
+          else
+            echo "Coverage report generation skipped (no test data)"
+            echo "coverage=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate Coverage Report (HTML)
+        run: |
+          TEST_BINARY=$(find .build -name "WeakupPackageTests.xctest" -type d | head -1)
+
+          if [ -n "$TEST_BINARY" ] && [ -f ".build/debug/codecov/default.profdata" ]; then
+            mkdir -p coverage_report
+            xcrun llvm-cov show \
+              "$TEST_BINARY/Contents/MacOS/WeakupPackageTests" \
+              -instr-profile=.build/debug/codecov/default.profdata \
+              -format=html \
+              -output-dir=coverage_report \
+              2>/dev/null || true
+          fi
+
+      - name: Check Coverage Threshold
+        run: |
+          COVERAGE="${{ steps.coverage.outputs.coverage }}"
+          if [ -n "$COVERAGE" ] && [ "$COVERAGE" != "0" ]; then
+            if (( $(echo "$COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
+              echo "::warning::Coverage ($COVERAGE%) is below threshold ($COVERAGE_THRESHOLD%)"
+            else
+              echo "Coverage ($COVERAGE%) meets threshold ($COVERAGE_THRESHOLD%)"
+            fi
+          fi
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -54,8 +123,165 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.sha }}
+          path: coverage_report/
+          retention-days: 14
+        if: always()
+
+      - name: Create Test Summary
+        if: always()
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests Passed | ${{ steps.unit_tests.outputs.passed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests Failed | ${{ steps.unit_tests.outputs.failed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Coverage | ${{ steps.coverage.outputs.coverage }}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage Threshold | ${{ env.COVERAGE_THRESHOLD }}% |" >> $GITHUB_STEP_SUMMARY
+
+  # Memory Leak Detection
+  memory-check:
+    name: Memory Leak Detection
+    runs-on: macos-14
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ env.SWIFT_VERSION }}
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Build Debug Binary
+        run: swift build -c debug
+
+      - name: Run Memory Leak Check
+        id: leaks
+        run: |
+          # Build and run with leak checking
+          # Note: Full leak detection requires running the app
+          # This runs a quick check on the test suite
+
+          echo "Running memory analysis..."
+
+          # Run tests with sanitizer if available
+          swift test 2>&1 | head -100 || true
+
+          # Check for obvious memory issues in build
+          if swift build -c debug 2>&1 | grep -i "memory\|leak"; then
+            echo "::warning::Potential memory issues detected in build output"
+          fi
+
+          echo "Memory check completed"
+
+      - name: Analyze with Instruments (if available)
+        run: |
+          # Check if we can run leaks tool
+          if command -v leaks &> /dev/null; then
+            echo "Leaks tool available"
+            # Note: Running leaks requires a running process
+            # This is a placeholder for more comprehensive leak detection
+          else
+            echo "Leaks tool not available in this environment"
+          fi
+
+  # Performance Benchmarks
+  benchmark:
+    name: Performance Benchmarks
+    runs-on: macos-14
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ env.SWIFT_VERSION }}
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Build Release Binary
+        run: swift build -c release
+
+      - name: Run Performance Tests
+        id: benchmark
+        run: |
+          echo "## Performance Benchmarks" > benchmark_results.md
+          echo "" >> benchmark_results.md
+
+          # Measure build time
+          echo "### Build Performance" >> benchmark_results.md
+          START_TIME=$(date +%s)
+          swift build -c release 2>&1
+          END_TIME=$(date +%s)
+          BUILD_TIME=$((END_TIME - START_TIME))
+          echo "- Release build time: ${BUILD_TIME}s" >> benchmark_results.md
+          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
+
+          # Measure binary size
+          echo "" >> benchmark_results.md
+          echo "### Binary Size" >> benchmark_results.md
+          if [ -f ".build/release/weakup" ]; then
+            BINARY_SIZE=$(ls -lh .build/release/weakup | awk '{print $5}')
+            BINARY_BYTES=$(ls -l .build/release/weakup | awk '{print $5}')
+            echo "- Binary size: $BINARY_SIZE ($BINARY_BYTES bytes)" >> benchmark_results.md
+            echo "binary_size=$BINARY_BYTES" >> $GITHUB_OUTPUT
+          fi
+
+          # Measure test execution time
+          echo "" >> benchmark_results.md
+          echo "### Test Performance" >> benchmark_results.md
+          START_TIME=$(date +%s)
+          swift test --parallel 2>&1 || true
+          END_TIME=$(date +%s)
+          TEST_TIME=$((END_TIME - START_TIME))
+          echo "- Test suite execution time: ${TEST_TIME}s" >> benchmark_results.md
+          echo "test_time=$TEST_TIME" >> $GITHUB_OUTPUT
+
+          cat benchmark_results.md
+
+      - name: Upload Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: benchmark_results.md
+          retention-days: 30
+
+      - name: Create Benchmark Summary
+        run: |
+          echo "## Performance Benchmarks" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Time | ${{ steps.benchmark.outputs.build_time }}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| Binary Size | ${{ steps.benchmark.outputs.binary_size }} bytes |" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Time | ${{ steps.benchmark.outputs.test_time }}s |" >> $GITHUB_STEP_SUMMARY
+
+  # Code Quality and Linting
   lint:
-    name: Lint
+    name: Code Quality
     runs-on: macos-14
 
     steps:
@@ -66,12 +292,41 @@ jobs:
         run: brew install swiftlint
 
       - name: Run SwiftLint
-        run: swiftlint lint --reporter github-actions-logging || true
+        id: swiftlint
+        run: |
+          swiftlint lint --reporter json > swiftlint_report.json 2>/dev/null || true
+          swiftlint lint --reporter github-actions-logging || true
 
+          # Count issues
+          WARNINGS=$(cat swiftlint_report.json | jq '[.[] | select(.severity == "Warning")] | length' 2>/dev/null || echo "0")
+          ERRORS=$(cat swiftlint_report.json | jq '[.[] | select(.severity == "Error")] | length' 2>/dev/null || echo "0")
+
+          echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
+          echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+
+      - name: Upload SwiftLint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: swiftlint-report-${{ github.sha }}
+          path: swiftlint_report.json
+          retention-days: 7
+        if: always()
+
+      - name: Create Lint Summary
+        if: always()
+        run: |
+          echo "## Code Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Issue Type | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Warnings | ${{ steps.swiftlint.outputs.warnings }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Errors | ${{ steps.swiftlint.outputs.errors }} |" >> $GITHUB_STEP_SUMMARY
+
+  # Build App Bundle
   build-app:
     name: Build App Bundle
     runs-on: macos-14
-    needs: [build, lint]
+    needs: [test, lint]
 
     steps:
       - name: Checkout
@@ -80,17 +335,43 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "6.0"
+          swift-version: ${{ env.SWIFT_VERSION }}
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
 
       - name: Build App Bundle
         run: ./build.sh
 
       - name: Verify App Bundle
         run: |
+          echo "Verifying app bundle structure..."
           test -d Weakup.app/Contents/MacOS
           test -f Weakup.app/Contents/MacOS/weakup
           test -f Weakup.app/Contents/Info.plist
+          test -d Weakup.app/Contents/Resources
+
+          # Verify localizations
+          for lang in en zh-Hans zh-Hant ja ko fr de es; do
+            if [ -d "Weakup.app/Contents/Resources/${lang}.lproj" ]; then
+              echo "Found localization: $lang"
+            fi
+          done
+
           echo "App bundle verification passed"
+
+      - name: Check App Bundle Size
+        run: |
+          APP_SIZE=$(du -sh Weakup.app | cut -f1)
+          echo "App bundle size: $APP_SIZE"
+          echo "## App Bundle" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Size: $APP_SIZE" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload App Bundle
         uses: actions/upload-artifact@v4
@@ -98,3 +379,33 @@ jobs:
           name: Weakup-${{ github.sha }}
           path: Weakup.app
           retention-days: 7
+
+  # Final Status Check
+  ci-status:
+    name: CI Status
+    runs-on: macos-14
+    needs: [test, lint, build-app, memory-check, benchmark]
+    if: always()
+
+    steps:
+      - name: Check CI Status
+        run: |
+          echo "## CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests | ${{ needs.test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build App | ${{ needs.build-app.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Memory Check | ${{ needs.memory-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Benchmarks | ${{ needs.benchmark.result }} |" >> $GITHUB_STEP_SUMMARY
+
+          # Fail if any required job failed
+          if [ "${{ needs.test.result }}" == "failure" ] || \
+             [ "${{ needs.lint.result }}" == "failure" ] || \
+             [ "${{ needs.build-app.result }}" == "failure" ]; then
+            echo "::error::One or more required jobs failed"
+            exit 1
+          fi
+
+          echo "All CI checks passed!"

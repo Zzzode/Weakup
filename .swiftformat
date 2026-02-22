@@ -17,7 +17,7 @@
 --wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
---wrapconditions after-first
+--wrapconditions before-first
 --wrapreturntype if-multiline
 --closingparen balanced
 --maxwidth 120
@@ -47,7 +47,7 @@
 --selfrequired
 
 # Other
---commas always
+--commas inline
 --decimalgrouping 3
 --binarygrouping 4,8
 --octalgrouping 4,8
@@ -63,6 +63,7 @@
 --markextensions always
 --extensionacl on-declarations
 --marktypes always
+--disable modifierOrder
 
 # Disabled rules
 --disable blankLinesAtStartOfScope

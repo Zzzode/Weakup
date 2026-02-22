@@ -20,7 +20,7 @@ BUILD_NUMBER="${BUILD_NUMBER:-1}"
 echo "Building Weakup v$APP_VERSION (build $BUILD_NUMBER)..."
 
 # Build project
-swift build -c release
+swift build -c release --disable-sandbox
 
 # Create app bundle
 APP_NAME="Weakup.app"
