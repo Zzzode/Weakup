@@ -1,15 +1,16 @@
-import XCTest
+import Testing
+import Foundation
 @testable import WeakupCore
 
 /// Integration tests for sleep prevention functionality
 /// These tests verify the actual IOPMAssertion behavior
+@Suite("Sleep Prevention Integration Tests", .serialized)
 @MainActor
-final class SleepPreventionIntegrationTests: XCTestCase {
+struct SleepPreventionIntegrationTests {
 
-    var viewModel: CaffeineViewModel!
+    private var viewModel: CaffeineViewModel
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         // Clear UserDefaults before each test
         UserDefaultsStore.shared.removeObject(forKey: "WeakupSoundEnabled")
         UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerMode")
@@ -20,61 +21,54 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         viewModel.soundEnabled = false
     }
 
-    override func tearDown() async throws {
-        // Ensure we stop any active session
-        if viewModel.isActive {
-            viewModel.stop()
-        }
-        viewModel = nil
-        try await super.tearDown()
-    }
+    // MARK: - Basic Sleep Prevention Tests
 
-    // Basic Sleep Prevention Tests
-
-    func testSleepPrevention_startsCorrectly() {
-        XCTAssertFalse(viewModel.isActive)
+    @Test("Sleep prevention starts correctly")
+    func sleepPrevention_startsCorrectly() {
+        #expect(!viewModel.isActive)
         viewModel.start()
-        XCTAssertTrue(viewModel.isActive, "Sleep prevention should be active after start")
-    }
-
-    func testSleepPrevention_stopsCorrectly() {
-        viewModel.start()
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive, "Sleep prevention should be active after start")
         viewModel.stop()
-        XCTAssertFalse(viewModel.isActive, "Sleep prevention should be inactive after stop")
     }
 
-    func testSleepPrevention_toggleWorks() {
-        XCTAssertFalse(viewModel.isActive)
-
-        viewModel.toggle()
-        XCTAssertTrue(viewModel.isActive, "First toggle should activate")
-
-        viewModel.toggle()
-        XCTAssertFalse(viewModel.isActive, "Second toggle should deactivate")
+    @Test("Sleep prevention stops correctly")
+    func sleepPrevention_stopsCorrectly() {
+        viewModel.start()
+        #expect(viewModel.isActive)
+        viewModel.stop()
+        #expect(!viewModel.isActive, "Sleep prevention should be inactive after stop")
     }
 
-    func testSleepPrevention_displaySleepAssertionActive() {
+    @Test("Sleep prevention toggle works")
+    func sleepPrevention_toggleWorks() {
+        #expect(!viewModel.isActive)
+
+        viewModel.toggle()
+        #expect(viewModel.isActive, "First toggle should activate")
+
+        viewModel.toggle()
+        #expect(!viewModel.isActive, "Second toggle should deactivate")
+    }
+
+    @Test("Display sleep assertion is active")
+    func sleepPrevention_displaySleepAssertionActive() throws {
         viewModel.start()
         defer { viewModel.stop() }
 
-        do {
-            let output = try pmsetAssertionsOutput()
-            XCTAssertTrue(output.contains("PreventUserIdleDisplaySleep"))
-            XCTAssertTrue(output.contains(AppConstants.powerAssertionReason))
-        } catch {
-            XCTFail("Failed to read pmset assertions: \(error)")
-        }
+        let output = try pmsetAssertionsOutput()
+        #expect(output.contains("PreventUserIdleDisplaySleep"))
+        #expect(output.contains(AppConstants.powerAssertionReason))
     }
 
-    // Rapid Toggle Tests
+    // MARK: - Rapid Toggle Tests
 
-    func testMultipleToggle_maintainsConsistentState() {
+    @Test("Multiple toggle maintains consistent state")
+    func multipleToggle_maintainsConsistentState() {
         for i in 0..<10 {
             viewModel.toggle()
             let expectedState = (i % 2 == 0)
-            XCTAssertEqual(viewModel.isActive, expectedState,
-                           "State should be consistent after toggle \(i + 1)")
+            #expect(viewModel.isActive == expectedState,
+                    "State should be consistent after toggle \(i + 1)")
         }
 
         // Clean up - ensure we end in inactive state
@@ -83,87 +77,97 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         }
     }
 
-    func testRapidToggle_noAssertionLeak() {
+    @Test("Rapid toggle has no assertion leak")
+    func rapidToggle_noAssertionLeak() {
         // Rapidly toggle many times
         for _ in 0..<20 {
             viewModel.toggle()
         }
 
         // Should end in inactive state (even number of toggles)
-        XCTAssertFalse(viewModel.isActive, "Should be inactive after even number of toggles")
+        #expect(!viewModel.isActive, "Should be inactive after even number of toggles")
 
         // Verify we can still toggle normally
         viewModel.toggle()
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive)
         viewModel.stop()
-        XCTAssertFalse(viewModel.isActive)
+        #expect(!viewModel.isActive)
     }
 
-    // Start/Stop Edge Cases
+    // MARK: - Start/Stop Edge Cases
 
-    func testStart_whenAlreadyActive_remainsActive() {
+    @Test("Start when already active remains active")
+    func start_whenAlreadyActive_remainsActive() {
         viewModel.start()
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive)
 
         viewModel.start() // Start again
-        XCTAssertTrue(viewModel.isActive, "Should remain active after double start")
+        #expect(viewModel.isActive, "Should remain active after double start")
+        viewModel.stop()
     }
 
-    func testStop_whenAlreadyInactive_remainsInactive() {
-        XCTAssertFalse(viewModel.isActive)
+    @Test("Stop when already inactive remains inactive")
+    func stop_whenAlreadyInactive_remainsInactive() {
+        #expect(!viewModel.isActive)
 
         viewModel.stop() // Stop when already inactive
-        XCTAssertFalse(viewModel.isActive, "Should remain inactive after stop when inactive")
+        #expect(!viewModel.isActive, "Should remain inactive after stop when inactive")
     }
 
-    func testStop_multipleTimesInRow_noError() {
+    @Test("Stop multiple times in row causes no error")
+    func stop_multipleTimesInRow_noError() {
         viewModel.start()
         viewModel.stop()
         viewModel.stop()
         viewModel.stop()
-        XCTAssertFalse(viewModel.isActive, "Multiple stops should not cause error")
+        #expect(!viewModel.isActive, "Multiple stops should not cause error")
     }
 
-    // Timer Mode Integration
+    // MARK: - Timer Mode Integration
 
-    func testTimerMode_startWithDuration() {
+    @Test("Timer mode start with duration")
+    func timerMode_startWithDuration() {
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(60) // 1 minute
 
         viewModel.start()
 
-        XCTAssertTrue(viewModel.isActive)
-        XCTAssertTrue(viewModel.timerMode)
-        XCTAssertEqual(viewModel.timeRemaining, 60, accuracy: 1)
+        #expect(viewModel.isActive)
+        #expect(viewModel.timerMode)
+        #expect(abs(viewModel.timeRemaining - 60) < 1)
+        viewModel.stop()
     }
 
-    func testTimerMode_stopResetsTimeRemaining() {
+    @Test("Timer mode stop resets time remaining")
+    func timerMode_stopResetsTimeRemaining() {
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(60)
         viewModel.start()
 
-        XCTAssertGreaterThan(viewModel.timeRemaining, 0)
+        #expect(viewModel.timeRemaining > 0)
 
         viewModel.stop()
 
-        XCTAssertEqual(viewModel.timeRemaining, 0, "Time remaining should reset on stop")
+        #expect(viewModel.timeRemaining == 0, "Time remaining should reset on stop")
     }
 
-    func testTimerMode_changeDurationWhileActive_stops() {
+    @Test("Timer mode change duration while active stops")
+    func timerMode_changeDurationWhileActive_stops() {
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(60)
         viewModel.start()
 
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive)
 
         viewModel.setTimerDuration(120) // Change duration
 
-        XCTAssertFalse(viewModel.isActive, "Changing duration while active should stop")
+        #expect(!viewModel.isActive, "Changing duration while active should stop")
     }
 
-    // State Consistency Tests
+    // MARK: - State Consistency Tests
 
-    func testStateConsistency_afterMultipleOperations() {
+    @Test("State consistency after multiple operations")
+    func stateConsistency_afterMultipleOperations() {
         // Perform various operations
         viewModel.start()
         viewModel.setTimerMode(true)
@@ -173,9 +177,11 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         viewModel.toggle()
 
         // Verify state is consistent
-        XCTAssertFalse(viewModel.isActive)
-        XCTAssertEqual(viewModel.timeRemaining, 0)
+        #expect(!viewModel.isActive)
+        #expect(viewModel.timeRemaining == 0)
     }
+
+    // MARK: - Helper Methods
 
     private func pmsetAssertionsOutput() throws -> String {
         let process = Process()
@@ -194,15 +200,15 @@ final class SleepPreventionIntegrationTests: XCTestCase {
     }
 }
 
-// Timer Countdown Integration Tests
+// MARK: - Timer Countdown Integration Tests
 
+@Suite("Timer Countdown Integration Tests", .serialized)
 @MainActor
-final class TimerCountdownIntegrationTests: XCTestCase {
+struct TimerCountdownIntegrationTests {
 
-    var viewModel: CaffeineViewModel!
+    private var viewModel: CaffeineViewModel
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         UserDefaultsStore.shared.removeObject(forKey: "WeakupSoundEnabled")
         UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerMode")
         UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerDuration")
@@ -211,15 +217,8 @@ final class TimerCountdownIntegrationTests: XCTestCase {
         viewModel.soundEnabled = false
     }
 
-    override func tearDown() async throws {
-        if viewModel.isActive {
-            viewModel.stop()
-        }
-        viewModel = nil
-        try await super.tearDown()
-    }
-
-    func testTimerCountdown_decrements() async throws {
+    @Test("Timer countdown decrements")
+    func timerCountdown_decrements() async throws {
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(5) // 5 seconds
 
@@ -232,27 +231,29 @@ final class TimerCountdownIntegrationTests: XCTestCase {
 
         let afterWait = viewModel.timeRemaining
 
-        XCTAssertLessThan(afterWait, initialTime, "Time should have decremented")
-        XCTAssertEqual(afterWait, initialTime - 2, accuracy: 1, "Should have decremented by ~2 seconds")
+        #expect(afterWait < initialTime, "Time should have decremented")
+        #expect(abs(afterWait - (initialTime - 2)) < 1, "Should have decremented by ~2 seconds")
 
         viewModel.stop()
     }
 
-    func testTimerCountdown_stopsAtZero() async throws {
+    @Test("Timer countdown stops at zero")
+    func timerCountdown_stopsAtZero() async throws {
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(2) // 2 seconds
 
         viewModel.start()
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive)
 
         // Wait for timer to expire (plus buffer)
         try await Task.sleep(nanoseconds: 3_000_000_000)
 
-        XCTAssertFalse(viewModel.isActive, "Should auto-stop when timer expires")
-        XCTAssertEqual(viewModel.timeRemaining, 0, "Time remaining should be 0")
+        #expect(!viewModel.isActive, "Should auto-stop when timer expires")
+        #expect(viewModel.timeRemaining == 0, "Time remaining should be 0")
     }
 
-    func testTimerCountdown_manualStopCancels() async throws {
+    @Test("Timer countdown manual stop cancels")
+    func timerCountdown_manualStopCancels() async throws {
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(60)
 
@@ -263,12 +264,12 @@ final class TimerCountdownIntegrationTests: XCTestCase {
 
         viewModel.stop()
 
-        XCTAssertFalse(viewModel.isActive)
-        XCTAssertEqual(viewModel.timeRemaining, 0)
+        #expect(!viewModel.isActive)
+        #expect(viewModel.timeRemaining == 0)
 
         // Wait to ensure timer doesn't continue
         try await Task.sleep(nanoseconds: 1_000_000_000)
 
-        XCTAssertFalse(viewModel.isActive, "Should remain stopped")
+        #expect(!viewModel.isActive, "Should remain stopped")
     }
 }

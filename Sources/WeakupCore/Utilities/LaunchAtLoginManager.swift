@@ -59,6 +59,11 @@ public struct SMAppServiceWrapper: LaunchAtLoginServiceProtocol {
 public final class LaunchAtLoginManager: ObservableObject {
     public static let shared = LaunchAtLoginManager()
 
+    private static var isRunningTests: Bool {
+        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil ||
+            NSClassFromString("XCTestCase") != nil
+    }
+
     @Published public var isEnabled: Bool {
         didSet {
             if oldValue != isEnabled, !isReverting {
@@ -136,7 +141,9 @@ public final class LaunchAtLoginManager: ObservableObject {
             showError = true
 
             // Log the error for debugging
-            print("LaunchAtLoginManager: \(launchError.localizedDescription)")
+            if !Self.isRunningTests {
+                print("LaunchAtLoginManager: \(launchError.localizedDescription)")
+            }
 
             // Revert the published value if operation failed
             Task { @MainActor in

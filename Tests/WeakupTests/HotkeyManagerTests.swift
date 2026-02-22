@@ -1,85 +1,96 @@
-import XCTest
+import Testing
 import Carbon
 @testable import WeakupCore
 
-// HotkeyConfig Tests
+// MARK: - HotkeyConfig Tests
 
-final class HotkeyConfigTests: XCTestCase {
+@Suite("HotkeyConfig Tests")
+struct HotkeyConfigTests {
 
-    // Default Config Tests
+    // MARK: - Default Config Tests
 
-    func testDefaultConfig_hasExpectedKeyCode() {
+    @Test("Default config has expected key code")
+    func defaultConfigHasExpectedKeyCode() {
         let config = HotkeyConfig.defaultConfig
-        XCTAssertEqual(config.keyCode, UInt32(kVK_ANSI_0))
+        #expect(config.keyCode == UInt32(kVK_ANSI_0))
     }
 
-    func testDefaultConfig_hasCommandAndControlModifiers() {
+    @Test("Default config has command and control modifiers")
+    func defaultConfigHasCommandAndControlModifiers() {
         let config = HotkeyConfig.defaultConfig
         let expectedModifiers = UInt32(cmdKey | controlKey)
-        XCTAssertEqual(config.modifiers, expectedModifiers)
+        #expect(config.modifiers == expectedModifiers)
     }
 
-    // Equatable Tests
+    // MARK: - Equatable Tests
 
-    func testEquatable_sameConfigs_areEqual() {
+    @Test("Equatable same configs are equal")
+    func equatableSameConfigsAreEqual() {
         let config1 = HotkeyConfig(keyCode: 10, modifiers: 256)
         let config2 = HotkeyConfig(keyCode: 10, modifiers: 256)
-        XCTAssertEqual(config1, config2)
+        #expect(config1 == config2)
     }
 
-    func testEquatable_differentKeyCode_areNotEqual() {
+    @Test("Equatable different key code are not equal")
+    func equatableDifferentKeyCodeAreNotEqual() {
         let config1 = HotkeyConfig(keyCode: 10, modifiers: 256)
         let config2 = HotkeyConfig(keyCode: 11, modifiers: 256)
-        XCTAssertNotEqual(config1, config2)
+        #expect(config1 != config2)
     }
 
-    func testEquatable_differentModifiers_areNotEqual() {
+    @Test("Equatable different modifiers are not equal")
+    func equatableDifferentModifiersAreNotEqual() {
         let config1 = HotkeyConfig(keyCode: 10, modifiers: 256)
         let config2 = HotkeyConfig(keyCode: 10, modifiers: 512)
-        XCTAssertNotEqual(config1, config2)
+        #expect(config1 != config2)
     }
 
-    // Display String Tests
+    // MARK: - Display String Tests
 
-    func testDisplayString_defaultConfig() {
+    @Test("Display string for default config")
+    func displayStringDefaultConfig() {
         let config = HotkeyConfig.defaultConfig
         let display = config.displayString
-        XCTAssertTrue(display.contains("Ctrl"))
-        XCTAssertTrue(display.contains("Cmd"))
-        XCTAssertTrue(display.contains("0"))
+        #expect(display.contains("Ctrl"))
+        #expect(display.contains("Cmd"))
+        #expect(display.contains("0"))
     }
 
-    func testDisplayString_withAllModifiers() {
+    @Test("Display string with all modifiers")
+    func displayStringWithAllModifiers() {
         let allModifiers = UInt32(cmdKey | controlKey | optionKey | shiftKey)
         let config = HotkeyConfig(keyCode: UInt32(kVK_ANSI_A), modifiers: allModifiers)
         let display = config.displayString
 
-        XCTAssertTrue(display.contains("Ctrl"))
-        XCTAssertTrue(display.contains("Option"))
-        XCTAssertTrue(display.contains("Shift"))
-        XCTAssertTrue(display.contains("Cmd"))
-        XCTAssertTrue(display.contains("A"))
+        #expect(display.contains("Ctrl"))
+        #expect(display.contains("Option"))
+        #expect(display.contains("Shift"))
+        #expect(display.contains("Cmd"))
+        #expect(display.contains("A"))
     }
 
-    func testDisplayString_functionKey() {
+    @Test("Display string for function key")
+    func displayStringFunctionKey() {
         let config = HotkeyConfig(keyCode: UInt32(kVK_F1), modifiers: UInt32(cmdKey))
-        XCTAssertTrue(config.displayString.contains("F1"))
+        #expect(config.displayString.contains("F1"))
     }
 
-    func testDisplayString_specialKeys() {
+    @Test("Display string for special keys")
+    func displayStringSpecialKeys() {
         let spaceConfig = HotkeyConfig(keyCode: UInt32(kVK_Space), modifiers: UInt32(cmdKey))
-        XCTAssertTrue(spaceConfig.displayString.contains("Space"))
+        #expect(spaceConfig.displayString.contains("Space"))
 
         let returnConfig = HotkeyConfig(keyCode: UInt32(kVK_Return), modifiers: UInt32(cmdKey))
-        XCTAssertTrue(returnConfig.displayString.contains("Return"))
+        #expect(returnConfig.displayString.contains("Return"))
 
         let escConfig = HotkeyConfig(keyCode: UInt32(kVK_Escape), modifiers: UInt32(cmdKey))
-        XCTAssertTrue(escConfig.displayString.contains("Esc"))
+        #expect(escConfig.displayString.contains("Esc"))
     }
 
-    // Codable Tests
+    // MARK: - Codable Tests
 
-    func testCodable_encodesAndDecodes() throws {
+    @Test("Codable encodes and decodes")
+    func codableEncodesAndDecodes() throws {
         let original = HotkeyConfig(keyCode: 42, modifiers: 1024)
 
         let encoder = JSONEncoder()
@@ -88,66 +99,187 @@ final class HotkeyConfigTests: XCTestCase {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(HotkeyConfig.self, from: data)
 
-        XCTAssertEqual(decoded, original)
+        #expect(decoded == original)
+    }
+
+    // MARK: - Numbers 0-9 Tests
+
+    @Test("Display string for numbers 0 to 9")
+    func displayStringNumbersZeroToNine() {
+        let keyCodes: [(Int, String)] = [
+            (kVK_ANSI_0, "0"),
+            (kVK_ANSI_1, "1"),
+            (kVK_ANSI_2, "2"),
+            (kVK_ANSI_3, "3"),
+            (kVK_ANSI_4, "4"),
+            (kVK_ANSI_5, "5"),
+            (kVK_ANSI_6, "6"),
+            (kVK_ANSI_7, "7"),
+            (kVK_ANSI_8, "8"),
+            (kVK_ANSI_9, "9"),
+        ]
+
+        for (keyCode, expected) in keyCodes {
+            let config = HotkeyConfig(keyCode: UInt32(keyCode), modifiers: UInt32(cmdKey))
+            #expect(config.displayString.contains(expected), "Expected \(expected) in display string")
+        }
+    }
+
+    @Test("Display string for letters A to Z")
+    func displayStringLettersAToZ() {
+        let letterKeyCodes: [(Int, String)] = [
+            (kVK_ANSI_A, "A"), (kVK_ANSI_B, "B"), (kVK_ANSI_C, "C"),
+            (kVK_ANSI_D, "D"), (kVK_ANSI_E, "E"), (kVK_ANSI_F, "F"),
+            (kVK_ANSI_G, "G"), (kVK_ANSI_H, "H"), (kVK_ANSI_I, "I"),
+            (kVK_ANSI_J, "J"), (kVK_ANSI_K, "K"), (kVK_ANSI_L, "L"),
+            (kVK_ANSI_M, "M"), (kVK_ANSI_N, "N"), (kVK_ANSI_O, "O"),
+            (kVK_ANSI_P, "P"), (kVK_ANSI_Q, "Q"), (kVK_ANSI_R, "R"),
+            (kVK_ANSI_S, "S"), (kVK_ANSI_T, "T"), (kVK_ANSI_U, "U"),
+            (kVK_ANSI_V, "V"), (kVK_ANSI_W, "W"), (kVK_ANSI_X, "X"),
+            (kVK_ANSI_Y, "Y"), (kVK_ANSI_Z, "Z"),
+        ]
+
+        for (keyCode, expected) in letterKeyCodes {
+            let config = HotkeyConfig(keyCode: UInt32(keyCode), modifiers: UInt32(cmdKey))
+            #expect(config.displayString.contains(expected), "Expected \(expected) in display string")
+        }
+    }
+
+    @Test("Display string for function keys F1 to F12")
+    func displayStringFunctionKeysF1ToF12() {
+        let functionKeyCodes: [(Int, String)] = [
+            (kVK_F1, "F1"), (kVK_F2, "F2"), (kVK_F3, "F3"),
+            (kVK_F4, "F4"), (kVK_F5, "F5"), (kVK_F6, "F6"),
+            (kVK_F7, "F7"), (kVK_F8, "F8"), (kVK_F9, "F9"),
+            (kVK_F10, "F10"), (kVK_F11, "F11"), (kVK_F12, "F12"),
+        ]
+
+        for (keyCode, expected) in functionKeyCodes {
+            let config = HotkeyConfig(keyCode: UInt32(keyCode), modifiers: UInt32(cmdKey))
+            #expect(config.displayString.contains(expected), "Expected \(expected) in display string")
+        }
+    }
+
+    @Test("Display string for tab key")
+    func displayStringTabKey() {
+        let config = HotkeyConfig(keyCode: UInt32(kVK_Tab), modifiers: UInt32(cmdKey))
+        #expect(config.displayString.contains("Tab"))
+    }
+
+    @Test("Display string for unknown key code")
+    func displayStringUnknownKeyCode() {
+        // Use a key code that's not in the switch statement
+        let config = HotkeyConfig(keyCode: 999, modifiers: UInt32(cmdKey))
+        #expect(config.displayString.contains("Key(999)"))
+    }
+
+    @Test("Display string modifier order")
+    func displayStringModifierOrder() {
+        // Modifiers should appear in a consistent order: Ctrl, Option, Shift, Cmd
+        let allModifiers = UInt32(cmdKey | controlKey | optionKey | shiftKey)
+        let config = HotkeyConfig(keyCode: UInt32(kVK_ANSI_A), modifiers: allModifiers)
+        let display = config.displayString
+
+        // Verify order by checking positions
+        guard let ctrlRange = display.range(of: "Ctrl"),
+              let optionRange = display.range(of: "Option"),
+              let shiftRange = display.range(of: "Shift"),
+              let cmdRange = display.range(of: "Cmd") else {
+            Issue.record("Missing modifier in display string")
+            return
+        }
+
+        #expect(ctrlRange.lowerBound < optionRange.lowerBound)
+        #expect(optionRange.lowerBound < shiftRange.lowerBound)
+        #expect(shiftRange.lowerBound < cmdRange.lowerBound)
+    }
+
+    @Test("Default config display string is Ctrl+Cmd+0")
+    func defaultConfigDisplayStringIsCtrlCmd0() {
+        let config = HotkeyConfig.defaultConfig
+        let display = config.displayString
+
+        // Should be "Ctrl + Cmd + 0"
+        #expect(display == "Ctrl + Cmd + 0")
+    }
+
+    @Test("Codable preserves all fields")
+    func codablePreservesAllFields() throws {
+        let original = HotkeyConfig(
+            keyCode: UInt32(kVK_ANSI_M),
+            modifiers: UInt32(cmdKey | shiftKey | optionKey)
+        )
+
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(HotkeyConfig.self, from: data)
+
+        #expect(decoded.keyCode == original.keyCode)
+        #expect(decoded.modifiers == original.modifiers)
+        #expect(decoded.displayString == original.displayString)
     }
 }
 
-// HotkeyManager Tests
+// MARK: - HotkeyManager Tests
 
+@Suite("HotkeyManager Tests")
 @MainActor
-final class HotkeyManagerTests: XCTestCase {
+struct HotkeyManagerTests {
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         UserDefaultsStore.shared.removeObject(forKey: "WeakupHotkeyConfig")
     }
 
-    // Singleton Tests
+    // MARK: - Singleton Tests
 
-    func testShared_returnsSameInstance() {
+    @Test("Shared returns same instance")
+    func sharedReturnsSameInstance() {
         let instance1 = HotkeyManager.shared
         let instance2 = HotkeyManager.shared
-        XCTAssertTrue(instance1 === instance2)
+        #expect(instance1 === instance2)
     }
 
-    // Recording State Tests
+    // MARK: - Recording State Tests
 
-    func testStartRecording_setsIsRecordingTrue() {
+    @Test("Start recording sets isRecording true")
+    func startRecordingSetsIsRecordingTrue() {
         let manager = HotkeyManager.shared
         manager.stopRecording() // Ensure clean state
-        XCTAssertFalse(manager.isRecording)
+        #expect(!manager.isRecording)
 
         manager.startRecording()
-        XCTAssertTrue(manager.isRecording)
+        #expect(manager.isRecording)
 
         manager.stopRecording() // Clean up
     }
 
-    func testStopRecording_setsIsRecordingFalse() {
+    @Test("Stop recording sets isRecording false")
+    func stopRecordingSetsIsRecordingFalse() {
         let manager = HotkeyManager.shared
         manager.startRecording()
-        XCTAssertTrue(manager.isRecording)
+        #expect(manager.isRecording)
 
         manager.stopRecording()
-        XCTAssertFalse(manager.isRecording)
+        #expect(!manager.isRecording)
     }
 
-    // Reset Tests
+    // MARK: - Reset Tests
 
-    func testResetToDefault_restoresDefaultConfig() {
+    @Test("Reset to default restores default config")
+    func resetToDefaultRestoresDefaultConfig() {
         let manager = HotkeyManager.shared
 
         // Change to non-default
         manager.currentConfig = HotkeyConfig(keyCode: 99, modifiers: 512)
-        XCTAssertNotEqual(manager.currentConfig, HotkeyConfig.defaultConfig)
+        #expect(manager.currentConfig != HotkeyConfig.defaultConfig)
 
         manager.resetToDefault()
-        XCTAssertEqual(manager.currentConfig, HotkeyConfig.defaultConfig)
+        #expect(manager.currentConfig == HotkeyConfig.defaultConfig)
     }
 
-    // Conflict Detection Tests
+    // MARK: - Conflict Detection Tests
 
-    func testHasConflict_initiallyFalse() {
+    @Test("Has conflict initially false")
+    func hasConflictInitiallyFalse() {
         let manager = HotkeyManager.shared
         // Note: hasConflict state depends on system registration
         // This test verifies the property exists and is accessible
@@ -155,9 +287,10 @@ final class HotkeyManagerTests: XCTestCase {
         _ = manager.conflictMessage
     }
 
-    // Callback Tests
+    // MARK: - Callback Tests
 
-    func testOnHotkeyPressed_canBeSet() {
+    @Test("onHotkeyPressed can be set")
+    func onHotkeyPressedCanBeSet() {
         let manager = HotkeyManager.shared
         var callbackCalled = false
 
@@ -167,15 +300,16 @@ final class HotkeyManagerTests: XCTestCase {
 
         // Manually trigger to verify callback is set
         manager.onHotkeyPressed?()
-        XCTAssertTrue(callbackCalled)
+        #expect(callbackCalled)
 
         // Clean up
         manager.onHotkeyPressed = nil
     }
 
-    // Record Key Tests
+    // MARK: - Record Key Tests
 
-    func testRecordKey_updatesConfig_whenRecording() {
+    @Test("Record key updates config when recording")
+    func recordKeyUpdatesConfigWhenRecording() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -188,23 +322,24 @@ final class HotkeyManagerTests: XCTestCase {
         )
 
         // Config should be updated
-        XCTAssertEqual(manager.currentConfig.keyCode, UInt32(kVK_ANSI_A))
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(shiftKey) != 0)
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(cmdKey) != 0)
+        #expect(manager.currentConfig.keyCode == UInt32(kVK_ANSI_A))
+        #expect(manager.currentConfig.modifiers & UInt32(shiftKey) != 0)
+        #expect(manager.currentConfig.modifiers & UInt32(cmdKey) != 0)
 
         // Recording should stop after recording a key
-        XCTAssertFalse(manager.isRecording)
+        #expect(!manager.isRecording)
 
         // Restore original config
         manager.currentConfig = originalConfig
     }
 
-    func testRecordKey_doesNotUpdate_whenNotRecording() {
+    @Test("Record key does not update when not recording")
+    func recordKeyDoesNotUpdateWhenNotRecording() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
         manager.stopRecording() // Ensure not recording
-        XCTAssertFalse(manager.isRecording)
+        #expect(!manager.isRecording)
 
         // Try to record a key
         manager.recordKey(
@@ -213,10 +348,11 @@ final class HotkeyManagerTests: XCTestCase {
         )
 
         // Config should not change
-        XCTAssertEqual(manager.currentConfig, originalConfig)
+        #expect(manager.currentConfig == originalConfig)
     }
 
-    func testRecordKey_requiresModifier() {
+    @Test("Record key requires modifier")
+    func recordKeyRequiresModifier() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -229,15 +365,16 @@ final class HotkeyManagerTests: XCTestCase {
         )
 
         // Config should not change (no modifiers)
-        XCTAssertEqual(manager.currentConfig, originalConfig)
+        #expect(manager.currentConfig == originalConfig)
 
         // Should still be recording since the key was rejected
-        XCTAssertTrue(manager.isRecording)
+        #expect(manager.isRecording)
 
         manager.stopRecording()
     }
 
-    func testRecordKey_withControlModifier() {
+    @Test("Record key with control modifier")
+    func recordKeyWithControlModifier() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -248,14 +385,15 @@ final class HotkeyManagerTests: XCTestCase {
             modifiers: [.control]
         )
 
-        XCTAssertEqual(manager.currentConfig.keyCode, UInt32(kVK_ANSI_B))
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(controlKey) != 0)
+        #expect(manager.currentConfig.keyCode == UInt32(kVK_ANSI_B))
+        #expect(manager.currentConfig.modifiers & UInt32(controlKey) != 0)
 
         // Restore
         manager.currentConfig = originalConfig
     }
 
-    func testRecordKey_withOptionModifier() {
+    @Test("Record key with option modifier")
+    func recordKeyWithOptionModifier() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -266,14 +404,15 @@ final class HotkeyManagerTests: XCTestCase {
             modifiers: [.option]
         )
 
-        XCTAssertEqual(manager.currentConfig.keyCode, UInt32(kVK_ANSI_C))
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(optionKey) != 0)
+        #expect(manager.currentConfig.keyCode == UInt32(kVK_ANSI_C))
+        #expect(manager.currentConfig.modifiers & UInt32(optionKey) != 0)
 
         // Restore
         manager.currentConfig = originalConfig
     }
 
-    func testRecordKey_withAllModifiers() {
+    @Test("Record key with all modifiers")
+    func recordKeyWithAllModifiers() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -284,19 +423,20 @@ final class HotkeyManagerTests: XCTestCase {
             modifiers: [.command, .control, .option, .shift]
         )
 
-        XCTAssertEqual(manager.currentConfig.keyCode, UInt32(kVK_ANSI_D))
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(cmdKey) != 0)
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(controlKey) != 0)
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(optionKey) != 0)
-        XCTAssertTrue(manager.currentConfig.modifiers & UInt32(shiftKey) != 0)
+        #expect(manager.currentConfig.keyCode == UInt32(kVK_ANSI_D))
+        #expect(manager.currentConfig.modifiers & UInt32(cmdKey) != 0)
+        #expect(manager.currentConfig.modifiers & UInt32(controlKey) != 0)
+        #expect(manager.currentConfig.modifiers & UInt32(optionKey) != 0)
+        #expect(manager.currentConfig.modifiers & UInt32(shiftKey) != 0)
 
         // Restore
         manager.currentConfig = originalConfig
     }
 
-    // Persistence Tests
+    // MARK: - Persistence Tests
 
-    func testConfig_persistsToUserDefaults() {
+    @Test("Config persists to UserDefaults")
+    func configPersistsToUserDefaults() throws {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -306,26 +446,23 @@ final class HotkeyManagerTests: XCTestCase {
 
         // Verify it was saved
         guard let data = UserDefaultsStore.shared.data(forKey: "WeakupHotkeyConfig") else {
-            XCTFail("Config not saved to UserDefaults")
+            Issue.record("Config not saved to UserDefaults")
             manager.currentConfig = originalConfig
             return
         }
 
-        do {
-            let savedConfig = try JSONDecoder().decode(HotkeyConfig.self, from: data)
-            XCTAssertEqual(savedConfig.keyCode, newConfig.keyCode)
-            XCTAssertEqual(savedConfig.modifiers, newConfig.modifiers)
-        } catch {
-            XCTFail("Failed to decode saved config: \(error)")
-        }
+        let savedConfig = try JSONDecoder().decode(HotkeyConfig.self, from: data)
+        #expect(savedConfig.keyCode == newConfig.keyCode)
+        #expect(savedConfig.modifiers == newConfig.modifiers)
 
         // Restore
         manager.currentConfig = originalConfig
     }
 
-    // Register/Unregister Tests
+    // MARK: - Register/Unregister Tests
 
-    func testRegisterHotkey_canBeCalled() {
+    @Test("Register hotkey can be called")
+    func registerHotkeyCanBeCalled() {
         let manager = HotkeyManager.shared
 
         // This test verifies the method can be called without crashing
@@ -336,7 +473,8 @@ final class HotkeyManagerTests: XCTestCase {
         manager.unregisterHotkey()
     }
 
-    func testUnregisterHotkey_canBeCalledMultipleTimes() {
+    @Test("Unregister hotkey can be called multiple times")
+    func unregisterHotkeyCanBeCalledMultipleTimes() {
         let manager = HotkeyManager.shared
 
         // Should not crash when called multiple times
@@ -345,7 +483,8 @@ final class HotkeyManagerTests: XCTestCase {
         manager.unregisterHotkey()
     }
 
-    func testRegisterUnregisterCycle() {
+    @Test("Register unregister cycle")
+    func registerUnregisterCycle() {
         let manager = HotkeyManager.shared
 
         // Multiple register/unregister cycles should work
@@ -355,9 +494,10 @@ final class HotkeyManagerTests: XCTestCase {
         }
     }
 
-    // Config Change Triggers Reregistration
+    // MARK: - Config Change Triggers Reregistration
 
-    func testConfigChange_triggersReregistration() {
+    @Test("Config change triggers reregistration")
+    func configChangeTriggersReregistration() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -372,9 +512,10 @@ final class HotkeyManagerTests: XCTestCase {
         manager.unregisterHotkey()
     }
 
-    // Conflict State Tests
+    // MARK: - Conflict State Tests
 
-    func testConflictMessage_isNilInitially() {
+    @Test("Conflict message is nil initially")
+    func conflictMessageIsNilInitially() {
         let manager = HotkeyManager.shared
         manager.unregisterHotkey()
 
@@ -384,75 +525,82 @@ final class HotkeyManagerTests: XCTestCase {
         _ = manager.conflictMessage
     }
 
-    // Conflict Detection Tests
+    // MARK: - Conflict Detection Tests
 
-    func testCheckConflicts_detectsSpotlightConflict() {
+    @Test("Check conflicts detects Spotlight conflict")
+    func checkConflictsDetectsSpotlightConflict() {
         let manager = HotkeyManager.shared
 
         // Cmd+Space is Spotlight
         let spotlightConfig = HotkeyConfig(keyCode: UInt32(kVK_Space), modifiers: UInt32(cmdKey))
         let conflicts = manager.checkConflicts(for: spotlightConfig)
 
-        XCTAssertFalse(conflicts.isEmpty, "Should detect Spotlight conflict")
-        XCTAssertEqual(conflicts.first?.conflictingApp, "macOS")
-        XCTAssertEqual(conflicts.first?.severity, .high)
+        #expect(!conflicts.isEmpty, "Should detect Spotlight conflict")
+        #expect(conflicts.first?.conflictingApp == "macOS")
+        #expect(conflicts.first?.severity == .high)
     }
 
-    func testCheckConflicts_detectsCopyConflict() {
+    @Test("Check conflicts detects Copy conflict")
+    func checkConflictsDetectsCopyConflict() {
         let manager = HotkeyManager.shared
 
         // Cmd+C is Copy
         let copyConfig = HotkeyConfig(keyCode: UInt32(kVK_ANSI_C), modifiers: UInt32(cmdKey))
         let conflicts = manager.checkConflicts(for: copyConfig)
 
-        XCTAssertFalse(conflicts.isEmpty, "Should detect Copy conflict")
-        XCTAssertEqual(conflicts.first?.conflictingApp, "macOS")
-        XCTAssertTrue(conflicts.first?.description.contains("Copy") ?? false)
+        #expect(!conflicts.isEmpty, "Should detect Copy conflict")
+        #expect(conflicts.first?.conflictingApp == "macOS")
+        #expect(conflicts.first?.description.contains("Copy") ?? false)
     }
 
-    func testCheckConflicts_detectsPasteConflict() {
+    @Test("Check conflicts detects Paste conflict")
+    func checkConflictsDetectsPasteConflict() {
         let manager = HotkeyManager.shared
 
         // Cmd+V is Paste
         let pasteConfig = HotkeyConfig(keyCode: UInt32(kVK_ANSI_V), modifiers: UInt32(cmdKey))
         let conflicts = manager.checkConflicts(for: pasteConfig)
 
-        XCTAssertFalse(conflicts.isEmpty, "Should detect Paste conflict")
-        XCTAssertEqual(conflicts.first?.severity, .high)
+        #expect(!conflicts.isEmpty, "Should detect Paste conflict")
+        #expect(conflicts.first?.severity == .high)
     }
 
-    func testCheckConflicts_detectsQuitConflict() {
+    @Test("Check conflicts detects Quit conflict")
+    func checkConflictsDetectsQuitConflict() {
         let manager = HotkeyManager.shared
 
         // Cmd+Q is Quit
         let quitConfig = HotkeyConfig(keyCode: UInt32(kVK_ANSI_Q), modifiers: UInt32(cmdKey))
         let conflicts = manager.checkConflicts(for: quitConfig)
 
-        XCTAssertFalse(conflicts.isEmpty, "Should detect Quit conflict")
-        XCTAssertEqual(conflicts.first?.conflictingApp, "macOS")
+        #expect(!conflicts.isEmpty, "Should detect Quit conflict")
+        #expect(conflicts.first?.conflictingApp == "macOS")
     }
 
-    func testCheckConflicts_detectsScreenshotConflict() {
+    @Test("Check conflicts detects Screenshot conflict")
+    func checkConflictsDetectsScreenshotConflict() {
         let manager = HotkeyManager.shared
 
         // Cmd+Shift+3 is Screenshot Full
         let screenshotConfig = HotkeyConfig(keyCode: UInt32(kVK_ANSI_3), modifiers: UInt32(cmdKey | shiftKey))
         let conflicts = manager.checkConflicts(for: screenshotConfig)
 
-        XCTAssertFalse(conflicts.isEmpty, "Should detect Screenshot conflict")
-        XCTAssertTrue(conflicts.first?.description.contains("Screenshot") ?? false)
+        #expect(!conflicts.isEmpty, "Should detect Screenshot conflict")
+        #expect(conflicts.first?.description.contains("Screenshot") ?? false)
     }
 
-    func testCheckConflicts_noConflictForDefaultConfig() {
+    @Test("Check conflicts no conflict for default config")
+    func checkConflictsNoConflictForDefaultConfig() {
         let manager = HotkeyManager.shared
 
         // Default config (Ctrl+Cmd+0) should not conflict with common shortcuts
         let conflicts = manager.checkConflicts(for: .defaultConfig)
 
-        XCTAssertTrue(conflicts.isEmpty, "Default config should not have conflicts")
+        #expect(conflicts.isEmpty, "Default config should not have conflicts")
     }
 
-    func testCheckConflicts_noConflictForUniqueShortcut() {
+    @Test("Check conflicts no conflict for unique shortcut")
+    func checkConflictsNoConflictForUniqueShortcut() {
         let manager = HotkeyManager.shared
 
         // Ctrl+Option+Shift+Cmd+9 is unlikely to conflict
@@ -462,10 +610,11 @@ final class HotkeyManagerTests: XCTestCase {
         )
         let conflicts = manager.checkConflicts(for: uniqueConfig)
 
-        XCTAssertTrue(conflicts.isEmpty, "Unique config should not have conflicts")
+        #expect(conflicts.isEmpty, "Unique config should not have conflicts")
     }
 
-    func testCheckConflicts_sortsBySeverity() {
+    @Test("Check conflicts sorts by severity")
+    func checkConflictsSortsBySeverity() {
         let manager = HotkeyManager.shared
 
         // If there are multiple conflicts, they should be sorted by severity (highest first)
@@ -475,16 +624,16 @@ final class HotkeyManagerTests: XCTestCase {
 
         if conflicts.count > 1 {
             for i in 0..<(conflicts.count - 1) {
-                XCTAssertGreaterThanOrEqual(
-                    conflicts[i].severity.rawValue,
-                    conflicts[i + 1].severity.rawValue,
+                #expect(
+                    conflicts[i].severity.rawValue >= conflicts[i + 1].severity.rawValue,
                     "Conflicts should be sorted by severity"
                 )
             }
         }
     }
 
-    func testHighestSeverityConflict_returnsFirstConflict() {
+    @Test("Highest severity conflict returns first conflict")
+    func highestSeverityConflictReturnsFirstConflict() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -492,15 +641,16 @@ final class HotkeyManagerTests: XCTestCase {
         manager.currentConfig = HotkeyConfig(keyCode: UInt32(kVK_ANSI_C), modifiers: UInt32(cmdKey))
 
         if manager.hasConflict {
-            XCTAssertNotNil(manager.highestSeverityConflict)
-            XCTAssertEqual(manager.highestSeverityConflict, manager.detectedConflicts.first)
+            #expect(manager.highestSeverityConflict != nil)
+            #expect(manager.highestSeverityConflict == manager.detectedConflicts.first)
         }
 
         // Restore
         manager.currentConfig = originalConfig
     }
 
-    func testDetectedConflicts_updatesOnConfigChange() {
+    @Test("Detected conflicts updates on config change")
+    func detectedConflictsUpdatesOnConfigChange() {
         let manager = HotkeyManager.shared
         let originalConfig = manager.currentConfig
 
@@ -512,40 +662,43 @@ final class HotkeyManagerTests: XCTestCase {
         manager.currentConfig = HotkeyConfig(keyCode: UInt32(kVK_ANSI_C), modifiers: UInt32(cmdKey))
         let conflictsWithCopy = manager.detectedConflicts.count
 
-        XCTAssertGreaterThan(conflictsWithCopy, conflictsWithDefault, "Copy shortcut should have more conflicts")
+        #expect(conflictsWithCopy > conflictsWithDefault, "Copy shortcut should have more conflicts")
 
         // Restore
         manager.currentConfig = originalConfig
     }
 
-    func testOverrideConflicts_canBeSet() {
+    @Test("Override conflicts can be set")
+    func overrideConflictsCanBeSet() {
         let manager = HotkeyManager.shared
         let originalOverride = manager.overrideConflicts
 
         manager.setOverrideConflicts(true)
-        XCTAssertTrue(manager.overrideConflicts)
+        #expect(manager.overrideConflicts)
 
         manager.setOverrideConflicts(false)
-        XCTAssertFalse(manager.overrideConflicts)
+        #expect(!manager.overrideConflicts)
 
         // Restore
         manager.setOverrideConflicts(originalOverride)
     }
 
-    func testOverrideConflicts_persistsToUserDefaults() {
+    @Test("Override conflicts persists to UserDefaults")
+    func overrideConflictsPersistsToUserDefaults() {
         let manager = HotkeyManager.shared
         let originalOverride = manager.overrideConflicts
 
         manager.setOverrideConflicts(true)
 
         let savedValue = UserDefaultsStore.shared.bool(forKey: "WeakupOverrideConflicts")
-        XCTAssertTrue(savedValue)
+        #expect(savedValue)
 
         // Restore
         manager.setOverrideConflicts(originalOverride)
     }
 
-    func testConflictSuggestion_isProvidedForConflicts() {
+    @Test("Conflict suggestion is provided for conflicts")
+    func conflictSuggestionIsProvidedForConflicts() {
         let manager = HotkeyManager.shared
 
         // Check that conflicts have suggestions
@@ -553,28 +706,32 @@ final class HotkeyManagerTests: XCTestCase {
         let conflicts = manager.checkConflicts(for: copyConfig)
 
         if let conflict = conflicts.first {
-            XCTAssertNotNil(conflict.suggestion, "Conflict should have a suggestion")
-            XCTAssertFalse(conflict.suggestion?.isEmpty ?? true, "Suggestion should not be empty")
+            #expect(conflict.suggestion != nil, "Conflict should have a suggestion")
+            #expect(!(conflict.suggestion?.isEmpty ?? true), "Suggestion should not be empty")
         }
     }
 }
 
-// HotkeyConflict Tests
+// MARK: - HotkeyConflict Tests
 
-final class HotkeyConflictTests: XCTestCase {
+@Suite("HotkeyConflict Tests")
+struct HotkeyConflictTests {
 
-    func testConflictSeverity_rawValues() {
-        XCTAssertEqual(HotkeyConflict.ConflictSeverity.low.rawValue, 0)
-        XCTAssertEqual(HotkeyConflict.ConflictSeverity.medium.rawValue, 1)
-        XCTAssertEqual(HotkeyConflict.ConflictSeverity.high.rawValue, 2)
+    @Test("Conflict severity raw values")
+    func conflictSeverityRawValues() {
+        #expect(HotkeyConflict.ConflictSeverity.low.rawValue == 0)
+        #expect(HotkeyConflict.ConflictSeverity.medium.rawValue == 1)
+        #expect(HotkeyConflict.ConflictSeverity.high.rawValue == 2)
     }
 
-    func testConflictSeverity_comparison() {
-        XCTAssertLessThan(HotkeyConflict.ConflictSeverity.low.rawValue, HotkeyConflict.ConflictSeverity.medium.rawValue)
-        XCTAssertLessThan(HotkeyConflict.ConflictSeverity.medium.rawValue, HotkeyConflict.ConflictSeverity.high.rawValue)
+    @Test("Conflict severity comparison")
+    func conflictSeverityComparison() {
+        #expect(HotkeyConflict.ConflictSeverity.low.rawValue < HotkeyConflict.ConflictSeverity.medium.rawValue)
+        #expect(HotkeyConflict.ConflictSeverity.medium.rawValue < HotkeyConflict.ConflictSeverity.high.rawValue)
     }
 
-    func testHotkeyConflict_initialization() {
+    @Test("HotkeyConflict initialization")
+    func hotkeyConflictInitialization() {
         let conflict = HotkeyConflict(
             conflictingApp: "TestApp",
             description: "Test Action",
@@ -582,23 +739,25 @@ final class HotkeyConflictTests: XCTestCase {
             suggestion: "Try another shortcut"
         )
 
-        XCTAssertEqual(conflict.conflictingApp, "TestApp")
-        XCTAssertEqual(conflict.description, "Test Action")
-        XCTAssertEqual(conflict.severity, .medium)
-        XCTAssertEqual(conflict.suggestion, "Try another shortcut")
+        #expect(conflict.conflictingApp == "TestApp")
+        #expect(conflict.description == "Test Action")
+        #expect(conflict.severity == .medium)
+        #expect(conflict.suggestion == "Try another shortcut")
     }
 
-    func testHotkeyConflict_initializationWithoutSuggestion() {
+    @Test("HotkeyConflict initialization without suggestion")
+    func hotkeyConflictInitializationWithoutSuggestion() {
         let conflict = HotkeyConflict(
             conflictingApp: "TestApp",
             description: "Test Action",
             severity: .low
         )
 
-        XCTAssertNil(conflict.suggestion)
+        #expect(conflict.suggestion == nil)
     }
 
-    func testHotkeyConflict_equatable() {
+    @Test("HotkeyConflict equatable")
+    func hotkeyConflictEquatable() {
         let conflict1 = HotkeyConflict(
             conflictingApp: "App1",
             description: "Action1",
@@ -620,11 +779,12 @@ final class HotkeyConflictTests: XCTestCase {
             suggestion: "Suggestion1"
         )
 
-        XCTAssertEqual(conflict1, conflict2)
-        XCTAssertNotEqual(conflict1, conflict3)
+        #expect(conflict1 == conflict2)
+        #expect(conflict1 != conflict3)
     }
 
-    func testHotkeyConflict_differentSeverities_notEqual() {
+    @Test("HotkeyConflict different severities not equal")
+    func hotkeyConflictDifferentSeveritiesNotEqual() {
         let conflict1 = HotkeyConflict(
             conflictingApp: "App",
             description: "Action",
@@ -637,117 +797,6 @@ final class HotkeyConflictTests: XCTestCase {
             severity: .low
         )
 
-        XCTAssertNotEqual(conflict1, conflict2)
-    }
-}
-
-// Additional HotkeyConfig Tests
-
-extension HotkeyConfigTests {
-
-    func testDisplayString_numbersZeroToNine() {
-        let keyCodes: [(Int, String)] = [
-            (kVK_ANSI_0, "0"),
-            (kVK_ANSI_1, "1"),
-            (kVK_ANSI_2, "2"),
-            (kVK_ANSI_3, "3"),
-            (kVK_ANSI_4, "4"),
-            (kVK_ANSI_5, "5"),
-            (kVK_ANSI_6, "6"),
-            (kVK_ANSI_7, "7"),
-            (kVK_ANSI_8, "8"),
-            (kVK_ANSI_9, "9"),
-        ]
-
-        for (keyCode, expected) in keyCodes {
-            let config = HotkeyConfig(keyCode: UInt32(keyCode), modifiers: UInt32(cmdKey))
-            XCTAssertTrue(config.displayString.contains(expected), "Expected \(expected) in display string")
-        }
-    }
-
-    func testDisplayString_lettersAToZ() {
-        let letterKeyCodes: [(Int, String)] = [
-            (kVK_ANSI_A, "A"), (kVK_ANSI_B, "B"), (kVK_ANSI_C, "C"),
-            (kVK_ANSI_D, "D"), (kVK_ANSI_E, "E"), (kVK_ANSI_F, "F"),
-            (kVK_ANSI_G, "G"), (kVK_ANSI_H, "H"), (kVK_ANSI_I, "I"),
-            (kVK_ANSI_J, "J"), (kVK_ANSI_K, "K"), (kVK_ANSI_L, "L"),
-            (kVK_ANSI_M, "M"), (kVK_ANSI_N, "N"), (kVK_ANSI_O, "O"),
-            (kVK_ANSI_P, "P"), (kVK_ANSI_Q, "Q"), (kVK_ANSI_R, "R"),
-            (kVK_ANSI_S, "S"), (kVK_ANSI_T, "T"), (kVK_ANSI_U, "U"),
-            (kVK_ANSI_V, "V"), (kVK_ANSI_W, "W"), (kVK_ANSI_X, "X"),
-            (kVK_ANSI_Y, "Y"), (kVK_ANSI_Z, "Z"),
-        ]
-
-        for (keyCode, expected) in letterKeyCodes {
-            let config = HotkeyConfig(keyCode: UInt32(keyCode), modifiers: UInt32(cmdKey))
-            XCTAssertTrue(config.displayString.contains(expected), "Expected \(expected) in display string")
-        }
-    }
-
-    func testDisplayString_functionKeysF1ToF12() {
-        let functionKeyCodes: [(Int, String)] = [
-            (kVK_F1, "F1"), (kVK_F2, "F2"), (kVK_F3, "F3"),
-            (kVK_F4, "F4"), (kVK_F5, "F5"), (kVK_F6, "F6"),
-            (kVK_F7, "F7"), (kVK_F8, "F8"), (kVK_F9, "F9"),
-            (kVK_F10, "F10"), (kVK_F11, "F11"), (kVK_F12, "F12"),
-        ]
-
-        for (keyCode, expected) in functionKeyCodes {
-            let config = HotkeyConfig(keyCode: UInt32(keyCode), modifiers: UInt32(cmdKey))
-            XCTAssertTrue(config.displayString.contains(expected), "Expected \(expected) in display string")
-        }
-    }
-
-    func testDisplayString_tabKey() {
-        let config = HotkeyConfig(keyCode: UInt32(kVK_Tab), modifiers: UInt32(cmdKey))
-        XCTAssertTrue(config.displayString.contains("Tab"))
-    }
-
-    func testDisplayString_unknownKeyCode() {
-        // Use a key code that's not in the switch statement
-        let config = HotkeyConfig(keyCode: 999, modifiers: UInt32(cmdKey))
-        XCTAssertTrue(config.displayString.contains("Key(999)"))
-    }
-
-    func testDisplayString_modifierOrder() {
-        // Modifiers should appear in a consistent order: Ctrl, Option, Shift, Cmd
-        let allModifiers = UInt32(cmdKey | controlKey | optionKey | shiftKey)
-        let config = HotkeyConfig(keyCode: UInt32(kVK_ANSI_A), modifiers: allModifiers)
-        let display = config.displayString
-
-        // Verify order by checking positions
-        guard let ctrlRange = display.range(of: "Ctrl"),
-              let optionRange = display.range(of: "Option"),
-              let shiftRange = display.range(of: "Shift"),
-              let cmdRange = display.range(of: "Cmd") else {
-            XCTFail("Missing modifier in display string")
-            return
-        }
-
-        XCTAssertLessThan(ctrlRange.lowerBound, optionRange.lowerBound)
-        XCTAssertLessThan(optionRange.lowerBound, shiftRange.lowerBound)
-        XCTAssertLessThan(shiftRange.lowerBound, cmdRange.lowerBound)
-    }
-
-    func testDefaultConfig_displayStringIsCtrlCmd0() {
-        let config = HotkeyConfig.defaultConfig
-        let display = config.displayString
-
-        // Should be "Ctrl + Cmd + 0"
-        XCTAssertEqual(display, "Ctrl + Cmd + 0")
-    }
-
-    func testCodable_preservesAllFields() throws {
-        let original = HotkeyConfig(
-            keyCode: UInt32(kVK_ANSI_M),
-            modifiers: UInt32(cmdKey | shiftKey | optionKey)
-        )
-
-        let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(HotkeyConfig.self, from: data)
-
-        XCTAssertEqual(decoded.keyCode, original.keyCode)
-        XCTAssertEqual(decoded.modifiers, original.modifiers)
-        XCTAssertEqual(decoded.displayString, original.displayString)
+        #expect(conflict1 != conflict2)
     }
 }

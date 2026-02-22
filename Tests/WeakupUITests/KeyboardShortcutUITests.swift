@@ -1,5 +1,16 @@
 import XCTest
 
+// MARK: - Swift Testing Migration Note
+// These UI tests intentionally use XCTest framework and cannot be migrated to Swift Testing.
+// Swift Testing does not support UI testing - XCUIApplication, XCUIElement, and the entire
+// XCUITest framework are only available through XCTest. This is a documented limitation
+// of Swift Testing which is designed for unit and integration tests only.
+//
+// Requirements for these tests:
+// - XCTest framework (XCUITest)
+// - Xcode project configuration
+// - Accessibility permissions for keyboard shortcut testing
+
 /// UI tests for keyboard shortcut functionality
 /// Note: These tests require XCUITest and an Xcode project to run
 /// They test global keyboard shortcuts and shortcut recording

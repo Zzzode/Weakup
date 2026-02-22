@@ -1,33 +1,29 @@
-import XCTest
+import Testing
 import UserNotifications
 @testable import WeakupCore
 
+@Suite("NotificationManager Tests")
 @MainActor
-final class NotificationManagerTests: XCTestCase {
+struct NotificationManagerTests {
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         // Clear notification settings before each test
         UserDefaultsStore.shared.removeObject(forKey: "WeakupNotificationsEnabled")
     }
 
-    override func tearDown() async throws {
-        // Clean up
-        NotificationManager.shared.cancelPendingNotifications()
-        try await super.tearDown()
-    }
+    // MARK: - Singleton Tests
 
-    // Singleton Tests
-
-    func testShared_returnsSameInstance() {
+    @Test("Shared returns same instance")
+    func sharedReturnsSameInstance() {
         let instance1 = NotificationManager.shared
         let instance2 = NotificationManager.shared
-        XCTAssertTrue(instance1 === instance2, "Shared should return same instance")
+        #expect(instance1 === instance2, "Shared should return same instance")
     }
 
-    // Notifications Enabled Tests
+    // MARK: - Notifications Enabled Tests
 
-    func testNotificationsEnabled_defaultTrue() {
+    @Test("Notifications enabled default true")
+    func notificationsEnabledDefaultTrue() {
         // Note: Since NotificationManager is a singleton, this tests the current state
         // The default value should be true based on the implementation
         let manager = NotificationManager.shared
@@ -36,48 +32,53 @@ final class NotificationManagerTests: XCTestCase {
         _ = manager.notificationsEnabled
     }
 
-    func testNotificationsEnabled_persistsValue() {
+    @Test("Notifications enabled persists value")
+    func notificationsEnabledPersistsValue() {
         let manager = NotificationManager.shared
         let originalValue = manager.notificationsEnabled
 
         // Toggle the value
         manager.notificationsEnabled = !originalValue
         let storedValue = UserDefaultsStore.shared.bool(forKey: "WeakupNotificationsEnabled")
-        XCTAssertEqual(storedValue, !originalValue)
+        #expect(storedValue == !originalValue)
 
         // Restore original value
         manager.notificationsEnabled = originalValue
     }
 
-    func testNotificationsEnabled_canBeToggled() {
+    @Test("Notifications enabled can be toggled")
+    func notificationsEnabledCanBeToggled() {
         let manager = NotificationManager.shared
         let original = manager.notificationsEnabled
 
         manager.notificationsEnabled = !original
-        XCTAssertNotEqual(manager.notificationsEnabled, original)
+        #expect(manager.notificationsEnabled != original)
 
         manager.notificationsEnabled = original
-        XCTAssertEqual(manager.notificationsEnabled, original)
+        #expect(manager.notificationsEnabled == original)
     }
 
-    // Authorization Tests
+    // MARK: - Authorization Tests
 
-    func testIsAuthorized_isAccessible() {
+    @Test("isAuthorized is accessible")
+    func isAuthorizedIsAccessible() {
         let manager = NotificationManager.shared
         // Just verify the property is accessible
         _ = manager.isAuthorized
     }
 
-    func testRequestAuthorization_doesNotCrash() {
+    @Test("Request authorization does not crash")
+    func requestAuthorizationDoesNotCrash() {
         let manager = NotificationManager.shared
         // This test verifies the method can be called without crashing
         // Actual authorization requires user interaction
         manager.requestAuthorization()
     }
 
-    // Notification Scheduling Tests
+    // MARK: - Notification Scheduling Tests
 
-    func testScheduleTimerExpiryNotification_whenDisabled_doesNotSchedule() {
+    @Test("Schedule timer expiry notification when disabled does not schedule")
+    func scheduleTimerExpiryNotificationWhenDisabledDoesNotSchedule() {
         let manager = NotificationManager.shared
         manager.notificationsEnabled = false
 
@@ -88,15 +89,17 @@ final class NotificationManagerTests: XCTestCase {
         // without mocking UNUserNotificationCenter
     }
 
-    func testCancelPendingNotifications_doesNotCrash() {
+    @Test("Cancel pending notifications does not crash")
+    func cancelPendingNotificationsDoesNotCrash() {
         let manager = NotificationManager.shared
         // Verify the method can be called without crashing
         manager.cancelPendingNotifications()
     }
 
-    // Callback Tests
+    // MARK: - Callback Tests
 
-    func testOnRestartRequested_canBeSet() {
+    @Test("onRestartRequested can be set")
+    func onRestartRequestedCanBeSet() {
         let manager = NotificationManager.shared
         var callbackCalled = false
 
@@ -106,22 +109,24 @@ final class NotificationManagerTests: XCTestCase {
 
         // Manually trigger to verify callback is set
         manager.onRestartRequested?()
-        XCTAssertTrue(callbackCalled)
+        #expect(callbackCalled)
 
         // Clean up
         manager.onRestartRequested = nil
     }
 
-    func testOnRestartRequested_canBeNil() {
+    @Test("onRestartRequested can be nil")
+    func onRestartRequestedCanBeNil() {
         let manager = NotificationManager.shared
         manager.onRestartRequested = nil
-        XCTAssertNil(manager.onRestartRequested)
+        #expect(manager.onRestartRequested == nil)
     }
 
-    // Observable Tests
+    // MARK: - Observable Tests
 
-    func testNotificationManager_isObservableObject() {
+    @Test("NotificationManager is ObservableObject")
+    func notificationManagerIsObservableObject() {
         let manager: any ObservableObject = NotificationManager.shared
-        XCTAssertNotNil(manager)
+        #expect(manager != nil)
     }
 }

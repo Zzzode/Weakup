@@ -1,86 +1,98 @@
-import XCTest
+import Foundation
+import Testing
 @testable import WeakupCore
 
-final class ActivitySessionTests: XCTestCase {
+@Suite("ActivitySession Tests")
+struct ActivitySessionTests {
 
-    // Initialization Tests
+    // MARK: - Initialization Tests
 
-    func testInit_setsDefaultValues() {
+    @Test("Init sets default values")
+    func initSetsDefaultValues() {
         let session = ActivitySession()
-        XCTAssertNotNil(session.id)
-        XCTAssertNil(session.endTime)
-        XCTAssertFalse(session.wasTimerMode)
-        XCTAssertNil(session.timerDuration)
+        #expect(session.id != UUID(uuidString: "00000000-0000-0000-0000-000000000000"))
+        #expect(session.endTime == nil)
+        #expect(!session.wasTimerMode)
+        #expect(session.timerDuration == nil)
     }
 
-    func testInit_withCustomValues() {
+    @Test("Init with custom values")
+    func initWithCustomValues() {
         let startTime = Date()
         let session = ActivitySession(startTime: startTime, wasTimerMode: true, timerDuration: 3600)
 
-        XCTAssertEqual(session.startTime, startTime)
-        XCTAssertTrue(session.wasTimerMode)
-        XCTAssertEqual(session.timerDuration, 3600)
+        #expect(session.startTime == startTime)
+        #expect(session.wasTimerMode)
+        #expect(session.timerDuration == 3600)
     }
 
-    func testInit_generatesUniqueIds() {
+    @Test("Init generates unique IDs")
+    func initGeneratesUniqueIds() {
         let session1 = ActivitySession()
         let session2 = ActivitySession()
-        XCTAssertNotEqual(session1.id, session2.id)
+        #expect(session1.id != session2.id)
     }
 
-    // isActive Tests
+    // MARK: - isActive Tests
 
-    func testIsActive_trueWhenNoEndTime() {
+    @Test("isActive is true when no end time")
+    func isActiveTrueWhenNoEndTime() {
         let session = ActivitySession()
-        XCTAssertTrue(session.isActive)
+        #expect(session.isActive)
     }
 
-    func testIsActive_falseAfterEnd() {
+    @Test("isActive is false after end")
+    func isActiveFalseAfterEnd() {
         var session = ActivitySession()
         session.end()
-        XCTAssertFalse(session.isActive)
+        #expect(!session.isActive)
     }
 
-    // Duration Tests
+    // MARK: - Duration Tests
 
-    func testDuration_calculatesFromStartToEnd() {
+    @Test("Duration calculates from start to end")
+    func durationCalculatesFromStartToEnd() {
         let startTime = Date().addingTimeInterval(-60) // 1 minute ago
         var session = ActivitySession(startTime: startTime)
         session.endTime = Date()
 
-        XCTAssertEqual(session.duration, 60, accuracy: 1)
+        #expect(abs(session.duration - 60) < 1)
     }
 
-    func testDuration_calculatesFromStartToNowWhenActive() {
+    @Test("Duration calculates from start to now when active")
+    func durationCalculatesFromStartToNowWhenActive() {
         let startTime = Date().addingTimeInterval(-30) // 30 seconds ago
         let session = ActivitySession(startTime: startTime)
 
-        XCTAssertEqual(session.duration, 30, accuracy: 2)
+        #expect(abs(session.duration - 30) < 2)
     }
 
-    // End Tests
+    // MARK: - End Tests
 
-    func testEnd_setsEndTime() {
+    @Test("End sets end time")
+    func endSetsEndTime() {
         var session = ActivitySession()
-        XCTAssertNil(session.endTime)
+        #expect(session.endTime == nil)
         session.end()
-        XCTAssertNotNil(session.endTime)
+        #expect(session.endTime != nil)
     }
 
-    func testEnd_endTimeIsNow() {
+    @Test("End time is now")
+    func endTimeIsNow() {
         var session = ActivitySession()
         let beforeEnd = Date()
         session.end()
         let afterEnd = Date()
 
-        XCTAssertNotNil(session.endTime)
-        XCTAssertGreaterThanOrEqual(session.endTime!, beforeEnd)
-        XCTAssertLessThanOrEqual(session.endTime!, afterEnd)
+        #expect(session.endTime != nil)
+        #expect(session.endTime! >= beforeEnd)
+        #expect(session.endTime! <= afterEnd)
     }
 
-    // Codable Tests
+    // MARK: - Codable Tests
 
-    func testCodable_encodesAndDecodes() throws {
+    @Test("Codable encodes and decodes")
+    func codableEncodesAndDecodes() throws {
         let original = ActivitySession(wasTimerMode: true, timerDuration: 1800)
 
         let encoder = JSONEncoder()
@@ -89,29 +101,32 @@ final class ActivitySessionTests: XCTestCase {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(ActivitySession.self, from: data)
 
-        XCTAssertEqual(decoded.id, original.id)
-        XCTAssertEqual(decoded.wasTimerMode, original.wasTimerMode)
-        XCTAssertEqual(decoded.timerDuration, original.timerDuration)
+        #expect(decoded.id == original.id)
+        #expect(decoded.wasTimerMode == original.wasTimerMode)
+        #expect(decoded.timerDuration == original.timerDuration)
     }
 }
 
-// Activity Statistics Tests
+// MARK: - Activity Statistics Tests
 
-final class ActivityStatisticsTests: XCTestCase {
+@Suite("ActivityStatistics Tests")
+struct ActivityStatisticsTests {
 
-    func testEmpty_returnsZeroValues() {
+    @Test("Empty returns zero values")
+    func emptyReturnsZeroValues() {
         let stats = ActivityStatistics.empty
 
-        XCTAssertEqual(stats.totalSessions, 0)
-        XCTAssertEqual(stats.totalDuration, 0)
-        XCTAssertEqual(stats.todaySessions, 0)
-        XCTAssertEqual(stats.todayDuration, 0)
-        XCTAssertEqual(stats.weekSessions, 0)
-        XCTAssertEqual(stats.weekDuration, 0)
-        XCTAssertEqual(stats.averageSessionDuration, 0)
+        #expect(stats.totalSessions == 0)
+        #expect(stats.totalDuration == 0)
+        #expect(stats.todaySessions == 0)
+        #expect(stats.todayDuration == 0)
+        #expect(stats.weekSessions == 0)
+        #expect(stats.weekDuration == 0)
+        #expect(stats.averageSessionDuration == 0)
     }
 
-    func testInit_storesAllValues() {
+    @Test("Init stores all values")
+    func initStoresAllValues() {
         let stats = ActivityStatistics(
             totalSessions: 10,
             totalDuration: 3600,
@@ -122,12 +137,12 @@ final class ActivityStatisticsTests: XCTestCase {
             averageSessionDuration: 360
         )
 
-        XCTAssertEqual(stats.totalSessions, 10)
-        XCTAssertEqual(stats.totalDuration, 3600)
-        XCTAssertEqual(stats.todaySessions, 2)
-        XCTAssertEqual(stats.todayDuration, 600)
-        XCTAssertEqual(stats.weekSessions, 5)
-        XCTAssertEqual(stats.weekDuration, 1800)
-        XCTAssertEqual(stats.averageSessionDuration, 360)
+        #expect(stats.totalSessions == 10)
+        #expect(stats.totalDuration == 3600)
+        #expect(stats.todaySessions == 2)
+        #expect(stats.todayDuration == 600)
+        #expect(stats.weekSessions == 5)
+        #expect(stats.weekDuration == 1800)
+        #expect(stats.averageSessionDuration == 360)
     }
 }

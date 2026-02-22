@@ -17,7 +17,7 @@ import Foundation
 /// - French (fr)
 /// - German (de)
 /// - Spanish (es)
-public enum AppLanguage: String, CaseIterable, Identifiable {
+public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
     case english = "en"
     case chinese = "zh-Hans"
     case chineseTraditional = "zh-Hant"

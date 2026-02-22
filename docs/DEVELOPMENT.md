@@ -88,6 +88,8 @@ Weakup/
 │       └── Protocols/
 │           └── NotificationManaging.swift
 ├── Tests/                     # Unit, integration, and UI tests
+│   ├── WeakupTests/           # Swift Testing (unit + integration)
+│   └── WeakupUITests/         # XCTest (UI tests only)
 ├── docs/                      # Documentation
 ├── Weakup.app/                # Built application (generated)
 ```
@@ -123,6 +125,31 @@ swift build
 # Run debug binary
 .build/debug/weakup
 ```
+
+### Running Tests
+
+```bash
+# Run all tests
+swift test
+
+# Run specific test suite
+swift test --filter CaffeineViewModelTests
+
+# Run with verbose output
+swift test --verbose
+
+# Run with coverage
+swift test --enable-code-coverage
+
+# If sandbox errors occur
+swift test --disable-sandbox
+```
+
+**Testing Frameworks:**
+- **Swift Testing** - Unit and integration tests use modern `@Test` syntax
+- **XCTest** - UI tests only (XCUITest framework requirement)
+
+See [TESTING.md](TESTING.md) for detailed testing guidelines.
 
 ## Code Organization
 

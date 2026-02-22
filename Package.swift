@@ -34,11 +34,15 @@ let package = Package(
                 .linkedFramework("Carbon"),
             ]
         ),
-        // Test target
+        // Test target for unit and integration tests (Swift Testing)
+        // Note: Swift Testing is built into Swift 6.0+, no external dependency needed
         .testTarget(
             name: "WeakupTests",
             dependencies: ["WeakupCore"],
             path: "Tests/WeakupTests"
         )
+        // Note: UI tests (WeakupUITests) are not included in SPM build.
+        // They require XCTest/XCUITest and should be run via Xcode.
+        // Swift Testing does not support UI testing.
     ]
 )

@@ -156,6 +156,25 @@ func toggleCaffeine(){viewModel.toggle();updateStatusIcon()}
 
 See [docs/TESTING.md](docs/TESTING.md) for detailed testing guidelines.
 
+### Testing Frameworks
+
+The project uses a mixed testing approach:
+- **Swift Testing** - For unit and integration tests (modern `@Test` syntax)
+- **XCTest** - For UI tests only (XCUITest requires XCTest)
+
+### Running Tests
+
+```bash
+# Run all tests
+swift test
+
+# Run specific test suite
+swift test --filter CaffeineViewModelTests
+
+# Run with coverage
+swift test --enable-code-coverage
+```
+
 ### Manual Testing Checklist
 
 Before submitting a PR, verify:
