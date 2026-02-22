@@ -18,13 +18,18 @@ A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
 - **One-Toggle Control** - Enable/disable sleep prevention with a single click
 - **Menu Bar App** - Lives in menu bar, no dock clutter
 - **Timer Mode** - Set auto-shutdown timer (15min, 30min, 1hr, 2hrs, 3hrs, or custom duration up to 24 hours)
+- **Countdown in Menu Bar** - Optional timer countdown next to the status icon
 - **Visual Status** - Clear filled/empty icon indicator with multiple icon styles
 - **Keyboard Shortcut** - `Cmd + Ctrl + 0` to toggle anywhere
+- **Hotkey Conflict Detection** - Warns about common shortcut conflicts and suggests alternatives
 - **Native Performance** - Uses IOPMAssertion API for minimal overhead
 - **Dark/Light Theme** - Supports system theme, light mode, and dark mode
 - **Sound Feedback** - Optional audio feedback when toggling
 - **Icon Customization** - Choose from Power, Bolt, Coffee, Moon, or Eye icons
 - **Multi-Language Support** - 8 languages with real-time switching
+- **Launch at Login** - Optional startup at login with error handling
+- **Timer Expiry Notifications** - Optional notification when the timer ends
+- **Onboarding** - First-launch walkthrough
 - **SwiftUI + AppKit** - Modern, clean codebase
 
 ## Supported Languages
@@ -90,8 +95,12 @@ open Weakup.app
 - **Duration** - Choose from preset times or set a custom duration (up to 24 hours)
 - **Theme** - System, Light, or Dark
 - **Sound Feedback** - Toggle audio feedback on/off
+- **Notifications** - Toggle timer expiry notifications
+- **Menu Bar Countdown** - Show remaining timer next to the icon
 - **Icon Style** - Choose your preferred menu bar icon
 - **Language** - Switch between 8 supported languages
+- **Launch at Login** - Start Weakup when you sign in
+- **Hotkey** - Customize shortcut and resolve conflicts
 
 ## Keyboard Shortcuts
 
@@ -121,10 +130,10 @@ open Weakup.app
 ### Recently Completed (v1.1.0)
 
 - [x] Launch at login preference
-- [x] Activity history with export/import (CSV/JSON)
+- [x] Activity history manager and history view (export/import)
 - [x] Keyboard shortcut conflict detection
 - [x] Enhanced history view with filtering and charts
-- [x] Comprehensive test suite (460+ tests)
+- [x] Expanded unit, integration, and UI test coverage
 - [x] Code refactoring with centralized utilities
 - [x] Architecture documentation and diagrams
 
