@@ -75,23 +75,29 @@ open Weakup.app
 Weakup/
 ├── Package.swift              # Swift Package configuration
 ├── build.sh                   # Build script
-├── Sources/Weakup/
-│   ├── main.swift             # Main application code
-│   │   ├── WeakupApp          # Entry point
-│   │   ├── AppDelegate        # System integration
-│   │   ├── CaffeineViewModel  # Business logic
-│   │   └── SettingsView       # SwiftUI UI
-│   ├── L10n.swift             # Localization system
-│   ├── en.lproj/              # English localization
-│   │   └── Localizable.strings
-│   └── zh-Hans.lproj/         # Chinese localization
-│       └── Localizable.strings
+├── Sources/
+│   ├── Weakup/                # App target (UI + lifecycle)
+│   │   ├── main.swift
+│   │   ├── App/
+│   │   │   └── AppDelegate.swift
+│   │   ├── Views/
+│   │   │   ├── SettingsView.swift
+│   │   │   ├── OnboardingView.swift
+│   │   │   └── HistoryView.swift
+│   │   ├── en.lproj/
+│   │   └── ... other .lproj folders
+│   └── WeakupCore/            # Core target (logic + managers)
+│       ├── ViewModels/
+│       ├── Utilities/
+│       ├── Models/
+│       └── Protocols/
 ├── docs/                      # Documentation
 │   ├── ARCHITECTURE.md        # System architecture
 │   ├── DEVELOPMENT.md         # Development guide
 │   ├── TESTING.md             # Testing guide
 │   ├── TRANSLATIONS.md        # Translation guide
 │   └── PRIVACY.md             # Privacy policy
+├── Tests/                     # Unit, integration, and UI tests
 └── Weakup.app/                # Built application
 ```
 
@@ -158,6 +164,8 @@ Before submitting a PR, verify:
 - [ ] Timer mode works as expected
 - [ ] Keyboard shortcut (Cmd+Ctrl+0) functions
 - [ ] Language switching works
+- [ ] Timer expiry notifications respect the toggle
+- [ ] Launch at login toggles successfully
 - [ ] App quits cleanly
 - [ ] No memory leaks or crashes
 
