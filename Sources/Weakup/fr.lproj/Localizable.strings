@@ -52,5 +52,93 @@
 "notification_action_restart" = "Redemarrer";
 "notification_action_dismiss" = "Fermer";
 
+// Menu Bar
+"show_countdown_in_menu_bar" = "Afficher le compte a rebours";
+
+// Startup
+"launch_at_login" = "Lancer au demarrage";
+"launch_at_login_error" = "Erreur de lancement au demarrage";
+"launch_at_login_permission_denied" = "Permission refusee. Verifiez Reglages Systeme > Ouverture.";
+"launch_at_login_not_supported" = "Le lancement au demarrage n'est pas pris en charge sur ce systeme.";
+"launch_at_login_enable_failed" = "Impossible d'activer le lancement au demarrage.";
+"launch_at_login_disable_failed" = "Impossible de desactiver le lancement au demarrage.";
+
+// History
+"history_title" = "Historique d'activite";
+"history_today" = "Aujourd'hui";
+"history_this_week" = "Cette semaine";
+"history_total" = "Total";
+"history_average" = "Moyenne";
+"history_sessions" = "sessions";
+"history_per_session" = "par session";
+"history_recent_sessions" = "Sessions recentes";
+"history_clear" = "Effacer";
+"history_clear_confirm_title" = "Effacer l'historique ?";
+"history_clear_confirm_message" = "Cela supprimera tout l'historique d'activite. Cette action est irreversible.";
+"history_no_sessions" = "Aucune session enregistree";
+"history_timer_mode" = "Minuterie";
+"history_privacy_note" = "L'historique est stocke localement sur votre appareil";
+
+// Hotkey
+"hotkey" = "Raccourci";
+"hotkey_current" = "Actuel";
+"hotkey_record" = "Enregistrer nouveau";
+"hotkey_reset" = "Reinitialiser";
+"hotkey_recording" = "Appuyez sur les touches...";
+"hotkey_conflict_message" = "Ce raccourci peut entrer en conflit avec une autre application";
+
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "Conflit avec %@ (%@)";
+"hotkey_conflict_app" = "Peut entrer en conflit avec %@ (%@)";
+"hotkey_conflict_possible" = "Conflit possible avec %@ (%@)";
+"hotkey_conflict_suggestion_high" = "Choisissez un autre raccourci pour eviter les conflits systeme";
+"hotkey_conflict_suggestion_medium" = "Ce raccourci peut ne pas fonctionner dans certaines applications";
+"hotkey_conflict_suggestion_low" = "Ce raccourci devrait fonctionner dans la plupart des cas";
+"hotkey_override_conflict" = "Utiliser quand meme";
+"hotkey_conflict_warning" = "Conflit de raccourci";
+"hotkey_no_conflict" = "Aucun conflit detecte";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 pour basculer";
+
+// History Export/Import
+"history_export" = "Exporter";
+"history_import" = "Importer";
+"history_export_format" = "Format d'export";
+"history_export_success" = "Historique exporte avec succes";
+"history_import_success" = "%d sessions importees";
+"history_import_skipped" = "%d sessions en double ignorees";
+"history_import_error" = "Echec de l'importation";
+"history_search" = "Rechercher";
+"history_filter" = "Filtrer";
+"history_sort" = "Trier";
+"history_delete_session" = "Supprimer la session";
+"history_chart" = "Graphique d'activite";
+"history_last_7_days" = "7 derniers jours";
+
+// Filter Options
+"filter_all" = "Tout";
+"filter_today" = "Aujourd'hui";
+"filter_this_week" = "Cette semaine";
+"filter_this_month" = "Ce mois";
+"filter_timer_only" = "Minuterie uniquement";
+"filter_manual_only" = "Manuel uniquement";
+
+// Sort Options
+"sort_date_desc" = "Plus recent d'abord";
+"sort_date_asc" = "Plus ancien d'abord";
+"sort_duration_desc" = "Plus long d'abord";
+"sort_duration_asc" = "Plus court d'abord";
+
+// Onboarding
+"onboarding_welcome" = "Bienvenue dans Weakup";
+"onboarding_welcome_message" = "Gardez votre Mac eveille en un clic";
+"onboarding_feature1_title" = "Empecher la veille";
+"onboarding_feature1_desc" = "Empchez votre Mac de se mettre en veille pendant les taches importantes";
+"onboarding_feature2_title" = "Mode minuterie";
+"onboarding_feature2_desc" = "Definissez une minuterie pour desactiver automatiquement la prevention de veille";
+"onboarding_feature3_title" = "Raccourci clavier";
+"onboarding_feature3_desc" = "Utilisez Cmd+Ctrl+0 pour basculer rapidement la prevention de veille";
+"onboarding_get_started" = "Commencer";
+"onboarding_skip" = "Passer";
+"onboarding_next" = "Suivant";

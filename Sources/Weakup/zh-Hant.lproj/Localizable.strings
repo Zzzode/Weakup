@@ -52,5 +52,93 @@
 "notification_action_restart" = "重新開始";
 "notification_action_dismiss" = "關閉";
 
+// Menu Bar
+"show_countdown_in_menu_bar" = "顯示倒數計時";
+
+// Startup
+"launch_at_login" = "登入時啟動";
+"launch_at_login_error" = "登入時啟動錯誤";
+"launch_at_login_permission_denied" = "權限被拒絕。請檢查系統設定 > 登入項目。";
+"launch_at_login_not_supported" = "此系統不支援登入時啟動。";
+"launch_at_login_enable_failed" = "無法啟用登入時啟動。";
+"launch_at_login_disable_failed" = "無法停用登入時啟動。";
+
+// History
+"history_title" = "活動記錄";
+"history_today" = "今天";
+"history_this_week" = "本週";
+"history_total" = "總計";
+"history_average" = "平均";
+"history_sessions" = "次";
+"history_per_session" = "每次";
+"history_recent_sessions" = "最近記錄";
+"history_clear" = "清除";
+"history_clear_confirm_title" = "清除記錄？";
+"history_clear_confirm_message" = "這將刪除所有活動記錄。此操作無法復原。";
+"history_no_sessions" = "尚無記錄";
+"history_timer_mode" = "計時器";
+"history_privacy_note" = "記錄僅儲存在您的裝置上";
+
+// Hotkey
+"hotkey" = "快捷鍵";
+"hotkey_current" = "目前";
+"hotkey_record" = "錄製新快捷鍵";
+"hotkey_reset" = "重設";
+"hotkey_recording" = "請按下按鍵...";
+"hotkey_conflict_message" = "此快捷鍵可能與其他應用程式衝突";
+
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "與 %@ (%@) 衝突";
+"hotkey_conflict_app" = "可能與 %@ (%@) 衝突";
+"hotkey_conflict_possible" = "可能與 %@ (%@) 有衝突";
+"hotkey_conflict_suggestion_high" = "建議選擇其他快捷鍵以避免系統衝突";
+"hotkey_conflict_suggestion_medium" = "此快捷鍵在某些應用程式中可能無法使用";
+"hotkey_conflict_suggestion_low" = "此快捷鍵在大多數情況下可以正常使用";
+"hotkey_override_conflict" = "仍然使用";
+"hotkey_conflict_warning" = "快捷鍵衝突";
+"hotkey_no_conflict" = "未偵測到衝突";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 快捷切換";
+
+// History Export/Import
+"history_export" = "匯出";
+"history_import" = "匯入";
+"history_export_format" = "匯出格式";
+"history_export_success" = "記錄匯出成功";
+"history_import_success" = "已匯入 %d 筆記錄";
+"history_import_skipped" = "已跳過 %d 筆重複記錄";
+"history_import_error" = "匯入失敗";
+"history_search" = "搜尋";
+"history_filter" = "篩選";
+"history_sort" = "排序";
+"history_delete_session" = "刪除記錄";
+"history_chart" = "活動圖表";
+"history_last_7_days" = "最近 7 天";
+
+// Filter Options
+"filter_all" = "全部";
+"filter_today" = "今天";
+"filter_this_week" = "本週";
+"filter_this_month" = "本月";
+"filter_timer_only" = "僅計時器";
+"filter_manual_only" = "僅手動";
+
+// Sort Options
+"sort_date_desc" = "最新優先";
+"sort_date_asc" = "最舊優先";
+"sort_duration_desc" = "最長優先";
+"sort_duration_asc" = "最短優先";
+
+// Onboarding
+"onboarding_welcome" = "歡迎使用 Weakup";
+"onboarding_welcome_message" = "一鍵讓您的 Mac 保持喚醒";
+"onboarding_feature1_title" = "防止休眠";
+"onboarding_feature1_desc" = "在重要任務期間防止 Mac 進入休眠";
+"onboarding_feature2_title" = "計時模式";
+"onboarding_feature2_desc" = "設定計時器自動停止防休眠";
+"onboarding_feature3_title" = "鍵盤快捷鍵";
+"onboarding_feature3_desc" = "使用 Cmd+Ctrl+0 快速切換防休眠";
+"onboarding_get_started" = "開始使用";
+"onboarding_skip" = "跳過";
+"onboarding_next" = "下一步";

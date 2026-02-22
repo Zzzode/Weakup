@@ -50,6 +50,11 @@
 
 // Startup
 "launch_at_login" = "Launch at Login";
+"launch_at_login_error" = "Launch at Login Error";
+"launch_at_login_permission_denied" = "Permission denied. Please check System Settings > Login Items.";
+"launch_at_login_not_supported" = "Launch at login is not supported on this system.";
+"launch_at_login_enable_failed" = "Failed to enable launch at login.";
+"launch_at_login_disable_failed" = "Failed to disable launch at login.";
 
 // Notifications
 "notifications" = "Notifications";
@@ -82,5 +87,58 @@
 "hotkey_recording" = "Press keys...";
 "hotkey_conflict_message" = "This shortcut may conflict with another app";
 
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "Conflicts with %@ (%@)";
+"hotkey_conflict_app" = "May conflict with %@ (%@)";
+"hotkey_conflict_possible" = "Possible conflict with %@ (%@)";
+"hotkey_conflict_suggestion_high" = "Choose a different shortcut to avoid system conflicts";
+"hotkey_conflict_suggestion_medium" = "This shortcut may not work in some apps";
+"hotkey_conflict_suggestion_low" = "This shortcut should work in most cases";
+"hotkey_override_conflict" = "Use anyway";
+"hotkey_conflict_warning" = "Shortcut Conflict";
+"hotkey_no_conflict" = "No conflicts detected";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 to toggle";
+
+// History Export/Import
+"history_export" = "Export";
+"history_import" = "Import";
+"history_export_format" = "Export Format";
+"history_export_success" = "History exported successfully";
+"history_import_success" = "Imported %d sessions";
+"history_import_skipped" = "Skipped %d duplicate sessions";
+"history_import_error" = "Import failed";
+"history_search" = "Search";
+"history_filter" = "Filter";
+"history_sort" = "Sort";
+"history_delete_session" = "Delete Session";
+"history_chart" = "Activity Chart";
+"history_last_7_days" = "Last 7 Days";
+
+// Filter Options
+"filter_all" = "All";
+"filter_today" = "Today";
+"filter_this_week" = "This Week";
+"filter_this_month" = "This Month";
+"filter_timer_only" = "Timer Only";
+"filter_manual_only" = "Manual Only";
+
+// Sort Options
+"sort_date_desc" = "Newest First";
+"sort_date_asc" = "Oldest First";
+"sort_duration_desc" = "Longest First";
+"sort_duration_asc" = "Shortest First";
+
+// Onboarding
+"onboarding_welcome" = "Welcome to Weakup";
+"onboarding_welcome_message" = "Keep your Mac awake with a single click";
+"onboarding_feature1_title" = "Prevent Sleep";
+"onboarding_feature1_desc" = "Stop your Mac from sleeping during important tasks";
+"onboarding_feature2_title" = "Timer Mode";
+"onboarding_feature2_desc" = "Set a timer to automatically disable sleep prevention";
+"onboarding_feature3_title" = "Keyboard Shortcut";
+"onboarding_feature3_desc" = "Use Cmd+Ctrl+0 to quickly toggle sleep prevention";
+"onboarding_get_started" = "Get Started";
+"onboarding_skip" = "Skip";
+"onboarding_next" = "Next";

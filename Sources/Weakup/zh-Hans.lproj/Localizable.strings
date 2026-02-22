@@ -50,6 +50,11 @@
 
 // Startup
 "launch_at_login" = "开机启动";
+"launch_at_login_error" = "开机启动错误";
+"launch_at_login_permission_denied" = "权限被拒绝。请检查系统设置 > 登录项。";
+"launch_at_login_not_supported" = "此系统不支持开机启动功能。";
+"launch_at_login_enable_failed" = "启用开机启动失败。";
+"launch_at_login_disable_failed" = "禁用开机启动失败。";
 
 // Notifications
 "notifications" = "通知";
@@ -82,5 +87,58 @@
 "hotkey_recording" = "请按键...";
 "hotkey_conflict_message" = "此快捷键可能与其他应用冲突";
 
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "与 %@ (%@) 冲突";
+"hotkey_conflict_app" = "可能与 %@ (%@) 冲突";
+"hotkey_conflict_possible" = "可能与 %@ (%@) 有冲突";
+"hotkey_conflict_suggestion_high" = "建议选择其他快捷键以避免系统冲突";
+"hotkey_conflict_suggestion_medium" = "此快捷键在某些应用中可能无法使用";
+"hotkey_conflict_suggestion_low" = "此快捷键在大多数情况下可以正常使用";
+"hotkey_override_conflict" = "仍然使用";
+"hotkey_conflict_warning" = "快捷键冲突";
+"hotkey_no_conflict" = "未检测到冲突";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 快捷切换";
+
+// History Export/Import
+"history_export" = "导出";
+"history_import" = "导入";
+"history_export_format" = "导出格式";
+"history_export_success" = "历史记录导出成功";
+"history_import_success" = "已导入 %d 条会话";
+"history_import_skipped" = "跳过 %d 条重复会话";
+"history_import_error" = "导入失败";
+"history_search" = "搜索";
+"history_filter" = "筛选";
+"history_sort" = "排序";
+"history_delete_session" = "删除会话";
+"history_chart" = "活动图表";
+"history_last_7_days" = "最近7天";
+
+// Filter Options
+"filter_all" = "全部";
+"filter_today" = "今天";
+"filter_this_week" = "本周";
+"filter_this_month" = "本月";
+"filter_timer_only" = "仅定时";
+"filter_manual_only" = "仅手动";
+
+// Sort Options
+"sort_date_desc" = "最新优先";
+"sort_date_asc" = "最早优先";
+"sort_duration_desc" = "最长优先";
+"sort_duration_asc" = "最短优先";
+
+// Onboarding
+"onboarding_welcome" = "欢迎使用 Weakup";
+"onboarding_welcome_message" = "一键保持 Mac 唤醒";
+"onboarding_feature1_title" = "防止休眠";
+"onboarding_feature1_desc" = "在重要任务期间阻止 Mac 进入休眠";
+"onboarding_feature2_title" = "定时模式";
+"onboarding_feature2_desc" = "设置定时器自动关闭防休眠";
+"onboarding_feature3_title" = "快捷键";
+"onboarding_feature3_desc" = "使用 Cmd+Ctrl+0 快速切换防休眠";
+"onboarding_get_started" = "开始使用";
+"onboarding_skip" = "跳过";
+"onboarding_next" = "下一步";

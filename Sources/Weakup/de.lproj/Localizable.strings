@@ -52,5 +52,93 @@
 "notification_action_restart" = "Timer neu starten";
 "notification_action_dismiss" = "Schliessen";
 
+// Menu Bar
+"show_countdown_in_menu_bar" = "Countdown anzeigen";
+
+// Startup
+"launch_at_login" = "Bei Anmeldung starten";
+"launch_at_login_error" = "Fehler beim Start bei Anmeldung";
+"launch_at_login_permission_denied" = "Berechtigung verweigert. Bitte Systemeinstellungen > Anmeldeobjekte prufen.";
+"launch_at_login_not_supported" = "Start bei Anmeldung wird auf diesem System nicht unterstutzt.";
+"launch_at_login_enable_failed" = "Start bei Anmeldung konnte nicht aktiviert werden.";
+"launch_at_login_disable_failed" = "Start bei Anmeldung konnte nicht deaktiviert werden.";
+
+// History
+"history_title" = "Aktivitatsverlauf";
+"history_today" = "Heute";
+"history_this_week" = "Diese Woche";
+"history_total" = "Gesamt";
+"history_average" = "Durchschnitt";
+"history_sessions" = "Sitzungen";
+"history_per_session" = "pro Sitzung";
+"history_recent_sessions" = "Letzte Sitzungen";
+"history_clear" = "Loschen";
+"history_clear_confirm_title" = "Verlauf loschen?";
+"history_clear_confirm_message" = "Dies loscht den gesamten Aktivitatsverlauf. Diese Aktion kann nicht ruckgangig gemacht werden.";
+"history_no_sessions" = "Noch keine Sitzungen aufgezeichnet";
+"history_timer_mode" = "Timer";
+"history_privacy_note" = "Der Verlauf wird lokal auf Ihrem Gerat gespeichert";
+
+// Hotkey
+"hotkey" = "Tastenkurzel";
+"hotkey_current" = "Aktuell";
+"hotkey_record" = "Neu aufnehmen";
+"hotkey_reset" = "Zurucksetzen";
+"hotkey_recording" = "Tasten drucken...";
+"hotkey_conflict_message" = "Dieses Tastenkurzel konnte mit einer anderen App in Konflikt stehen";
+
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "Konflikt mit %@ (%@)";
+"hotkey_conflict_app" = "Moglicher Konflikt mit %@ (%@)";
+"hotkey_conflict_possible" = "Moglicher Konflikt mit %@ (%@)";
+"hotkey_conflict_suggestion_high" = "Wahlen Sie ein anderes Tastenkurzel, um Systemkonflikte zu vermeiden";
+"hotkey_conflict_suggestion_medium" = "Dieses Tastenkurzel funktioniert moglicherweise nicht in allen Apps";
+"hotkey_conflict_suggestion_low" = "Dieses Tastenkurzel sollte in den meisten Fallen funktionieren";
+"hotkey_override_conflict" = "Trotzdem verwenden";
+"hotkey_conflict_warning" = "Tastenkurzel-Konflikt";
+"hotkey_no_conflict" = "Keine Konflikte erkannt";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 zum Umschalten";
+
+// History Export/Import
+"history_export" = "Exportieren";
+"history_import" = "Importieren";
+"history_export_format" = "Exportformat";
+"history_export_success" = "Verlauf erfolgreich exportiert";
+"history_import_success" = "%d Sitzungen importiert";
+"history_import_skipped" = "%d doppelte Sitzungen ubersprungen";
+"history_import_error" = "Import fehlgeschlagen";
+"history_search" = "Suchen";
+"history_filter" = "Filtern";
+"history_sort" = "Sortieren";
+"history_delete_session" = "Sitzung loschen";
+"history_chart" = "Aktivitatsdiagramm";
+"history_last_7_days" = "Letzte 7 Tage";
+
+// Filter Options
+"filter_all" = "Alle";
+"filter_today" = "Heute";
+"filter_this_week" = "Diese Woche";
+"filter_this_month" = "Dieser Monat";
+"filter_timer_only" = "Nur Timer";
+"filter_manual_only" = "Nur manuell";
+
+// Sort Options
+"sort_date_desc" = "Neueste zuerst";
+"sort_date_asc" = "Alteste zuerst";
+"sort_duration_desc" = "Langste zuerst";
+"sort_duration_asc" = "Kurzeste zuerst";
+
+// Onboarding
+"onboarding_welcome" = "Willkommen bei Weakup";
+"onboarding_welcome_message" = "Halten Sie Ihren Mac mit einem Klick wach";
+"onboarding_feature1_title" = "Ruhezustand verhindern";
+"onboarding_feature1_desc" = "Verhindern Sie, dass Ihr Mac wahrend wichtiger Aufgaben in den Ruhezustand geht";
+"onboarding_feature2_title" = "Timer-Modus";
+"onboarding_feature2_desc" = "Stellen Sie einen Timer ein, um die Ruhezustand-Verhinderung automatisch zu deaktivieren";
+"onboarding_feature3_title" = "Tastenkurzel";
+"onboarding_feature3_desc" = "Verwenden Sie Cmd+Ctrl+0, um die Ruhezustand-Verhinderung schnell umzuschalten";
+"onboarding_get_started" = "Loslegen";
+"onboarding_skip" = "Uberspringen";
+"onboarding_next" = "Weiter";

@@ -52,5 +52,93 @@
 "notification_action_restart" = "타이머 재시작";
 "notification_action_dismiss" = "닫기";
 
+// Menu Bar
+"show_countdown_in_menu_bar" = "카운트다운 표시";
+
+// Startup
+"launch_at_login" = "로그인 시 실행";
+"launch_at_login_error" = "로그인 시 실행 오류";
+"launch_at_login_permission_denied" = "권한이 거부되었습니다. 시스템 설정 > 로그인 항목을 확인하세요.";
+"launch_at_login_not_supported" = "이 시스템에서는 로그인 시 실행이 지원되지 않습니다.";
+"launch_at_login_enable_failed" = "로그인 시 실행을 활성화하지 못했습니다.";
+"launch_at_login_disable_failed" = "로그인 시 실행을 비활성화하지 못했습니다.";
+
+// History
+"history_title" = "활동 기록";
+"history_today" = "오늘";
+"history_this_week" = "이번 주";
+"history_total" = "총계";
+"history_average" = "평균";
+"history_sessions" = "세션";
+"history_per_session" = "세션당";
+"history_recent_sessions" = "최근 세션";
+"history_clear" = "지우기";
+"history_clear_confirm_title" = "기록을 지우시겠습니까?";
+"history_clear_confirm_message" = "모든 활동 기록이 삭제됩니다. 이 작업은 취소할 수 없습니다.";
+"history_no_sessions" = "아직 기록된 세션이 없습니다";
+"history_timer_mode" = "타이머";
+"history_privacy_note" = "기록은 기기에 로컬로 저장됩니다";
+
+// Hotkey
+"hotkey" = "단축키";
+"hotkey_current" = "현재";
+"hotkey_record" = "새로 녹음";
+"hotkey_reset" = "재설정";
+"hotkey_recording" = "키를 누르세요...";
+"hotkey_conflict_message" = "이 단축키는 다른 앱과 충돌할 수 있습니다";
+
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "%@ (%@)와(과) 충돌합니다";
+"hotkey_conflict_app" = "%@ (%@)와(과) 충돌할 수 있습니다";
+"hotkey_conflict_possible" = "%@ (%@)와(과) 충돌 가능성이 있습니다";
+"hotkey_conflict_suggestion_high" = "시스템 충돌을 피하려면 다른 단축키를 선택하세요";
+"hotkey_conflict_suggestion_medium" = "이 단축키는 일부 앱에서 작동하지 않을 수 있습니다";
+"hotkey_conflict_suggestion_low" = "이 단축키는 대부분의 경우 작동합니다";
+"hotkey_override_conflict" = "그래도 사용";
+"hotkey_conflict_warning" = "단축키 충돌";
+"hotkey_no_conflict" = "충돌이 감지되지 않았습니다";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 으로 전환";
+
+// History Export/Import
+"history_export" = "내보내기";
+"history_import" = "가져오기";
+"history_export_format" = "내보내기 형식";
+"history_export_success" = "기록을 성공적으로 내보냈습니다";
+"history_import_success" = "%d개의 세션을 가져왔습니다";
+"history_import_skipped" = "%d개의 중복 세션을 건너뛰었습니다";
+"history_import_error" = "가져오기 실패";
+"history_search" = "검색";
+"history_filter" = "필터";
+"history_sort" = "정렬";
+"history_delete_session" = "세션 삭제";
+"history_chart" = "활동 차트";
+"history_last_7_days" = "최근 7일";
+
+// Filter Options
+"filter_all" = "전체";
+"filter_today" = "오늘";
+"filter_this_week" = "이번 주";
+"filter_this_month" = "이번 달";
+"filter_timer_only" = "타이머만";
+"filter_manual_only" = "수동만";
+
+// Sort Options
+"sort_date_desc" = "최신순";
+"sort_date_asc" = "오래된순";
+"sort_duration_desc" = "긴 순서";
+"sort_duration_asc" = "짧은 순서";
+
+// Onboarding
+"onboarding_welcome" = "Weakup에 오신 것을 환영합니다";
+"onboarding_welcome_message" = "한 번의 클릭으로 Mac을 깨어 있게 하세요";
+"onboarding_feature1_title" = "잠자기 방지";
+"onboarding_feature1_desc" = "중요한 작업 중 Mac이 잠자기 모드로 전환되는 것을 방지합니다";
+"onboarding_feature2_title" = "타이머 모드";
+"onboarding_feature2_desc" = "타이머를 설정하여 잠자기 방지를 자동으로 해제합니다";
+"onboarding_feature3_title" = "키보드 단축키";
+"onboarding_feature3_desc" = "Cmd+Ctrl+0으로 잠자기 방지를 빠르게 전환하세요";
+"onboarding_get_started" = "시작하기";
+"onboarding_skip" = "건너뛰기";
+"onboarding_next" = "다음";

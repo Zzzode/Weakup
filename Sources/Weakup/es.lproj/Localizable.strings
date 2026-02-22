@@ -52,5 +52,93 @@
 "notification_action_restart" = "Reiniciar temporizador";
 "notification_action_dismiss" = "Cerrar";
 
+// Menu Bar
+"show_countdown_in_menu_bar" = "Mostrar cuenta regresiva";
+
+// Startup
+"launch_at_login" = "Iniciar al arrancar";
+"launch_at_login_error" = "Error al iniciar al arrancar";
+"launch_at_login_permission_denied" = "Permiso denegado. Por favor, revisa Ajustes del Sistema > Elementos de inicio.";
+"launch_at_login_not_supported" = "Iniciar al arrancar no es compatible con este sistema.";
+"launch_at_login_enable_failed" = "No se pudo activar iniciar al arrancar.";
+"launch_at_login_disable_failed" = "No se pudo desactivar iniciar al arrancar.";
+
+// History
+"history_title" = "Historial de actividad";
+"history_today" = "Hoy";
+"history_this_week" = "Esta semana";
+"history_total" = "Total";
+"history_average" = "Promedio";
+"history_sessions" = "sesiones";
+"history_per_session" = "por sesion";
+"history_recent_sessions" = "Sesiones recientes";
+"history_clear" = "Borrar";
+"history_clear_confirm_title" = "Borrar historial?";
+"history_clear_confirm_message" = "Esto eliminara todo el historial de actividad. Esta accion no se puede deshacer.";
+"history_no_sessions" = "Aun no hay sesiones registradas";
+"history_timer_mode" = "Temporizador";
+"history_privacy_note" = "El historial se almacena localmente en tu dispositivo";
+
+// Hotkey
+"hotkey" = "Atajo de teclado";
+"hotkey_current" = "Actual";
+"hotkey_record" = "Grabar nuevo";
+"hotkey_reset" = "Restablecer";
+"hotkey_recording" = "Presiona las teclas...";
+"hotkey_conflict_message" = "Este atajo puede entrar en conflicto con otra aplicacion";
+
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "Conflicto con %@ (%@)";
+"hotkey_conflict_app" = "Puede entrar en conflicto con %@ (%@)";
+"hotkey_conflict_possible" = "Posible conflicto con %@ (%@)";
+"hotkey_conflict_suggestion_high" = "Elige un atajo diferente para evitar conflictos del sistema";
+"hotkey_conflict_suggestion_medium" = "Este atajo puede no funcionar en algunas aplicaciones";
+"hotkey_conflict_suggestion_low" = "Este atajo deberia funcionar en la mayoria de los casos";
+"hotkey_override_conflict" = "Usar de todos modos";
+"hotkey_conflict_warning" = "Conflicto de atajo";
+"hotkey_no_conflict" = "No se detectaron conflictos";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 para alternar";
+
+// History Export/Import
+"history_export" = "Exportar";
+"history_import" = "Importar";
+"history_export_format" = "Formato de exportacion";
+"history_export_success" = "Historial exportado con exito";
+"history_import_success" = "%d sesiones importadas";
+"history_import_skipped" = "%d sesiones duplicadas omitidas";
+"history_import_error" = "Error en la importacion";
+"history_search" = "Buscar";
+"history_filter" = "Filtrar";
+"history_sort" = "Ordenar";
+"history_delete_session" = "Eliminar sesion";
+"history_chart" = "Grafico de actividad";
+"history_last_7_days" = "Ultimos 7 dias";
+
+// Filter Options
+"filter_all" = "Todo";
+"filter_today" = "Hoy";
+"filter_this_week" = "Esta semana";
+"filter_this_month" = "Este mes";
+"filter_timer_only" = "Solo temporizador";
+"filter_manual_only" = "Solo manual";
+
+// Sort Options
+"sort_date_desc" = "Mas reciente primero";
+"sort_date_asc" = "Mas antiguo primero";
+"sort_duration_desc" = "Mas largo primero";
+"sort_duration_asc" = "Mas corto primero";
+
+// Onboarding
+"onboarding_welcome" = "Bienvenido a Weakup";
+"onboarding_welcome_message" = "Manten tu Mac despierto con un solo clic";
+"onboarding_feature1_title" = "Evitar suspension";
+"onboarding_feature1_desc" = "Evita que tu Mac entre en suspension durante tareas importantes";
+"onboarding_feature2_title" = "Modo temporizador";
+"onboarding_feature2_desc" = "Configura un temporizador para desactivar automaticamente la prevencion de suspension";
+"onboarding_feature3_title" = "Atajo de teclado";
+"onboarding_feature3_desc" = "Usa Cmd+Ctrl+0 para alternar rapidamente la prevencion de suspension";
+"onboarding_get_started" = "Comenzar";
+"onboarding_skip" = "Omitir";
+"onboarding_next" = "Siguiente";

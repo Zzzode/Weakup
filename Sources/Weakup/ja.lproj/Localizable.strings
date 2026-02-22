@@ -52,5 +52,93 @@
 "notification_action_restart" = "タイマー再開";
 "notification_action_dismiss" = "閉じる";
 
+// Menu Bar
+"show_countdown_in_menu_bar" = "カウントダウンを表示";
+
+// Startup
+"launch_at_login" = "ログイン時に起動";
+"launch_at_login_error" = "ログイン時起動エラー";
+"launch_at_login_permission_denied" = "権限が拒否されました。システム設定 > ログイン項目を確認してください。";
+"launch_at_login_not_supported" = "このシステムではログイン時起動はサポートされていません。";
+"launch_at_login_enable_failed" = "ログイン時起動を有効にできませんでした。";
+"launch_at_login_disable_failed" = "ログイン時起動を無効にできませんでした。";
+
+// History
+"history_title" = "アクティビティ履歴";
+"history_today" = "今日";
+"history_this_week" = "今週";
+"history_total" = "合計";
+"history_average" = "平均";
+"history_sessions" = "セッション";
+"history_per_session" = "セッションあたり";
+"history_recent_sessions" = "最近のセッション";
+"history_clear" = "クリア";
+"history_clear_confirm_title" = "履歴をクリアしますか？";
+"history_clear_confirm_message" = "すべてのアクティビティ履歴が削除されます。この操作は取り消せません。";
+"history_no_sessions" = "まだセッションがありません";
+"history_timer_mode" = "タイマー";
+"history_privacy_note" = "履歴はデバイスにローカル保存されます";
+
+// Hotkey
+"hotkey" = "ホットキー";
+"hotkey_current" = "現在";
+"hotkey_record" = "新規録音";
+"hotkey_reset" = "リセット";
+"hotkey_recording" = "キーを押してください...";
+"hotkey_conflict_message" = "このショートカットは他のアプリと競合する可能性があります";
+
+// Hotkey Conflict Detection
+"hotkey_conflict_system" = "%@ (%@) と競合しています";
+"hotkey_conflict_app" = "%@ (%@) と競合する可能性があります";
+"hotkey_conflict_possible" = "%@ (%@) との競合の可能性があります";
+"hotkey_conflict_suggestion_high" = "システムの競合を避けるため、別のショートカットを選択してください";
+"hotkey_conflict_suggestion_medium" = "このショートカットは一部のアプリで動作しない可能性があります";
+"hotkey_conflict_suggestion_low" = "このショートカットはほとんどの場合で動作するはずです";
+"hotkey_override_conflict" = "それでも使用";
+"hotkey_conflict_warning" = "ショートカットの競合";
+"hotkey_no_conflict" = "競合は検出されませんでした";
+
 // Hints
 "shortcut_hint" = "Cmd + Ctrl + 0 で切り替え";
+
+// History Export/Import
+"history_export" = "エクスポート";
+"history_import" = "インポート";
+"history_export_format" = "エクスポート形式";
+"history_export_success" = "履歴のエクスポートに成功しました";
+"history_import_success" = "%d セッションをインポートしました";
+"history_import_skipped" = "%d 件の重複セッションをスキップしました";
+"history_import_error" = "インポートに失敗しました";
+"history_search" = "検索";
+"history_filter" = "フィルター";
+"history_sort" = "並べ替え";
+"history_delete_session" = "セッションを削除";
+"history_chart" = "アクティビティチャート";
+"history_last_7_days" = "過去7日間";
+
+// Filter Options
+"filter_all" = "すべて";
+"filter_today" = "今日";
+"filter_this_week" = "今週";
+"filter_this_month" = "今月";
+"filter_timer_only" = "タイマーのみ";
+"filter_manual_only" = "手動のみ";
+
+// Sort Options
+"sort_date_desc" = "新しい順";
+"sort_date_asc" = "古い順";
+"sort_duration_desc" = "長い順";
+"sort_duration_asc" = "短い順";
+
+// Onboarding
+"onboarding_welcome" = "Weakup へようこそ";
+"onboarding_welcome_message" = "ワンクリックで Mac をスリープさせません";
+"onboarding_feature1_title" = "スリープ防止";
+"onboarding_feature1_desc" = "重要な作業中に Mac がスリープするのを防ぎます";
+"onboarding_feature2_title" = "タイマーモード";
+"onboarding_feature2_desc" = "タイマーを設定してスリープ防止を自動で解除";
+"onboarding_feature3_title" = "キーボードショートカット";
+"onboarding_feature3_desc" = "Cmd+Ctrl+0 でスリープ防止を素早く切り替え";
+"onboarding_get_started" = "始める";
+"onboarding_skip" = "スキップ";
+"onboarding_next" = "次へ";
