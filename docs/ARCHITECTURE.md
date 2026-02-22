@@ -1,99 +1,296 @@
 # Weakup Architecture
 
-This document provides an overview of the Weakup application architecture.
+This document provides a comprehensive overview of the Weakup application architecture.
 
 ## Overview
 
 Weakup is a macOS menu bar application that prevents system sleep using Apple's IOPMAssertion API. The app is built with Swift 6.0 using a combination of SwiftUI for the settings UI and AppKit for system integration.
 
-## System Architecture
+## High-Level Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        macOS System                              │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │   Menu Bar      │  │   IOKit         │  │   UserDefaults  │  │
-│  │   (NSStatusBar) │  │   (Power Mgmt)  │  │   (Preferences) │  │
-│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘  │
-└───────────┼────────────────────┼────────────────────┼───────────┘
-            │                    │                    │
-┌───────────┼────────────────────┼────────────────────┼───────────┐
-│           ▼                    ▼                    ▼           │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                     AppDelegate                          │   │
-│  │  - Status bar setup                                      │   │
-│  │  - Menu management                                       │   │
-│  │  - Hotkey registration                                   │   │
-│  └─────────────────────────┬───────────────────────────────┘   │
-│                            │                                    │
-│           ┌────────────────┼────────────────┐                  │
-│           ▼                ▼                ▼                  │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐    │
-│  │SettingsView │  │CaffeineVM   │  │      L10n           │    │
-│  │  (SwiftUI)  │  │(ViewModel)  │  │  (Localization)     │    │
-│  └─────────────┘  └─────────────┘  └─────────────────────┘    │
-│                                                                 │
-│                        Weakup.app                               │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              macOS System Layer                              │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌─────────────┐  │
+│  │  NSStatusBar  │  │    IOKit      │  │ UserDefaults  │  │ UNUserNotif │  │
+│  │  (Menu Bar)   │  │ (Power Mgmt)  │  │ (Preferences) │  │ (Alerts)    │  │
+│  └───────┬───────┘  └───────┬───────┘  └───────┬───────┘  └──────┬──────┘  │
+└──────────┼──────────────────┼──────────────────┼─────────────────┼──────────┘
+           │                  │                  │                 │
+┌──────────┼──────────────────┼──────────────────┼─────────────────┼──────────┐
+│          ▼                  ▼                  ▼                 ▼          │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                         Weakup (App Target)                          │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────────┐  │   │
+│  │  │   AppDelegate   │  │  SettingsView   │  │    HistoryView      │  │   │
+│  │  │  (Entry Point)  │  │   (SwiftUI)     │  │    (SwiftUI)        │  │   │
+│  │  └────────┬────────┘  └────────┬────────┘  └──────────┬──────────┘  │   │
+│  └───────────┼────────────────────┼──────────────────────┼─────────────┘   │
+│              │                    │                      │                  │
+│  ┌───────────┼────────────────────┼──────────────────────┼─────────────┐   │
+│  │           ▼                    ▼                      ▼             │   │
+│  │  ┌─────────────────────────────────────────────────────────────┐   │   │
+│  │  │                    WeakupCore (Library Target)               │   │   │
+│  │  │                                                              │   │   │
+│  │  │  ┌──────────────────────────────────────────────────────┐   │   │   │
+│  │  │  │                    ViewModels                         │   │   │   │
+│  │  │  │  ┌─────────────────────────────────────────────────┐ │   │   │   │
+│  │  │  │  │              CaffeineViewModel                   │ │   │   │   │
+│  │  │  │  │  - Sleep prevention state                        │ │   │   │   │
+│  │  │  │  │  - Timer management                              │ │   │   │   │
+│  │  │  │  │  - IOPMAssertion lifecycle                       │ │   │   │   │
+│  │  │  │  └─────────────────────────────────────────────────┘ │   │   │   │
+│  │  │  └──────────────────────────────────────────────────────┘   │   │   │
+│  │  │                                                              │   │   │
+│  │  │  ┌──────────────────────────────────────────────────────┐   │   │   │
+│  │  │  │                    Utilities                          │   │   │   │
+│  │  │  │  ┌────────────┐ ┌────────────┐ ┌────────────────────┐│   │   │   │
+│  │  │  │  │   L10n     │ │ IconMgr    │ │ NotificationMgr    ││   │   │   │
+│  │  │  │  └────────────┘ └────────────┘ └────────────────────┘│   │   │   │
+│  │  │  │  ┌────────────┐ ┌────────────┐ ┌────────────────────┐│   │   │   │
+│  │  │  │  │ HotkeyMgr  │ │ ThemeMgr   │ │ ActivityHistoryMgr ││   │   │   │
+│  │  │  │  └────────────┘ └────────────┘ └────────────────────┘│   │   │   │
+│  │  │  │  ┌────────────┐                                      │   │   │   │
+│  │  │  │  │LaunchLogin │                                      │   │   │   │
+│  │  │  │  └────────────┘                                      │   │   │   │
+│  │  │  └──────────────────────────────────────────────────────┘   │   │   │
+│  │  │                                                              │   │   │
+│  │  │  ┌──────────────────────────────────────────────────────┐   │   │   │
+│  │  │  │                     Models                            │   │   │   │
+│  │  │  │  ┌─────────────────┐  ┌─────────────────────────────┐│   │   │   │
+│  │  │  │  │ ActivitySession │  │    ActivityStatistics       ││   │   │   │
+│  │  │  │  └─────────────────┘  └─────────────────────────────┘│   │   │   │
+│  │  │  └──────────────────────────────────────────────────────┘   │   │   │
+│  │  └─────────────────────────────────────────────────────────────┘   │   │
+│  └────────────────────────────────────────────────────────────────────┘   │
+│                                                                            │
+│                              Weakup.app                                    │
+└────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Component Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           WeakupCore Library                             │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                        CaffeineViewModel                         │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │    │
+│  │  │  isActive   │  │ timerMode   │  │    timeRemaining        │  │    │
+│  │  │   (Bool)    │  │   (Bool)    │  │   (TimeInterval)        │  │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────────────────┘  │    │
+│  │  ┌─────────────────────────────────────────────────────────────┐│    │
+│  │  │ Methods: start() | stop() | toggle() | setTimerDuration()   ││    │
+│  │  └─────────────────────────────────────────────────────────────┘│    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                              │                                           │
+│                              │ uses                                      │
+│                              ▼                                           │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                     Manager Singletons                           │    │
+│  │                                                                   │    │
+│  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────────┐    │    │
+│  │  │     L10n      │  │  IconManager  │  │NotificationManager│    │    │
+│  │  │   .shared     │  │    .shared    │  │      .shared      │    │    │
+│  │  │               │  │               │  │                   │    │    │
+│  │  │ - language    │  │ - iconStyle   │  │ - enabled         │    │    │
+│  │  │ - strings     │  │ - images      │  │ - authorized      │    │    │
+│  │  └───────────────┘  └───────────────┘  └───────────────────┘    │    │
+│  │                                                                   │    │
+│  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────────┐    │    │
+│  │  │ HotkeyManager │  │ ThemeManager  │  │ActivityHistoryMgr │    │    │
+│  │  │    .shared    │  │    .shared    │  │      .shared      │    │    │
+│  │  │               │  │               │  │                   │    │    │
+│  │  │ - config      │  │ - theme       │  │ - sessions        │    │    │
+│  │  │ - conflicts   │  │ - colorScheme │  │ - statistics      │    │    │
+│  │  └───────────────┘  └───────────────┘  └───────────────────┘    │    │
+│  │                                                                   │    │
+│  │  ┌───────────────────────────────────────────────────────────┐  │    │
+│  │  │                  LaunchAtLoginManager                      │  │    │
+│  │  │                        .shared                             │  │    │
+│  │  │                                                            │  │    │
+│  │  │  - isEnabled: Bool                                         │  │    │
+│  │  │  - Uses SMAppService for login item management             │  │    │
+│  │  └───────────────────────────────────────────────────────────┘  │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Sequence Diagram: Sleep Prevention Toggle
+
+```
+┌──────┐     ┌───────────┐     ┌─────────────────┐     ┌───────┐     ┌──────────────────┐
+│ User │     │AppDelegate│     │CaffeineViewModel│     │ IOKit │     │ActivityHistoryMgr│
+└──┬───┘     └─────┬─────┘     └────────┬────────┘     └───┬───┘     └────────┬─────────┘
+   │               │                    │                  │                  │
+   │  Click Icon   │                    │                  │                  │
+   │──────────────>│                    │                  │                  │
+   │               │                    │                  │                  │
+   │               │    toggle()        │                  │                  │
+   │               │───────────────────>│                  │                  │
+   │               │                    │                  │                  │
+   │               │                    │  IOPMAssertion   │                  │
+   │               │                    │  CreateWithName  │                  │
+   │               │                    │─────────────────>│                  │
+   │               │                    │                  │                  │
+   │               │                    │   assertionID    │                  │
+   │               │                    │<─────────────────│                  │
+   │               │                    │                  │                  │
+   │               │                    │  startSession()  │                  │
+   │               │                    │─────────────────────────────────────>│
+   │               │                    │                  │                  │
+   │               │  objectWillChange  │                  │                  │
+   │               │<───────────────────│                  │                  │
+   │               │                    │                  │                  │
+   │               │  updateStatusIcon()│                  │                  │
+   │               │───────────────────>│                  │                  │
+   │               │                    │                  │                  │
+   │  Icon Updated │                    │                  │                  │
+   │<──────────────│                    │                  │                  │
+   │               │                    │                  │                  │
+```
+
+## Sequence Diagram: Timer Mode Flow
+
+```
+┌──────┐     ┌─────────────────┐     ┌───────┐     ┌───────────────────┐
+│ User │     │CaffeineViewModel│     │ Timer │     │NotificationManager│
+└──┬───┘     └────────┬────────┘     └───┬───┘     └─────────┬─────────┘
+   │                  │                  │                   │
+   │  Enable Timer    │                  │                   │
+   │  Set Duration    │                  │                   │
+   │─────────────────>│                  │                   │
+   │                  │                  │                   │
+   │  start()         │                  │                   │
+   │─────────────────>│                  │                   │
+   │                  │                  │                   │
+   │                  │  Schedule Timer  │                   │
+   │                  │─────────────────>│                   │
+   │                  │                  │                   │
+   │                  │                  │                   │
+   │                  │  tick (0.5s)     │                   │
+   │                  │<─────────────────│                   │
+   │                  │                  │                   │
+   │                  │  Update          │                   │
+   │                  │  timeRemaining   │                   │
+   │                  │                  │                   │
+   │                  │     ...          │                   │
+   │                  │                  │                   │
+   │                  │  timeRemaining=0 │                   │
+   │                  │<─────────────────│                   │
+   │                  │                  │                   │
+   │                  │  stop()          │                   │
+   │                  │──────────────────│                   │
+   │                  │                  │                   │
+   │                  │  scheduleTimerExpiryNotification()   │
+   │                  │──────────────────────────────────────>│
+   │                  │                  │                   │
+   │                  │                  │   Notification    │
+   │<─────────────────────────────────────────────────────────│
+   │                  │                  │                   │
+```
+
+## Data Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              Data Flow                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                          ┌─────────────────┐
+                          │   User Action   │
+                          │  (Click/Hotkey) │
+                          └────────┬────────┘
+                                   │
+                                   ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            AppDelegate                                        │
+│  ┌────────────────────────────────────────────────────────────────────────┐  │
+│  │  - Receives user input                                                  │  │
+│  │  - Routes to appropriate handler                                        │  │
+│  └────────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                   │
+                    ┌──────────────┼──────────────┐
+                    │              │              │
+                    ▼              ▼              ▼
+           ┌───────────────┐ ┌──────────┐ ┌─────────────┐
+           │CaffeineViewModel│ │ L10n    │ │ Settings    │
+           │               │ │          │ │ Managers    │
+           └───────┬───────┘ └────┬─────┘ └──────┬──────┘
+                   │              │              │
+                   │              │              │
+        ┌──────────┴──────────────┴──────────────┴──────────┐
+        │                                                    │
+        ▼                                                    ▼
+┌───────────────┐                                   ┌───────────────┐
+│    IOKit      │                                   │  UserDefaults │
+│  (Power API)  │                                   │ (Persistence) │
+└───────────────┘                                   └───────────────┘
+        │                                                    │
+        │                                                    │
+        ▼                                                    ▼
+┌───────────────┐                                   ┌───────────────┐
+│ System Sleep  │                                   │   Settings    │
+│   Prevented   │                                   │   Restored    │
+└───────────────┘                                   └───────────────┘
+```
+
+## Module Structure
+
+```
+Sources/
+├── Weakup/                          # App Target (Executable)
+│   ├── main.swift                   # Entry point
+│   ├── App/
+│   │   └── AppDelegate.swift        # Menu bar, system integration
+│   ├── Views/
+│   │   ├── SettingsView.swift       # Main settings UI
+│   │   └── HistoryView.swift        # Activity history UI
+│   └── *.lproj/                     # Localization strings
+│       └── Localizable.strings
+│
+└── WeakupCore/                      # Library Target
+    ├── Models/
+    │   └── ActivitySession.swift    # Session data model
+    ├── ViewModels/
+    │   └── CaffeineViewModel.swift  # Core business logic
+    └── Utilities/
+        ├── L10n.swift               # Localization manager
+        ├── IconManager.swift        # Menu bar icon styles
+        ├── ThemeManager.swift       # Light/dark theme
+        ├── HotkeyManager.swift      # Keyboard shortcuts
+        ├── NotificationManager.swift # System notifications
+        ├── ActivityHistoryManager.swift # Session history
+        ├── LaunchAtLoginManager.swift   # Login item
+        └── Version.swift            # App version info
 ```
 
 ## Core Components
 
-### 1. WeakupApp (Entry Point)
+### 1. CaffeineViewModel
 
-**File:** `Sources/Weakup/main.swift:8-16`
+**File:** `Sources/WeakupCore/ViewModels/CaffeineViewModel.swift`
 
-The application entry point that:
-- Creates the NSApplication instance
-- Sets up the AppDelegate
-- Configures the app as an accessory (menu bar only, no dock icon)
+The central view model managing sleep prevention state:
 
-```swift
-@MainActor
-struct WeakupApp {
-    static func main() {
-        let app = NSApplication.shared
-        let delegate = AppDelegate()
-        app.delegate = delegate
-        app.setActivationPolicy(.accessory)
-        app.run()
-    }
-}
-```
-
-### 2. AppDelegate
-
-**File:** `Sources/Weakup/main.swift:20-94`
-
-Responsibilities:
-- **Status Bar Management:** Creates and manages the menu bar icon
-- **Menu Setup:** Configures the dropdown menu with Settings and Quit options
-- **Hotkey Registration:** Registers global keyboard shortcut (Cmd+Ctrl+0)
-- **Popover Management:** Shows/hides the settings popover
-
-Key methods:
-- `setupStatusBar()` - Initializes the menu bar item
-- `updateMenu()` - Creates the context menu
-- `setupHotkeys()` - Registers keyboard shortcuts
-- `toggleCaffeine()` - Toggles sleep prevention
-- `showSettings()` - Displays the settings popover
-
-### 3. CaffeineViewModel
-
-**File:** `Sources/Weakup/main.swift:98-174`
-
-The view model managing the sleep prevention state:
-
-**Properties:**
+**Published Properties:**
 - `isActive: Bool` - Current sleep prevention state
 - `timerMode: Bool` - Whether timer mode is enabled
 - `timeRemaining: TimeInterval` - Countdown timer value
-- `timerDuration: TimeInterval` - Selected timer duration
+- `soundEnabled: Bool` - Sound feedback setting
+- `showCountdownInMenuBar: Bool` - Menu bar countdown display
+- `notificationsEnabled: Bool` - Timer expiry notifications
 
-**Core Functionality:**
-- `start()` - Creates an IOPMAssertion to prevent sleep
-- `stop()` - Releases the assertion and allows sleep
+**Core Methods:**
+- `start()` - Creates IOPMAssertion to prevent sleep
+- `stop()` - Releases assertion and allows sleep
 - `toggle()` - Switches between active/inactive states
+- `setTimerDuration(_:)` - Sets timer duration
+- `restartTimer()` - Restarts timer (from notification action)
 
 **IOPMAssertion Integration:**
 ```swift
@@ -105,76 +302,81 @@ IOPMAssertionCreateWithName(
 )
 ```
 
-### 4. SettingsView
+### 2. AppDelegate
 
-**File:** `Sources/Weakup/main.swift:178-294`
+**File:** `Sources/Weakup/App/AppDelegate.swift`
 
-A SwiftUI view providing the user interface:
-- Status indicator (green/gray dot)
-- Language picker (English/Chinese)
-- Timer mode toggle
-- Duration picker (15m, 30m, 1h, 2h, 3h)
-- Main toggle button
-- Keyboard shortcut hint
+Responsibilities:
+- **Status Bar Management:** Creates and manages the menu bar icon
+- **Menu Setup:** Configures the dropdown menu with Settings and Quit options
+- **Hotkey Integration:** Connects HotkeyManager to toggle action
+- **Session Tracking:** Coordinates with ActivityHistoryManager
 
-### 5. L10n (Localization)
+### 3. Manager Singletons
 
-**File:** `Sources/Weakup/L10n.swift`
+| Manager | Purpose | Key Properties |
+|---------|---------|----------------|
+| `L10n` | Localization | `currentLanguage`, `string(forKey:)` |
+| `IconManager` | Menu bar icons | `currentStyle`, `currentImage(isActive:)` |
+| `ThemeManager` | App theme | `currentTheme`, `effectiveColorScheme` |
+| `HotkeyManager` | Keyboard shortcuts | `currentConfig`, `isRecording`, `hasConflict` |
+| `NotificationManager` | System notifications | `notificationsEnabled`, `isAuthorized` |
+| `ActivityHistoryManager` | Session history | `sessions`, `statistics`, `exportHistory()` |
+| `LaunchAtLoginManager` | Login item | `isEnabled` |
 
-Manages internationalization:
-- Supports English and Chinese (Simplified)
-- Real-time language switching without app restart
-- Persists language preference in UserDefaults
-- Auto-detects system language on first launch
+### 4. Models
 
-## Data Flow
+**ActivitySession:**
+```swift
+public struct ActivitySession: Codable, Identifiable, Sendable {
+    public let id: UUID
+    public let startTime: Date
+    public var endTime: Date?
+    public var wasTimerMode: Bool
+    public var timerDuration: TimeInterval?
 
+    public var duration: TimeInterval { ... }
+    public var isActive: Bool { ... }
+}
 ```
-User Action → AppDelegate → CaffeineViewModel → IOKit API
-                  ↓
-            SettingsView ← L10n (localized strings)
-                  ↓
-            UI Update (status icon, menu)
-```
 
-## File Structure
-
-```
-Weakup/
-├── Package.swift                    # Swift Package configuration
-├── build.sh                         # Build script
-├── Sources/Weakup/
-│   ├── main.swift                   # App entry, delegate, VM, views
-│   ├── L10n.swift                   # Localization system
-│   ├── en.lproj/
-│   │   └── Localizable.strings      # English strings
-│   └── zh-Hans.lproj/
-│       └── Localizable.strings      # Chinese strings
-└── Weakup.app/                      # Built application bundle
-    └── Contents/
-        ├── MacOS/weakup             # Executable
-        ├── Resources/               # Localizations, icons
-        └── Info.plist               # App metadata
+**ActivityStatistics:**
+```swift
+public struct ActivityStatistics: Sendable {
+    public let totalSessions: Int
+    public let totalDuration: TimeInterval
+    public let todaySessions: Int
+    public let todayDuration: TimeInterval
+    public let weekSessions: Int
+    public let weekDuration: TimeInterval
+    public let averageSessionDuration: TimeInterval
+}
 ```
 
 ## Frameworks Used
 
 | Framework | Purpose |
 |-----------|---------|
-| SwiftUI | Settings UI |
+| SwiftUI | Settings UI, History view |
 | AppKit | Menu bar, popover, system integration |
 | IOKit | Power management (IOPMAssertion) |
-| Foundation | Core utilities, UserDefaults |
+| Foundation | Core utilities, UserDefaults, JSON |
 | Carbon | Keyboard event handling |
+| UserNotifications | Timer expiry notifications |
+| ServiceManagement | Launch at login |
 
 ## Design Decisions
 
-### 1. Single-File Architecture
+### 1. Modular Architecture
 
-The main application code is contained in `main.swift` for simplicity. As the app grows, consider splitting into:
-- `AppDelegate.swift`
-- `CaffeineViewModel.swift`
-- `SettingsView.swift`
+The codebase is split into two targets:
+- **WeakupCore:** Library containing all business logic, view models, and utilities
+- **Weakup:** Executable containing UI views and app lifecycle management
+
+Benefits:
+- Clear separation of concerns
+- Easier unit testing of core logic
+- Potential for code reuse
 
 ### 2. Menu Bar Only (Accessory App)
 
@@ -198,15 +400,50 @@ Language switching happens instantly without restart by:
 - Observing language changes in SwiftUI views
 - Dynamically loading bundle for selected language
 
+### 5. Singleton Managers
+
+Manager classes use the singleton pattern for:
+- Global state management
+- Easy access from any component
+- Consistent state across the app
+
 ## Security Considerations
 
 - **No Network Access:** The app operates entirely offline
 - **Minimal Permissions:** Only requires power management access
 - **Local Storage Only:** Preferences stored in UserDefaults
 - **No Sensitive Data:** No personal information collected
+- **Sandboxing Compatible:** Uses standard macOS APIs
 
 ## Performance
 
 - **Memory:** ~15-20 MB typical usage
 - **CPU:** Negligible (event-driven, no polling)
 - **Battery:** Minimal impact (native API usage)
+- **Timer Accuracy:** Uses elapsed time calculation to handle background/sleep
+
+## Testing Architecture
+
+```
+Tests/WeakupTests/
+├── CaffeineViewModelTests.swift     # Core logic tests
+├── L10nTests.swift                  # Localization tests
+├── ActivityHistoryManagerTests.swift # History tests
+├── HotkeyManagerTests.swift         # Hotkey tests
+├── IconManagerTests.swift           # Icon tests
+├── ThemeManagerTests.swift          # Theme tests
+├── NotificationManagerTests.swift   # Notification tests
+├── Mocks/
+│   ├── MockUserDefaults.swift       # UserDefaults mock
+│   ├── MockSleepPreventionService.swift # IOKit mock
+│   └── TestFixtures.swift           # Test data
+└── Integration/
+    └── SleepPreventionIntegrationTests.swift
+```
+
+## Future Considerations
+
+- **Widget Support:** Menu bar widget for quick access
+- **Shortcuts Integration:** Siri Shortcuts support
+- **iCloud Sync:** Sync settings across devices
+- **Apple Watch Companion:** Remote control from watch
