@@ -13,13 +13,13 @@ public enum Logger {
 
     // Categories
 
-    private static let general = os.Logger(subsystem: subsystem, category: "general")
-    private static let power = os.Logger(subsystem: subsystem, category: "power")
-    private static let timer = os.Logger(subsystem: subsystem, category: "timer")
-    private static let notifications = os.Logger(subsystem: subsystem, category: "notifications")
-    private static let hotkey = os.Logger(subsystem: subsystem, category: "hotkey")
-    private static let history = os.Logger(subsystem: subsystem, category: "history")
-    private static let preferences = os.Logger(subsystem: subsystem, category: "preferences")
+    private static var general: os.Logger { os.Logger(subsystem: subsystem, category: "general") }
+    private static var power: os.Logger { os.Logger(subsystem: subsystem, category: "power") }
+    private static var timer: os.Logger { os.Logger(subsystem: subsystem, category: "timer") }
+    private static var notifications: os.Logger { os.Logger(subsystem: subsystem, category: "notifications") }
+    private static var hotkey: os.Logger { os.Logger(subsystem: subsystem, category: "hotkey") }
+    private static var history: os.Logger { os.Logger(subsystem: subsystem, category: "history") }
+    private static var preferences: os.Logger { os.Logger(subsystem: subsystem, category: "preferences") }
 
     // Log Levels
 
