@@ -17,7 +17,6 @@ permissions:
   contents: read
 
 env:
-  SWIFT_VERSION: "6.0"
   COVERAGE_THRESHOLD: 80
 
 jobs:
@@ -30,10 +29,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read Swift version
+        run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
+
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ env.SWIFT_VERSION }}
+      - name: Verify Swift version
+        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -162,10 +166,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read Swift version
+        run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
+
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ env.SWIFT_VERSION }}
+      - name: Verify Swift version
+        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -221,10 +230,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read Swift version
+        run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
+
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ env.SWIFT_VERSION }}
+      - name: Verify Swift version
+        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -352,10 +366,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read Swift version
+        run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
+
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ env.SWIFT_VERSION }}
+      - name: Verify Swift version
+        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
 
       - name: Cache Swift packages
         uses: actions/cache@v4

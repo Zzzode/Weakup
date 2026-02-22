@@ -1,6 +1,18 @@
 #!/bin/bash
 set -e
 
+SWIFT_CMD=${SWIFT_CMD:-"xcrun swift"}
+SWIFT_VERSION_FILE="$(pwd)/.swift-version"
+if [ -f "$SWIFT_VERSION_FILE" ]; then
+    REQUIRED_SWIFT_VERSION=$(cat "$SWIFT_VERSION_FILE" | tr -d '[:space:]')
+    CURRENT_SWIFT_VERSION=$($SWIFT_CMD --version | awk '/Apple Swift version/ {print $4}')
+    if [[ "$CURRENT_SWIFT_VERSION" != "$REQUIRED_SWIFT_VERSION"* ]]; then
+        echo "Swift version mismatch. Required: $REQUIRED_SWIFT_VERSION, Current: $CURRENT_SWIFT_VERSION"
+        echo "Set SWIFT_CMD to point to the correct Swift toolchain"
+        exit 1
+    fi
+fi
+
 # Read version from VERSION file
 VERSION_FILE="$(pwd)/VERSION"
 if [ -f "$VERSION_FILE" ]; then
@@ -20,7 +32,7 @@ BUILD_NUMBER="${BUILD_NUMBER:-1}"
 echo "Building Weakup v$APP_VERSION (build $BUILD_NUMBER)..."
 
 # Build project
-swift build -c release --disable-sandbox
+$SWIFT_CMD build -c release --disable-sandbox
 
 # Create app bundle
 APP_NAME="Weakup.app"
@@ -57,19 +69,19 @@ cat > /tmp/weakup_icon.svg << 'EOF'
 </svg>
 EOF
 
-qlmanage -t -s 1024 -o "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset" /tmp/weakup_icon.svg >/dev/null 2>&1
-mv "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/weakup_icon.svg.png" \
-   "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024.png" 2>/dev/null || true
+qlmanage -t -s 1024 -o "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset" /tmp/weakup_icon.svg >/dev/null 2>&1 || true
+ICON_SOURCE="$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/weakup_icon.svg.png"
+if [ -f "$ICON_SOURCE" ]; then
+    mv "$ICON_SOURCE" \
+       "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024.png" 2>/dev/null || true
 
-# Generate all sizes
-SIZES=(16 32 64 128 256 512 1024)
-for size in "${SIZES[@]}"; do
-    sips -z $size $size "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024.png" \
-        --out "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_${size}.png" >/dev/null 2>&1
-done
+    SIZES=(16 32 64 128 256 512 1024)
+    for size in "${SIZES[@]}"; do
+        sips -z $size $size "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024.png" \
+            --out "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_${size}.png" >/dev/null 2>&1 || true
+    done
 
-# Create Contents.json for AppIcon
-cat > "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json" << 'EOF'
+    cat > "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json" << 'EOF'
 {
   "images" : [
     {"idiom" : "mac", "scale" : "1x", "size" : "16x16", "filename" : "icon_16.png"},
@@ -89,6 +101,7 @@ cat > "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/Contents.
   }
 }
 EOF
+fi
 
 # Create Info.plist
 cat > "$APP_PATH/Contents/Info.plist" << EOF
