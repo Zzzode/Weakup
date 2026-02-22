@@ -63,8 +63,25 @@ public final class NotificationManager: NSObject, ObservableObject, Notification
 
     /// Indicates whether we're running in a test environment.
     private static var isRunningTests: Bool {
-        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil ||
-            NSClassFromString("XCTestCase") != nil
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            return true
+        }
+        if ProcessInfo.processInfo.environment["XCTestBundlePath"] != nil {
+            return true
+        }
+        if ProcessInfo.processInfo.environment["SWIFTPM_TEST"] != nil {
+            return true
+        }
+        if NSClassFromString("XCTestCase") != nil {
+            return true
+        }
+        if Bundle.main.bundlePath.hasSuffix(".xctest") {
+            return true
+        }
+        if ProcessInfo.processInfo.processName.localizedCaseInsensitiveContains("test") {
+            return true
+        }
+        return Bundle.allBundles.contains { $0.bundlePath.hasSuffix(".xctest") }
     }
 
     override private init() {
