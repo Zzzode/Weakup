@@ -183,19 +183,99 @@ Updated `.github/workflows/ci.yml`:
 ## Lessons Learned
 
 ### 1. Foundation Import is Critical
-Swift Testing does not automatically import Foundation. This must be documented prominently in migration guides.
+**Discovery:** Compilation errors appeared immediately: `cannot find 'TimeInterval' in scope`, `cannot find 'Date' in scope`.
+
+**Root Cause:** XCTest automatically imports Foundation, but Swift Testing does not.
+
+**Impact:** Affected all 16 migrated test files.
+
+**Solution:** Add `import Foundation` as the first import in every test file.
+
+**Takeaway:** This should be the #1 item in any migration checklist. It's easy to forget because XCTest hides this dependency.
 
 ### 2. Swift 6 Concurrency Matters
-Types used in parameterized tests must conform to `Sendable`. Plan for this early.
+**Discovery:** `type 'AppLanguage' does not conform to the 'Sendable' protocol` errors in integration tests.
 
-### 3. UI Tests Cannot Migrate
-XCUITest framework requires XCTest. Mixed testing approach is necessary.
+**Root Cause:** Swift 6 strict concurrency checking requires types used in parameterized tests or across isolation boundaries to be `Sendable`.
 
-### 4. Parallel Execution is Powerful
-Swift Testing's default parallel execution significantly speeds up test runs.
+**Impact:** Blocked integration tests from compiling.
 
-### 5. Team Coordination is Key
-Having multiple engineers work in parallel on different test files accelerated the migration.
+**Solution:** Added `Sendable` conformance to `AppLanguage` enum in source code:
+```swift
+public enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
+    // ...
+}
+```
+
+**Takeaway:** Fix Sendable issues in source code, not tests. Enums and simple structs are easy to make Sendable.
+
+### 3. Import Order Can Matter
+**Discovery:** Some files had `import Testing` before `import Foundation`, causing subtle issues.
+
+**Solution:** Standardized import order:
+```swift
+import Foundation  // System frameworks first
+import Testing     // Testing framework second
+@testable import WeakupCore  // Your module last
+```
+
+**Takeaway:** Establish and enforce a consistent import order in your style guide.
+
+### 4. UI Tests Cannot Migrate
+**Discovery:** XCUITest framework is tightly coupled to XCTest.
+
+**Impact:** 3 UI test files (29 tests) must remain on XCTest.
+
+**Solution:** Documented the limitation clearly in code comments and migration docs.
+
+**Takeaway:** Mixed testing approach is necessary and acceptable. Don't try to force UI tests into Swift Testing.
+
+### 5. Parallel Execution is Powerful
+**Discovery:** Tests run significantly faster with default parallel execution.
+
+**Impact:** Test suite execution time remained around 29 seconds despite framework change.
+
+**Takeaway:** Swift Testing's parallel execution is a major benefit. Use `.serialized` only when truly necessary.
+
+### 6. Team Coordination is Key
+**Discovery:** Having 6 engineers work in parallel on different files was highly effective.
+
+**Impact:** Completed migration in ~10 minutes instead of hours.
+
+**Takeaway:** Break work into independent chunks and parallelize. Use clear task assignments and communication.
+
+### 7. Accuracy Assertions Need Manual Conversion
+**Discovery:** `XCTAssertEqual(_:_:accuracy:)` has no direct equivalent in Swift Testing.
+
+**Solution:** Use explicit comparison: `#expect(abs(a - b) < accuracy)`
+
+**Example:**
+```swift
+// Before
+XCTAssertEqual(viewModel.timeRemaining, 5.0, accuracy: 0.5)
+
+// After
+#expect(abs(viewModel.timeRemaining - 5.0) < 0.5)
+```
+
+**Takeaway:** This pattern is actually clearer and more explicit about what's being tested.
+
+### 8. Test Isolation Requires Attention
+**Discovery:** Singleton managers can cause test interference when tests run in parallel.
+
+**Solution:** Reset state in `init()` or use `.serialized` trait:
+```swift
+@Suite("My Tests", .serialized)
+@MainActor
+struct MyTests {
+    init() {
+        // Reset singleton state
+        UserDefaultsStore.shared.removeAll()
+    }
+}
+```
+
+**Takeaway:** Be explicit about test isolation. Don't rely on XCTest's per-test instance creation.
 
 ## Recommendations
 
