@@ -100,6 +100,7 @@ public final class CaffeineViewModel: ObservableObject {
 
     private var timer: Timer?
     private var assertionID: IOPMAssertionID = 0
+    private var displayAssertionID: IOPMAssertionID = 0
     private var timerStartDate: Date?
     private var timerExpiredByTimer = false
 
@@ -173,21 +174,38 @@ public final class CaffeineViewModel: ObservableObject {
     /// - Note: If the assertion creation fails, the method returns silently without
     ///   changing the `isActive` state.
     public func start() {
-        var id: IOPMAssertionID = 0
-        let result = IOPMAssertionCreateWithName(
+        var systemID: IOPMAssertionID = 0
+        let systemResult = IOPMAssertionCreateWithName(
             kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
             IOPMAssertionLevel(kIOPMAssertionLevelOn),
             AppConstants.powerAssertionReason as CFString,
-            &id
+            &systemID
         )
 
-        guard result == kIOReturnSuccess else {
-            Logger.error("Failed to create power assertion", category: .power)
+        guard systemResult == kIOReturnSuccess else {
+            Logger.error("Failed to create system sleep assertion", category: .power)
             return
         }
-        assertionID = id
+
+        var displayID: IOPMAssertionID = 0
+        let displayResult = IOPMAssertionCreateWithName(
+            kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
+            IOPMAssertionLevel(kIOPMAssertionLevelOn),
+            AppConstants.powerAssertionReason as CFString,
+            &displayID
+        )
+
+        guard displayResult == kIOReturnSuccess else {
+            Logger.error("Failed to create display sleep assertion", category: .power)
+            IOPMAssertionRelease(systemID)
+            return
+        }
+
+        assertionID = systemID
+        displayAssertionID = displayID
         isActive = true
-        Logger.powerAssertionCreated(id: id)
+        Logger.powerAssertionCreated(id: systemID)
+        Logger.powerAssertionCreated(id: displayID)
         playSound(enabled: true)
 
         if timerMode, timerDuration > 0 {
@@ -254,6 +272,11 @@ public final class CaffeineViewModel: ObservableObject {
     }
 
     private func releaseAssertion() {
+        if displayAssertionID != 0 {
+            Logger.powerAssertionReleased(id: displayAssertionID)
+            IOPMAssertionRelease(displayAssertionID)
+            displayAssertionID = 0
+        }
         if assertionID != 0 {
             Logger.powerAssertionReleased(id: assertionID)
             IOPMAssertionRelease(assertionID)

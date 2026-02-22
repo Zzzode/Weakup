@@ -54,6 +54,19 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive, "Second toggle should deactivate")
     }
 
+    func testSleepPrevention_displaySleepAssertionActive() {
+        viewModel.start()
+        defer { viewModel.stop() }
+
+        do {
+            let output = try pmsetAssertionsOutput()
+            XCTAssertTrue(output.contains("PreventUserIdleDisplaySleep"))
+            XCTAssertTrue(output.contains(AppConstants.powerAssertionReason))
+        } catch {
+            XCTFail("Failed to read pmset assertions: \(error)")
+        }
+    }
+
     // MARK: - Rapid Toggle Tests
 
     func testMultipleToggle_maintainsConsistentState() {
@@ -162,6 +175,22 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         // Verify state is consistent
         XCTAssertFalse(viewModel.isActive)
         XCTAssertEqual(viewModel.timeRemaining, 0)
+    }
+
+    private func pmsetAssertionsOutput() throws -> String {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
+        process.arguments = ["-g", "assertions"]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        return String(decoding: data, as: UTF8.self)
     }
 }
 
