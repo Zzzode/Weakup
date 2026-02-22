@@ -40,12 +40,6 @@ A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
 | German | Deutsch |
 | Spanish | Espanol |
 
-## Screenshots
-
-| Settings (English) | Settings (中文) |
-|--------------------|-------------------|
-| ![English](screenshots/english.png) | ![Chinese](screenshots/chinese.png) |
-
 ## Installation
 
 ### Homebrew (Recommended)

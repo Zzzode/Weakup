@@ -40,12 +40,6 @@
 | German | Deutsch |
 | Spanish | Espanol |
 
-## 截图
-
-| 设置 (English) | 设置 (中文) |
-|--------------------|-------------------|
-| ![English](screenshots/english.png) | ![Chinese](screenshots/chinese.png) |
-
 ## 安装
 
 ### Homebrew (推荐)
