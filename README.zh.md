@@ -6,7 +6,7 @@
 [![Release](https://github.com/Zzzode/weakup/actions/workflows/release.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
 ![macOS](https://img.shields.io/badge/macOS-13%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 
 一个高性能、轻量级的 macOS 防休眠实用工具。
@@ -148,7 +148,7 @@ open Weakup.app
 
 ## 许可证
 
-本项目基于 MIT 许可证开源 - 详情请参阅 [LICENSE](LICENSE) 文件。
+本项目基于 Apache 2.0 许可证开源 - 详情请参阅 [LICENSE](LICENSE) 文件。
 
 ## 致谢
 

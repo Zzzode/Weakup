@@ -6,7 +6,7 @@
 [![Release](https://github.com/Zzzode/weakup/actions/workflows/release.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
 ![macOS](https://img.shields.io/badge/macOS-13%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 
 A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
@@ -152,7 +152,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for det
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
