@@ -1,392 +1,439 @@
-import XCTest
+import Testing
 import SwiftUI
 import Combine
 @testable import WeakupCore
 
-final class AppThemeTests: XCTestCase {
+@Suite("AppTheme Tests")
+struct AppThemeTests {
 
-    // Enum Cases Tests (TM-001)
+    // MARK: - Enum Cases Tests (TM-001)
 
-    func testAllCases_containsExpectedThemes() {
+    @Test("All cases contains expected themes")
+    func allCasesContainsExpectedThemes() {
         let allCases = AppTheme.allCases
-        XCTAssertEqual(allCases.count, 3, "Should have exactly 3 themes")
-        XCTAssertTrue(allCases.contains(.system), "Should contain system")
-        XCTAssertTrue(allCases.contains(.light), "Should contain light")
-        XCTAssertTrue(allCases.contains(.dark), "Should contain dark")
+        #expect(allCases.count == 3, "Should have exactly 3 themes")
+        #expect(allCases.contains(.system), "Should contain system")
+        #expect(allCases.contains(.light), "Should contain light")
+        #expect(allCases.contains(.dark), "Should contain dark")
     }
 
-    func testAllCases_count() {
-        XCTAssertEqual(AppTheme.allCases.count, 3)
+    @Test("All cases count")
+    func allCasesCount() {
+        #expect(AppTheme.allCases.count == 3)
     }
 
-    // Raw Value Tests (TM-002)
+    // MARK: - Raw Value Tests (TM-002)
 
-    func testRawValue_system() {
-        XCTAssertEqual(AppTheme.system.rawValue, "system")
+    @Test("Raw value for system")
+    func rawValueSystem() {
+        #expect(AppTheme.system.rawValue == "system")
     }
 
-    func testRawValue_light() {
-        XCTAssertEqual(AppTheme.light.rawValue, "light")
+    @Test("Raw value for light")
+    func rawValueLight() {
+        #expect(AppTheme.light.rawValue == "light")
     }
 
-    func testRawValue_dark() {
-        XCTAssertEqual(AppTheme.dark.rawValue, "dark")
+    @Test("Raw value for dark")
+    func rawValueDark() {
+        #expect(AppTheme.dark.rawValue == "dark")
     }
 
-    func testRawValues_areUnique() {
+    @Test("Raw values are unique")
+    func rawValuesAreUnique() {
         let rawValues = AppTheme.allCases.map { $0.rawValue }
         let uniqueRawValues = Set(rawValues)
-        XCTAssertEqual(rawValues.count, uniqueRawValues.count, "All raw values should be unique")
+        #expect(rawValues.count == uniqueRawValues.count, "All raw values should be unique")
     }
 
-    // Identifiable Tests (TM-003)
+    // MARK: - Identifiable Tests (TM-003)
 
-    func testId_matchesRawValue() {
+    @Test("ID matches raw value")
+    func idMatchesRawValue() {
         for theme in AppTheme.allCases {
-            XCTAssertEqual(theme.id, theme.rawValue, "ID should match raw value")
+            #expect(theme.id == theme.rawValue, "ID should match raw value")
         }
     }
 
-    func testId_system() {
-        XCTAssertEqual(AppTheme.system.id, "system")
+    @Test("ID for system")
+    func idSystem() {
+        #expect(AppTheme.system.id == "system")
     }
 
-    func testId_light() {
-        XCTAssertEqual(AppTheme.light.id, "light")
+    @Test("ID for light")
+    func idLight() {
+        #expect(AppTheme.light.id == "light")
     }
 
-    func testId_dark() {
-        XCTAssertEqual(AppTheme.dark.id, "dark")
+    @Test("ID for dark")
+    func idDark() {
+        #expect(AppTheme.dark.id == "dark")
     }
 
-    // Localization Key Tests (TM-004)
+    // MARK: - Localization Key Tests (TM-004)
 
-    func testLocalizationKey_system() {
-        XCTAssertEqual(AppTheme.system.localizationKey, "theme_system")
+    @Test("Localization key for system")
+    func localizationKeySystem() {
+        #expect(AppTheme.system.localizationKey == "theme_system")
     }
 
-    func testLocalizationKey_light() {
-        XCTAssertEqual(AppTheme.light.localizationKey, "theme_light")
+    @Test("Localization key for light")
+    func localizationKeyLight() {
+        #expect(AppTheme.light.localizationKey == "theme_light")
     }
 
-    func testLocalizationKey_dark() {
-        XCTAssertEqual(AppTheme.dark.localizationKey, "theme_dark")
+    @Test("Localization key for dark")
+    func localizationKeyDark() {
+        #expect(AppTheme.dark.localizationKey == "theme_dark")
     }
 
-    func testLocalizationKey_allThemesHaveKeys() {
+    @Test("All themes have localization keys")
+    func localizationKeyAllThemesHaveKeys() {
         for theme in AppTheme.allCases {
-            XCTAssertFalse(theme.localizationKey.isEmpty, "Localization key should not be empty for \(theme)")
-            XCTAssertTrue(theme.localizationKey.hasPrefix("theme_"), "Localization key should start with 'theme_'")
+            #expect(!theme.localizationKey.isEmpty, "Localization key should not be empty for \(theme)")
+            #expect(theme.localizationKey.hasPrefix("theme_"), "Localization key should start with 'theme_'")
         }
     }
 
-    // Color Scheme Tests (TM-005, TM-006, TM-007)
+    // MARK: - Color Scheme Tests (TM-005, TM-006, TM-007)
 
-    func testColorScheme_system_returnsNil() {
-        XCTAssertNil(AppTheme.system.colorScheme, "System theme should return nil color scheme")
+    @Test("Color scheme for system returns nil")
+    func colorSchemeSystemReturnsNil() {
+        #expect(AppTheme.system.colorScheme == nil, "System theme should return nil color scheme")
     }
 
-    func testColorScheme_light_returnsLight() {
-        XCTAssertEqual(AppTheme.light.colorScheme, .light)
+    @Test("Color scheme for light returns light")
+    func colorSchemeLightReturnsLight() {
+        #expect(AppTheme.light.colorScheme == .light)
     }
 
-    func testColorScheme_dark_returnsDark() {
-        XCTAssertEqual(AppTheme.dark.colorScheme, .dark)
+    @Test("Color scheme for dark returns dark")
+    func colorSchemeDarkReturnsDark() {
+        #expect(AppTheme.dark.colorScheme == .dark)
     }
 
-    func testColorScheme_onlySystemReturnsNil() {
+    @Test("Only system returns nil")
+    func colorSchemeOnlySystemReturnsNil() {
         for theme in AppTheme.allCases {
             if theme == .system {
-                XCTAssertNil(theme.colorScheme, "System should return nil")
+                #expect(theme.colorScheme == nil, "System should return nil")
             } else {
-                XCTAssertNotNil(theme.colorScheme, "\(theme) should return non-nil color scheme")
+                #expect(theme.colorScheme != nil, "\(theme) should return non-nil color scheme")
             }
         }
     }
 
-    // Initialization Tests
+    // MARK: - Initialization Tests
 
-    func testInit_fromValidRawValue() {
-        XCTAssertEqual(AppTheme(rawValue: "system"), .system)
-        XCTAssertEqual(AppTheme(rawValue: "light"), .light)
-        XCTAssertEqual(AppTheme(rawValue: "dark"), .dark)
+    @Test("Init from valid raw value")
+    func initFromValidRawValue() {
+        #expect(AppTheme(rawValue: "system") == .system)
+        #expect(AppTheme(rawValue: "light") == .light)
+        #expect(AppTheme(rawValue: "dark") == .dark)
     }
 
-    func testInit_fromInvalidRawValue() {
+    @Test("Init from invalid raw value")
+    func initFromInvalidRawValue() {
         let invalid = AppTheme(rawValue: "invalid")
-        XCTAssertNil(invalid, "Invalid raw value should return nil")
+        #expect(invalid == nil, "Invalid raw value should return nil")
     }
 
-    func testInit_fromEmptyRawValue() {
+    @Test("Init from empty raw value")
+    func initFromEmptyRawValue() {
         let empty = AppTheme(rawValue: "")
-        XCTAssertNil(empty, "Empty raw value should return nil")
+        #expect(empty == nil, "Empty raw value should return nil")
     }
 
-    func testInit_caseSensitive() {
-        XCTAssertNil(AppTheme(rawValue: "System"), "Raw value should be case sensitive")
-        XCTAssertNil(AppTheme(rawValue: "LIGHT"), "Raw value should be case sensitive")
-        XCTAssertNil(AppTheme(rawValue: "Dark"), "Raw value should be case sensitive")
+    @Test("Init case sensitive")
+    func initCaseSensitive() {
+        #expect(AppTheme(rawValue: "System") == nil, "Raw value should be case sensitive")
+        #expect(AppTheme(rawValue: "LIGHT") == nil, "Raw value should be case sensitive")
+        #expect(AppTheme(rawValue: "Dark") == nil, "Raw value should be case sensitive")
     }
 
-    // Sendable Conformance
+    // MARK: - Sendable Conformance
 
-    func testAppTheme_isSendable() {
+    @Test("AppTheme is Sendable")
+    func appThemeIsSendable() async {
         let theme: AppTheme = .system
-        Task {
+        await Task {
             let _ = theme
-        }
+        }.value
     }
 
-    // CaseIterable Tests
+    // MARK: - CaseIterable Tests
 
-    func testCaseIterable_orderIsConsistent() {
+    @Test("CaseIterable order is consistent")
+    func caseIterableOrderIsConsistent() {
         let cases1 = AppTheme.allCases
         let cases2 = AppTheme.allCases
-        XCTAssertEqual(cases1, cases2, "allCases should return consistent order")
+        #expect(cases1 == cases2, "allCases should return consistent order")
     }
 }
 
+@Suite("ThemeManager Tests")
 @MainActor
-final class ThemeManagerTests: XCTestCase {
+struct ThemeManagerTests {
 
     private let userDefaultsKey = "WeakupTheme"
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         // Clear UserDefaults before each test
         UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
     }
 
-    override func tearDown() async throws {
-        // Clean up after tests
-        UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
-        try await super.tearDown()
-    }
+    // MARK: - Singleton Tests (TM-008)
 
-    // Singleton Tests (TM-008)
-
-    func testShared_returnsSameInstance() {
+    @Test("Shared returns same instance")
+    func sharedReturnsSameInstance() {
         let instance1 = ThemeManager.shared
         let instance2 = ThemeManager.shared
-        XCTAssertTrue(instance1 === instance2, "Shared should return same instance")
+        #expect(instance1 === instance2, "Shared should return same instance")
     }
 
-    func testShared_isNotNil() {
-        XCTAssertNotNil(ThemeManager.shared, "Shared instance should not be nil")
+    @Test("Shared is not nil")
+    func sharedIsNotNil() {
+        #expect(ThemeManager.shared != nil, "Shared instance should not be nil")
     }
 
-    // Default Theme Tests (TM-009)
+    // MARK: - Default Theme Tests (TM-009)
 
-    func testDefaultTheme_isSystem() {
+    @Test("Default theme is system")
+    func defaultThemeIsSystem() {
         // After clearing UserDefaults, a new instance should default to system
         // Note: Since ThemeManager is a singleton, this test verifies the default behavior
         // In practice, the singleton may already be initialized
         let manager = ThemeManager.shared
         // We can't easily test the default without resetting the singleton
         // So we just verify the current theme is valid
-        XCTAssertTrue(AppTheme.allCases.contains(manager.currentTheme))
+        #expect(AppTheme.allCases.contains(manager.currentTheme))
     }
 
-    func testCurrentTheme_isValidTheme() {
+    @Test("Current theme is valid theme")
+    func currentThemeIsValidTheme() {
         let manager = ThemeManager.shared
-        XCTAssertTrue(AppTheme.allCases.contains(manager.currentTheme), "Current theme should be a valid theme")
+        #expect(AppTheme.allCases.contains(manager.currentTheme), "Current theme should be a valid theme")
     }
 
-    // Theme Persistence Tests (TM-010)
+    // MARK: - Theme Persistence Tests (TM-010)
 
-    func testSetTheme_persistsValue() {
+    @Test("Set theme persists value")
+    func setThemePersistsValue() {
         let manager = ThemeManager.shared
         manager.currentTheme = .dark
         let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
-        XCTAssertEqual(storedValue, "dark", "Theme should be persisted to UserDefaults")
+        #expect(storedValue == "dark", "Theme should be persisted to UserDefaults")
     }
 
-    func testSetTheme_persistsSystem() {
+    @Test("Set theme persists system")
+    func setThemePersistsSystem() {
         let manager = ThemeManager.shared
         manager.currentTheme = .system
         let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
-        XCTAssertEqual(storedValue, "system", "System theme should be persisted")
+        #expect(storedValue == "system", "System theme should be persisted")
     }
 
-    func testSetTheme_persistsLight() {
+    @Test("Set theme persists light")
+    func setThemePersistsLight() {
         let manager = ThemeManager.shared
         manager.currentTheme = .light
         let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
-        XCTAssertEqual(storedValue, "light", "Light theme should be persisted")
+        #expect(storedValue == "light", "Light theme should be persisted")
     }
 
-    func testSetTheme_persistsDark() {
+    @Test("Set theme persists dark")
+    func setThemePersistsDark() {
         let manager = ThemeManager.shared
         manager.currentTheme = .dark
         let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
-        XCTAssertEqual(storedValue, "dark", "Dark theme should be persisted")
+        #expect(storedValue == "dark", "Dark theme should be persisted")
     }
 
-    func testSetTheme_persistsAllThemes() {
+    @Test("Set theme persists all themes")
+    func setThemePersistsAllThemes() {
         let manager = ThemeManager.shared
         for theme in AppTheme.allCases {
             manager.currentTheme = theme
             let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
-            XCTAssertEqual(storedValue, theme.rawValue, "Theme \(theme) should be persisted")
+            #expect(storedValue == theme.rawValue, "Theme \(theme) should be persisted")
         }
     }
 
-    func testSetTheme_updatesCurrentTheme() {
+    @Test("Set theme updates current theme")
+    func setThemeUpdatesCurrentTheme() {
         let manager = ThemeManager.shared
         for theme in AppTheme.allCases {
             manager.currentTheme = theme
-            XCTAssertEqual(manager.currentTheme, theme, "currentTheme should be updated to \(theme)")
+            #expect(manager.currentTheme == theme, "currentTheme should be updated to \(theme)")
         }
     }
 
-    // Effective Color Scheme Tests (TM-011)
+    // MARK: - Effective Color Scheme Tests (TM-011)
 
-    func testEffectiveColorScheme_matchesTheme() {
+    @Test("Effective color scheme matches theme")
+    func effectiveColorSchemeMatchesTheme() {
         let manager = ThemeManager.shared
 
         manager.currentTheme = .system
-        XCTAssertNil(manager.effectiveColorScheme)
+        #expect(manager.effectiveColorScheme == nil)
 
         manager.currentTheme = .light
-        XCTAssertEqual(manager.effectiveColorScheme, .light)
+        #expect(manager.effectiveColorScheme == .light)
 
         manager.currentTheme = .dark
-        XCTAssertEqual(manager.effectiveColorScheme, .dark)
+        #expect(manager.effectiveColorScheme == .dark)
     }
 
-    func testEffectiveColorScheme_followsSystem() {
+    @Test("Effective color scheme follows system")
+    func effectiveColorSchemeFollowsSystem() {
         let manager = ThemeManager.shared
         manager.currentTheme = .system
-        XCTAssertNil(manager.effectiveColorScheme, "System theme should return nil for effectiveColorScheme")
+        #expect(manager.effectiveColorScheme == nil, "System theme should return nil for effectiveColorScheme")
     }
 
-    func testEffectiveColorScheme_overridesWithLight() {
+    @Test("Effective color scheme overrides with light")
+    func effectiveColorSchemeOverridesWithLight() {
         let manager = ThemeManager.shared
         manager.currentTheme = .light
-        XCTAssertEqual(manager.effectiveColorScheme, .light, "Light theme should return .light")
+        #expect(manager.effectiveColorScheme == .light, "Light theme should return .light")
     }
 
-    func testEffectiveColorScheme_overridesWithDark() {
+    @Test("Effective color scheme overrides with dark")
+    func effectiveColorSchemeOverridesWithDark() {
         let manager = ThemeManager.shared
         manager.currentTheme = .dark
-        XCTAssertEqual(manager.effectiveColorScheme, .dark, "Dark theme should return .dark")
+        #expect(manager.effectiveColorScheme == .dark, "Dark theme should return .dark")
     }
 
-    func testEffectiveColorScheme_matchesThemeColorScheme() {
+    @Test("Effective color scheme matches theme color scheme")
+    func effectiveColorSchemeMatchesThemeColorScheme() {
         let manager = ThemeManager.shared
         for theme in AppTheme.allCases {
             manager.currentTheme = theme
-            XCTAssertEqual(
-                manager.effectiveColorScheme,
-                theme.colorScheme,
+            #expect(
+                manager.effectiveColorScheme == theme.colorScheme,
                 "effectiveColorScheme should match theme.colorScheme for \(theme)"
             )
         }
     }
 
-    // Theme Switching Tests
+    // MARK: - Theme Switching Tests
 
-    func testThemeSwitching_systemToLight() {
+    @Test("Theme switching system to light")
+    func themeSwitchingSystemToLight() {
         let manager = ThemeManager.shared
         manager.currentTheme = .system
-        XCTAssertNil(manager.effectiveColorScheme)
+        #expect(manager.effectiveColorScheme == nil)
 
         manager.currentTheme = .light
-        XCTAssertEqual(manager.effectiveColorScheme, .light)
+        #expect(manager.effectiveColorScheme == .light)
     }
 
-    func testThemeSwitching_systemToDark() {
+    @Test("Theme switching system to dark")
+    func themeSwitchingSystemToDark() {
         let manager = ThemeManager.shared
         manager.currentTheme = .system
-        XCTAssertNil(manager.effectiveColorScheme)
+        #expect(manager.effectiveColorScheme == nil)
 
         manager.currentTheme = .dark
-        XCTAssertEqual(manager.effectiveColorScheme, .dark)
+        #expect(manager.effectiveColorScheme == .dark)
     }
 
-    func testThemeSwitching_lightToDark() {
+    @Test("Theme switching light to dark")
+    func themeSwitchingLightToDark() {
         let manager = ThemeManager.shared
         manager.currentTheme = .light
-        XCTAssertEqual(manager.effectiveColorScheme, .light)
+        #expect(manager.effectiveColorScheme == .light)
 
         manager.currentTheme = .dark
-        XCTAssertEqual(manager.effectiveColorScheme, .dark)
+        #expect(manager.effectiveColorScheme == .dark)
     }
 
-    func testThemeSwitching_darkToLight() {
+    @Test("Theme switching dark to light")
+    func themeSwitchingDarkToLight() {
         let manager = ThemeManager.shared
         manager.currentTheme = .dark
-        XCTAssertEqual(manager.effectiveColorScheme, .dark)
+        #expect(manager.effectiveColorScheme == .dark)
 
         manager.currentTheme = .light
-        XCTAssertEqual(manager.effectiveColorScheme, .light)
+        #expect(manager.effectiveColorScheme == .light)
     }
 
-    func testThemeSwitching_lightToSystem() {
+    @Test("Theme switching light to system")
+    func themeSwitchingLightToSystem() {
         let manager = ThemeManager.shared
         manager.currentTheme = .light
-        XCTAssertEqual(manager.effectiveColorScheme, .light)
+        #expect(manager.effectiveColorScheme == .light)
 
         manager.currentTheme = .system
-        XCTAssertNil(manager.effectiveColorScheme)
+        #expect(manager.effectiveColorScheme == nil)
     }
 
-    func testThemeSwitching_darkToSystem() {
+    @Test("Theme switching dark to system")
+    func themeSwitchingDarkToSystem() {
         let manager = ThemeManager.shared
         manager.currentTheme = .dark
-        XCTAssertEqual(manager.effectiveColorScheme, .dark)
+        #expect(manager.effectiveColorScheme == .dark)
 
         manager.currentTheme = .system
-        XCTAssertNil(manager.effectiveColorScheme)
+        #expect(manager.effectiveColorScheme == nil)
     }
 
-    func testThemeSwitching_cycleAllThemes() {
+    @Test("Theme switching cycle all themes")
+    func themeSwitchingCycleAllThemes() {
         let manager = ThemeManager.shared
         let themes: [AppTheme] = [.system, .light, .dark, .system, .dark, .light]
 
         for theme in themes {
             manager.currentTheme = theme
-            XCTAssertEqual(manager.currentTheme, theme)
-            XCTAssertEqual(manager.effectiveColorScheme, theme.colorScheme)
+            #expect(manager.currentTheme == theme)
+            #expect(manager.effectiveColorScheme == theme.colorScheme)
         }
     }
 
-    // Rapid Theme Changes
+    // MARK: - Rapid Theme Changes
 
-    func testRapidThemeChanges() {
+    @Test("Rapid theme changes")
+    func rapidThemeChanges() {
         let manager = ThemeManager.shared
 
         for _ in 0..<10 {
             for theme in AppTheme.allCases {
                 manager.currentTheme = theme
-                XCTAssertEqual(manager.currentTheme, theme)
+                #expect(manager.currentTheme == theme)
             }
         }
     }
 
-    // ObservableObject Tests
+    // MARK: - ObservableObject Tests
 
-    func testThemeManager_isObservableObject() {
+    @Test("ThemeManager is ObservableObject")
+    func themeManagerIsObservableObject() {
         let manager = ThemeManager.shared
         // Verify the manager conforms to ObservableObject by accessing objectWillChange
         _ = manager.objectWillChange
     }
 
-    func testCurrentTheme_isPublished() {
+    @Test("Current theme is published")
+    func currentThemeIsPublished() async {
         let manager = ThemeManager.shared
-        let expectation = XCTestExpectation(description: "Published property should notify")
+        var notificationReceived = false
 
         let cancellable = manager.objectWillChange.sink {
-            expectation.fulfill()
+            notificationReceived = true
         }
 
         manager.currentTheme = .dark
 
-        wait(for: [expectation], timeout: 1.0)
+        // Give time for notification
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        #expect(notificationReceived)
         cancellable.cancel()
     }
 
-    func testThemeChange_triggersObjectWillChange() {
+    @Test("Theme change triggers objectWillChange")
+    func themeChangeTriggersObjectWillChange() async {
         let manager = ThemeManager.shared
         var notificationCount = 0
 
@@ -399,28 +446,25 @@ final class ThemeManagerTests: XCTestCase {
         manager.currentTheme = .system
 
         // Allow time for notifications
-        let expectation = XCTestExpectation(description: "Wait for notifications")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 1.0)
+        try? await Task.sleep(nanoseconds: 100_000_000)
 
-        XCTAssertGreaterThanOrEqual(notificationCount, 3, "Should receive notifications for theme changes")
+        #expect(notificationCount >= 3, "Should receive notifications for theme changes")
         cancellable.cancel()
     }
 
-    // Persistence Verification Tests
+    // MARK: - Persistence Verification Tests
 
-    func testPersistence_survivesClear() {
+    @Test("Persistence survives clear")
+    func persistenceSurvivesClear() {
         let manager = ThemeManager.shared
 
         // Set a theme
         manager.currentTheme = .dark
-        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: userDefaultsKey), "dark")
+        #expect(UserDefaultsStore.shared.string(forKey: userDefaultsKey) == "dark")
 
         // Clear and set another
         UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
         manager.currentTheme = .light
-        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: userDefaultsKey), "light")
+        #expect(UserDefaultsStore.shared.string(forKey: userDefaultsKey) == "light")
     }
 }

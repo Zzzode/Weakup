@@ -56,10 +56,13 @@ Tests/
 
 ### 1.2 Testing Framework
 
-- **Primary**: XCTest (Apple's native testing framework)
-- **Async Testing**: XCTest async/await support
-- **UI Testing**: XCUITest for UI automation
+- **Primary**: Swift Testing (modern testing framework for Swift 6.0+)
+- **UI Testing**: XCTest/XCUITest (Swift Testing does not support UI testing)
+- **Async Testing**: Native async/await support in Swift Testing
 - **Mocking**: Protocol-based dependency injection
+- **Test Isolation**: `UserDefaultsStore` for isolated test state
+
+**Note:** UI tests in `WeakupUITests/` intentionally use XCTest because Swift Testing does not support XCUIApplication and XCUIElement APIs.
 
 ---
 

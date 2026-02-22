@@ -29,11 +29,100 @@ Tests/
 │       ├── MockSleepPreventionService.swift
 │       ├── MockUserDefaults.swift
 │       └── TestFixtures.swift
-└── WeakupUITests/
+└── WeakupUITests/                              # XCTest-based (cannot use Swift Testing)
     ├── MenuBarUITests.swift
     ├── SettingsPopoverUITests.swift
     └── KeyboardShortcutUITests.swift
 ```
+
+### UI Tests and Swift Testing
+
+**Important:** UI tests in `WeakupUITests/` intentionally use XCTest framework and cannot be migrated to Swift Testing. This is because:
+
+- Swift Testing does not support UI testing
+- XCUIApplication, XCUIElement, and the entire XCUITest framework are only available through XCTest
+- This is a documented limitation of Swift Testing, which is designed for unit and integration tests only
+
+UI tests require:
+- XCTest framework (XCUITest)
+- Xcode project configuration
+- Accessibility permissions for UI element interaction
+
+## Testing Frameworks
+
+### Mixed Testing Approach
+
+Weakup uses a **mixed testing approach** with two frameworks:
+
+| Framework | Use Case | Test Types |
+|-----------|----------|------------|
+| **Swift Testing** | Unit and integration tests | WeakupTests (unit, integration) |
+| **XCTest** | UI tests only | WeakupUITests |
+
+### Swift Testing (Primary)
+
+Swift Testing is the modern testing framework introduced with Swift 6.0. It provides:
+
+- **Cleaner syntax** with `@Test` attribute and `#expect` macro
+- **Better async/await support** built-in
+- **Parameterized tests** with `@Test(arguments:)`
+- **Traits** for test configuration (`@Test(.disabled)`, `@Test(.tags(...))`)
+- **Parallel execution** by default
+
+#### Swift Testing Syntax
+
+```swift
+import Testing
+@testable import WeakupCore
+
+@Suite("CaffeineViewModel Tests")
+@MainActor
+struct CaffeineViewModelTests {
+
+    @Test("Initial state is inactive")
+    func initialStateIsInactive() {
+        let viewModel = CaffeineViewModel()
+        #expect(viewModel.isActive == false)
+    }
+
+    @Test("Toggle starts when inactive")
+    func toggleStartsWhenInactive() {
+        let viewModel = CaffeineViewModel()
+        viewModel.toggle()
+        #expect(viewModel.isActive == true)
+    }
+
+    @Test("Timer duration updates correctly", arguments: [900, 1800, 3600])
+    func timerDurationUpdates(duration: TimeInterval) {
+        let viewModel = CaffeineViewModel()
+        viewModel.setTimerDuration(duration)
+        #expect(viewModel.timerDuration == duration)
+    }
+}
+```
+
+#### Key Differences from XCTest
+
+| XCTest | Swift Testing |
+|--------|---------------|
+| `import XCTest` | `import Testing` |
+| `class FooTests: XCTestCase` | `struct FooTests` or `@Suite struct FooTests` |
+| `func testFoo()` | `@Test func foo()` |
+| `XCTAssertEqual(a, b)` | `#expect(a == b)` |
+| `XCTAssertTrue(x)` | `#expect(x)` |
+| `XCTAssertNil(x)` | `#expect(x == nil)` |
+| `XCTAssertThrowsError` | `#expect(throws:)` |
+| `setUp()` / `tearDown()` | `init()` / `deinit` |
+| `setUpWithError()` | `init() throws` |
+
+### XCTest (UI Tests Only)
+
+XCTest is retained **only for UI tests** because Swift Testing does not support:
+
+- `XCUIApplication` for launching apps
+- `XCUIElement` for UI element queries
+- `waitForExistence(timeout:)` for async UI operations
+- Screenshot and accessibility testing
 
 ## Running Tests
 
@@ -89,290 +178,294 @@ open Weakup.xcodeproj
 
 ## Unit Test Examples
 
-### CaffeineViewModel Tests
+### CaffeineViewModel Tests (Swift Testing)
 
 ```swift
-import XCTest
+import Testing
 @testable import WeakupCore
 
+@Suite("CaffeineViewModel Tests")
 @MainActor
-final class CaffeineViewModelTests: XCTestCase {
-    var viewModel: CaffeineViewModel!
+struct CaffeineViewModelTests {
+    let userDefaultsStore: UserDefaultsStore
 
-    override func setUp() async throws {
-        try await super.setUp()
-        // Clear UserDefaults before each test
-        UserDefaults.standard.removeObject(forKey: "WeakupSoundEnabled")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerMode")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerDuration")
-        viewModel = CaffeineViewModel()
-    }
-
-    override func tearDown() async throws {
-        if viewModel.isActive {
-            viewModel.stop()
-        }
-        viewModel = nil
-        try await super.tearDown()
+    init() {
+        // Use isolated UserDefaults for test isolation
+        userDefaultsStore = UserDefaultsStore(suiteName: "TestDefaults-\(UUID().uuidString)")
     }
 
     // Initial State Tests
 
-    func testInitialState_isInactive() {
-        XCTAssertFalse(viewModel.isActive)
+    @Test("Initial state is inactive")
+    func initialStateIsInactive() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
+        #expect(viewModel.isActive == false)
     }
 
-    func testInitialState_timerModeDisabled() {
-        XCTAssertFalse(viewModel.timerMode)
+    @Test("Initial state has timer mode disabled")
+    func initialStateTimerModeDisabled() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
+        #expect(viewModel.timerMode == false)
     }
 
-    func testInitialState_timeRemainingIsZero() {
-        XCTAssertEqual(viewModel.timeRemaining, 0)
+    @Test("Initial state has zero time remaining")
+    func initialStateTimeRemainingIsZero() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
+        #expect(viewModel.timeRemaining == 0)
     }
 
     // Toggle Tests
 
-    func testToggle_startsWhenInactive() {
-        XCTAssertFalse(viewModel.isActive)
+    @Test("Toggle starts when inactive")
+    func toggleStartsWhenInactive() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
+        #expect(viewModel.isActive == false)
         viewModel.toggle()
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive == true)
+        viewModel.stop()
     }
 
-    func testToggle_stopsWhenActive() {
+    @Test("Toggle stops when active")
+    func toggleStopsWhenActive() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
         viewModel.start()
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive == true)
         viewModel.toggle()
-        XCTAssertFalse(viewModel.isActive)
+        #expect(viewModel.isActive == false)
     }
 
-    // Timer Tests
+    // Timer Tests (Parameterized)
 
-    func testSetTimerDuration_updatesValue() {
-        viewModel.setTimerDuration(3600)
-        XCTAssertEqual(viewModel.timerDuration, 3600)
+    @Test("Timer duration updates correctly", arguments: [900.0, 1800.0, 3600.0, 7200.0])
+    func timerDurationUpdates(duration: TimeInterval) {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
+        viewModel.setTimerDuration(duration)
+        #expect(viewModel.timerDuration == duration)
     }
 
-    func testSetTimerDuration_negativeClampsToZero() {
+    @Test("Negative duration clamps to zero")
+    func negativeDurationClampsToZero() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
         viewModel.setTimerDuration(-100)
-        XCTAssertEqual(viewModel.timerDuration, 0)
+        #expect(viewModel.timerDuration == 0)
     }
 
-    func testTimerMode_withDuration_setsTimeRemaining() {
+    @Test("Timer mode with duration sets time remaining")
+    func timerModeWithDurationSetsTimeRemaining() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(60)
         viewModel.start()
-        XCTAssertEqual(viewModel.timeRemaining, 60, accuracy: 1)
+        #expect(viewModel.timeRemaining == 60.0 || abs(viewModel.timeRemaining - 60.0) < 1.0)
+        viewModel.stop()
     }
 }
 ```
 
-### L10n Tests
+### L10n Tests (Swift Testing)
 
 ```swift
-import XCTest
+import Testing
 @testable import WeakupCore
 
+@Suite("Localization Tests")
 @MainActor
-final class L10nTests: XCTestCase {
-    var l10n: L10n!
+struct L10nTests {
+    let l10n: L10n
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         l10n = L10n.shared
-        // Reset to English for consistent tests
         l10n.setLanguage(.english)
     }
 
-    func testSetLanguage_updatesCurrentLanguage() {
+    @Test("Set language updates current language")
+    func setLanguageUpdatesCurrentLanguage() {
         l10n.setLanguage(.chinese)
-        XCTAssertEqual(l10n.currentLanguage, .chinese)
+        #expect(l10n.currentLanguage == .chinese)
+        l10n.setLanguage(.english) // Reset
     }
 
-    func testSetLanguage_persistsToUserDefaults() {
+    @Test("Set language persists to UserDefaults")
+    func setLanguagePersistsToUserDefaults() {
         l10n.setLanguage(.japanese)
         let saved = UserDefaults.standard.string(forKey: "WeakupLanguage")
-        XCTAssertEqual(saved, "ja")
+        #expect(saved == "ja")
+        l10n.setLanguage(.english) // Reset
     }
 
-    func testString_returnsLocalizedValue() {
+    @Test("String returns localized value")
+    func stringReturnsLocalizedValue() {
         l10n.setLanguage(.english)
         let result = l10n.string(forKey: "app_name")
-        XCTAssertEqual(result, "Weakup")
+        #expect(result == "Weakup")
     }
 
-    func testString_fallsBackToEnglish() {
-        // Set to a language that might be missing some keys
+    @Test("String falls back to English for missing keys")
+    func stringFallsBackToEnglish() {
         l10n.setLanguage(.korean)
         let result = l10n.string(forKey: "app_name")
-        // Should return English fallback if Korean is missing
-        XCTAssertFalse(result.isEmpty)
+        #expect(!result.isEmpty)
+        l10n.setLanguage(.english) // Reset
     }
 
-    func testAllLanguages_haveDisplayName() {
-        for language in AppLanguage.allCases {
-            XCTAssertFalse(language.displayName.isEmpty)
-        }
+    @Test("All languages have display names", arguments: AppLanguage.allCases)
+    func allLanguagesHaveDisplayName(language: AppLanguage) {
+        #expect(!language.displayName.isEmpty)
     }
 }
 ```
 
-### ActivityHistoryManager Tests
+### ActivityHistoryManager Tests (Swift Testing)
 
 ```swift
-import XCTest
+import Testing
 @testable import WeakupCore
 
+@Suite("Activity History Manager Tests")
 @MainActor
-final class ActivityHistoryManagerTests: XCTestCase {
-    var manager: ActivityHistoryManager!
+struct ActivityHistoryManagerTests {
+    let manager: ActivityHistoryManager
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         manager = ActivityHistoryManager.shared
         manager.clearHistory()
     }
 
-    func testStartSession_createsCurrentSession() {
+    @Test("Start session creates current session")
+    func startSessionCreatesCurrentSession() {
         manager.startSession(timerMode: false, timerDuration: nil)
-        XCTAssertNotNil(manager.currentSession)
+        #expect(manager.currentSession != nil)
+        manager.endSession()
     }
 
-    func testEndSession_movesToHistory() {
+    @Test("End session moves to history")
+    func endSessionMovesToHistory() {
         manager.startSession(timerMode: false, timerDuration: nil)
         manager.endSession()
-        XCTAssertNil(manager.currentSession)
-        XCTAssertEqual(manager.sessions.count, 1)
+        #expect(manager.currentSession == nil)
+        #expect(manager.sessions.count == 1)
     }
 
-    func testStatistics_calculatesCorrectly() {
-        // Create a completed session
+    @Test("Statistics calculates correctly")
+    func statisticsCalculatesCorrectly() {
         manager.startSession(timerMode: false, timerDuration: nil)
         manager.endSession()
 
         let stats = manager.statistics
-        XCTAssertEqual(stats.totalSessions, 1)
-        XCTAssertGreaterThanOrEqual(stats.todaySessions, 1)
+        #expect(stats.totalSessions == 1)
+        #expect(stats.todaySessions >= 1)
     }
 
-    func testExportHistory_json() {
+    @Test("Export history formats", arguments: [ExportFormat.json, ExportFormat.csv])
+    func exportHistoryFormats(format: ExportFormat) {
         manager.startSession(timerMode: true, timerDuration: 3600)
         manager.endSession()
 
-        let result = manager.exportHistory(format: .json)
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.format, .json)
-    }
-
-    func testExportHistory_csv() {
-        manager.startSession(timerMode: false, timerDuration: nil)
-        manager.endSession()
-
-        let result = manager.exportHistory(format: .csv)
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.format, .csv)
+        let result = manager.exportHistory(format: format)
+        #expect(result != nil)
+        #expect(result?.format == format)
     }
 }
 ```
 
-### HotkeyManager Tests
+### HotkeyManager Tests (Swift Testing)
 
 ```swift
-import XCTest
+import Testing
+import Carbon.HIToolbox
 @testable import WeakupCore
 
+@Suite("Hotkey Manager Tests")
 @MainActor
-final class HotkeyManagerTests: XCTestCase {
-    var manager: HotkeyManager!
+struct HotkeyManagerTests {
+    let manager: HotkeyManager
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         manager = HotkeyManager.shared
         manager.resetToDefault()
     }
 
-    func testDefaultConfig_isCorrect() {
+    @Test("Default config has correct key code")
+    func defaultConfigIsCorrect() {
         let config = HotkeyConfig.defaultConfig
-        XCTAssertEqual(config.keyCode, UInt32(kVK_ANSI_0))
+        #expect(config.keyCode == UInt32(kVK_ANSI_0))
     }
 
-    func testDisplayString_formatsCorrectly() {
+    @Test("Display string formats correctly")
+    func displayStringFormatsCorrectly() {
         let config = HotkeyConfig.defaultConfig
-        XCTAssertTrue(config.displayString.contains("Cmd"))
-        XCTAssertTrue(config.displayString.contains("Ctrl"))
-        XCTAssertTrue(config.displayString.contains("0"))
+        #expect(config.displayString.contains("Cmd"))
+        #expect(config.displayString.contains("Ctrl"))
+        #expect(config.displayString.contains("0"))
     }
 
-    func testCheckConflicts_detectsSystemShortcuts() {
+    @Test("Check conflicts detects system shortcuts")
+    func checkConflictsDetectsSystemShortcuts() {
         // Cmd+Q is a system shortcut
         let config = HotkeyConfig(keyCode: UInt32(kVK_ANSI_Q), modifiers: UInt32(cmdKey))
         let conflicts = manager.checkConflicts(for: config)
-        XCTAssertFalse(conflicts.isEmpty)
-        XCTAssertEqual(conflicts.first?.severity, .high)
+        #expect(!conflicts.isEmpty)
+        #expect(conflicts.first?.severity == .high)
     }
 
-    func testStartRecording_setsFlag() {
+    @Test("Recording state management")
+    func recordingStateManagement() {
         manager.startRecording()
-        XCTAssertTrue(manager.isRecording)
-    }
+        #expect(manager.isRecording == true)
 
-    func testStopRecording_clearsFlag() {
-        manager.startRecording()
         manager.stopRecording()
-        XCTAssertFalse(manager.isRecording)
+        #expect(manager.isRecording == false)
     }
 }
 ```
 
 ## Integration Tests
 
-### Sleep Prevention Integration
+### Sleep Prevention Integration (Swift Testing)
 
 ```swift
-import XCTest
+import Testing
 @testable import WeakupCore
 
+@Suite("Sleep Prevention Integration Tests")
 @MainActor
-final class SleepPreventionIntegrationTests: XCTestCase {
-    var viewModel: CaffeineViewModel!
+struct SleepPreventionIntegrationTests {
+    let userDefaultsStore: UserDefaultsStore
 
-    override func setUp() async throws {
-        try await super.setUp()
-        viewModel = CaffeineViewModel()
+    init() {
+        userDefaultsStore = UserDefaultsStore(suiteName: "TestDefaults-\(UUID().uuidString)")
     }
 
-    override func tearDown() async throws {
-        if viewModel.isActive {
-            viewModel.stop()
-        }
-        viewModel = nil
-        try await super.tearDown()
-    }
+    @Test("Full cycle start and stop")
+    func fullCycleStartAndStop() {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
 
-    func testFullCycle_startAndStop() {
         // Start
         viewModel.start()
-        XCTAssertTrue(viewModel.isActive)
+        #expect(viewModel.isActive == true)
 
         // Verify assertion exists (check with pmset -g assertions)
 
         // Stop
         viewModel.stop()
-        XCTAssertFalse(viewModel.isActive)
+        #expect(viewModel.isActive == false)
     }
 
-    func testTimerMode_expiresCorrectly() async throws {
+    @Test("Timer mode expires correctly")
+    func timerModeExpiresCorrectly() async throws {
+        let viewModel = CaffeineViewModel(userDefaultsStore: userDefaultsStore)
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(2) // 2 seconds
         viewModel.start()
 
-        XCTAssertTrue(viewModel.isActive)
-        XCTAssertEqual(viewModel.timeRemaining, 2, accuracy: 0.5)
+        #expect(viewModel.isActive == true)
+        #expect(abs(viewModel.timeRemaining - 2) < 0.5)
 
         // Wait for timer to expire
         try await Task.sleep(nanoseconds: 3_000_000_000) // 3 seconds
 
-        XCTAssertFalse(viewModel.isActive)
-        XCTAssertEqual(viewModel.timeRemaining, 0)
+        #expect(viewModel.isActive == false)
+        #expect(viewModel.timeRemaining == 0)
     }
 }
 ```

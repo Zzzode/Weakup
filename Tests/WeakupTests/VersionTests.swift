@@ -1,77 +1,87 @@
-import XCTest
+import Foundation
+import Testing
 @testable import WeakupCore
 
-final class AppVersionTests: XCTestCase {
+@Suite("AppVersion Tests")
+struct AppVersionTests {
 
-    // String Tests
+    // MARK: - String Tests
 
-    func testString_returnsValidVersion() {
+    @Test("Version string is not empty")
+    func stringReturnsValidVersion() {
         let version = AppVersion.string
-        XCTAssertFalse(version.isEmpty, "Version string should not be empty")
+        #expect(!version.isEmpty, "Version string should not be empty")
     }
 
-    func testString_matchesSemanticVersionFormat() {
+    @Test("Version matches semantic version format")
+    func stringMatchesSemanticVersionFormat() throws {
         let version = AppVersion.string
         // Version should match pattern like "1.0.0" or "1.0"
         let pattern = #"^\d+\.\d+(\.\d+)?$"#
-        let regex = try? NSRegularExpression(pattern: pattern)
+        let regex = try NSRegularExpression(pattern: pattern)
         let range = NSRange(version.startIndex..., in: version)
-        let match = regex?.firstMatch(in: version, range: range)
-        XCTAssertNotNil(match, "Version '\(version)' should match semantic version format")
+        let match = regex.firstMatch(in: version, range: range)
+        #expect(match != nil, "Version '\(version)' should match semantic version format")
     }
 
-    // Build Tests
+    // MARK: - Build Tests
 
-    func testBuild_returnsValidBuild() {
+    @Test("Build string is not empty")
+    func buildReturnsValidBuild() {
         let build = AppVersion.build
-        XCTAssertFalse(build.isEmpty, "Build string should not be empty")
+        #expect(!build.isEmpty, "Build string should not be empty")
     }
 
-    // Full String Tests
+    // MARK: - Full String Tests
 
-    func testFullString_containsVersionAndBuild() {
+    @Test("Full string contains version and build")
+    func fullStringContainsVersionAndBuild() {
         let fullString = AppVersion.fullString
-        XCTAssertTrue(fullString.contains(AppVersion.string), "Full string should contain version")
-        XCTAssertTrue(fullString.contains(AppVersion.build), "Full string should contain build")
-        XCTAssertTrue(fullString.contains("("), "Full string should contain parenthesis")
-        XCTAssertTrue(fullString.contains(")"), "Full string should contain parenthesis")
+        #expect(fullString.contains(AppVersion.string), "Full string should contain version")
+        #expect(fullString.contains(AppVersion.build), "Full string should contain build")
+        #expect(fullString.contains("("), "Full string should contain parenthesis")
+        #expect(fullString.contains(")"), "Full string should contain parenthesis")
     }
 
-    func testFullString_format() {
+    @Test("Full string has correct format")
+    func fullStringFormat() {
         let fullString = AppVersion.fullString
         let expected = "\(AppVersion.string) (\(AppVersion.build))"
-        XCTAssertEqual(fullString, expected, "Full string should match expected format")
+        #expect(fullString == expected, "Full string should match expected format")
     }
 
-    // Components Tests
+    // MARK: - Components Tests
 
-    func testComponents_returnsTuple() {
+    @Test("Components returns valid tuple")
+    func componentsReturnsTuple() {
         let components = AppVersion.components
-        XCTAssertGreaterThanOrEqual(components.major, 0, "Major version should be non-negative")
-        XCTAssertGreaterThanOrEqual(components.minor, 0, "Minor version should be non-negative")
-        XCTAssertGreaterThanOrEqual(components.patch, 0, "Patch version should be non-negative")
+        #expect(components.major >= 0, "Major version should be non-negative")
+        #expect(components.minor >= 0, "Minor version should be non-negative")
+        #expect(components.patch >= 0, "Patch version should be non-negative")
     }
 
-    func testComponents_matchVersionString() {
+    @Test("Components match version string")
+    func componentsMatchVersionString() {
         let components = AppVersion.components
         let versionString = AppVersion.string
         let parts = versionString.split(separator: ".").compactMap { Int($0) }
 
         if parts.count > 0 {
-            XCTAssertEqual(components.major, parts[0], "Major should match first part")
+            #expect(components.major == parts[0], "Major should match first part")
         }
         if parts.count > 1 {
-            XCTAssertEqual(components.minor, parts[1], "Minor should match second part")
+            #expect(components.minor == parts[1], "Minor should match second part")
         }
         if parts.count > 2 {
-            XCTAssertEqual(components.patch, parts[2], "Patch should match third part")
+            #expect(components.patch == parts[2], "Patch should match third part")
         }
     }
 
-    func testComponents_defaultsForMissingParts() {
+    @Test("Components defaults for missing parts")
+    func componentsDefaultsForMissingParts() {
         // This test verifies the default behavior when version string has fewer than 3 parts
         let components = AppVersion.components
         // At minimum, major should be 1 (the default)
-        XCTAssertGreaterThanOrEqual(components.major, 1, "Major should be at least 1")
+        #expect(components.major >= 1, "Major should be at least 1")
     }
 }

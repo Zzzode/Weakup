@@ -1,182 +1,188 @@
-import XCTest
+import Foundation
+import Testing
 @testable import WeakupCore
 
 /// Integration tests for persistence functionality
 /// Tests that settings persist correctly across simulated app restarts
+@Suite("Persistence Integration Tests", .serialized)
 @MainActor
-final class PersistenceIntegrationTests: XCTestCase {
+struct PersistenceIntegrationTests {
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         // Clear all UserDefaults before each test
         for key in UserDefaultsKeys.all {
             UserDefaultsStore.shared.removeObject(forKey: key)
         }
     }
 
-    override func tearDown() async throws {
-        // Clean up
-        for key in UserDefaultsKeys.all {
-            UserDefaultsStore.shared.removeObject(forKey: key)
-        }
-        try await super.tearDown()
-    }
+    // MARK: - Language Persistence Tests
 
-    // Language Persistence Tests
-
-    func testLanguagePreference_persistsAcrossLaunches() {
+    @Test("Language preference persists across launches")
+    func languagePreference_persistsAcrossLaunches() {
         // Set language
         L10n.shared.setLanguage(.japanese)
 
         // Verify it's stored in UserDefaults
         let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language)
-        XCTAssertEqual(storedValue, "ja")
+        #expect(storedValue == "ja")
 
         // Simulate reading on "restart" - L10n reads from UserDefaults on init
         // Since L10n is a singleton, we verify the stored value matches
-        XCTAssertEqual(L10n.shared.currentLanguage, .japanese)
+        #expect(L10n.shared.currentLanguage == .japanese)
     }
 
-    func testLanguagePreference_allLanguages() {
+    @Test("Language preference persists for all languages")
+    func languagePreference_allLanguages() {
         for language in AppLanguage.allCases {
             L10n.shared.setLanguage(language)
 
             let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language)
-            XCTAssertEqual(storedValue, language.rawValue,
-                           "Language \(language) should persist correctly")
+            #expect(storedValue == language.rawValue,
+                    "Language \(language) should persist correctly")
         }
     }
 
-    // Timer Settings Persistence Tests
+    // MARK: - Timer Settings Persistence Tests
 
-    func testTimerDuration_persistsAcrossLaunches() {
+    @Test("Timer duration persists across launches")
+    func timerDuration_persistsAcrossLaunches() {
         let viewModel = CaffeineViewModel()
         viewModel.setTimerDuration(1800) // 30 minutes
 
         // Verify stored
         let storedValue = UserDefaultsStore.shared.double(forKey: UserDefaultsKeys.timerDuration)
-        XCTAssertEqual(storedValue, 1800)
+        #expect(storedValue == 1800)
 
         // Create new view model (simulating restart)
         let newViewModel = CaffeineViewModel()
-        XCTAssertEqual(newViewModel.timerDuration, 1800, "Duration should persist")
+        #expect(newViewModel.timerDuration == 1800, "Duration should persist")
     }
 
-    func testTimerMode_persistsAcrossLaunches() {
+    @Test("Timer mode persists across launches")
+    func timerMode_persistsAcrossLaunches() {
         let viewModel = CaffeineViewModel()
         viewModel.setTimerMode(true)
 
         // Verify stored
         let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.timerMode)
-        XCTAssertTrue(storedValue)
+        #expect(storedValue == true)
 
         // Create new view model
         let newViewModel = CaffeineViewModel()
-        XCTAssertTrue(newViewModel.timerMode, "Timer mode should persist")
+        #expect(newViewModel.timerMode, "Timer mode should persist")
     }
 
-    func testTimerSettings_combinedPersistence() {
+    @Test("Timer settings combined persistence")
+    func timerSettings_combinedPersistence() {
         let viewModel = CaffeineViewModel()
         viewModel.setTimerMode(true)
         viewModel.setTimerDuration(3600) // 1 hour
 
         // Create new view model
         let newViewModel = CaffeineViewModel()
-        XCTAssertTrue(newViewModel.timerMode)
-        XCTAssertEqual(newViewModel.timerDuration, 3600)
+        #expect(newViewModel.timerMode)
+        #expect(newViewModel.timerDuration == 3600)
     }
 
-    // Sound Settings Persistence Tests
+    // MARK: - Sound Settings Persistence Tests
 
-    func testSoundEnabled_persistsAcrossLaunches() {
+    @Test("Sound enabled persists across launches")
+    func soundEnabled_persistsAcrossLaunches() {
         let viewModel = CaffeineViewModel()
         viewModel.soundEnabled = false
 
         // Verify stored
         let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled)
-        XCTAssertFalse(storedValue)
+        #expect(storedValue == false)
 
         // Create new view model
         let newViewModel = CaffeineViewModel()
-        XCTAssertFalse(newViewModel.soundEnabled, "Sound setting should persist")
+        #expect(!newViewModel.soundEnabled, "Sound setting should persist")
     }
 
-    func testSoundEnabled_togglePersistence() {
+    @Test("Sound enabled toggle persistence")
+    func soundEnabled_togglePersistence() {
         let viewModel = CaffeineViewModel()
 
         // Toggle multiple times
         viewModel.soundEnabled = true
-        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
+        #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled) == true)
 
         viewModel.soundEnabled = false
-        XCTAssertFalse(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
+        #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled) == false)
 
         viewModel.soundEnabled = true
-        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
+        #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled) == true)
     }
 
-    // Icon Style Persistence Tests
+    // MARK: - Icon Style Persistence Tests
 
-    func testIconStyle_persistsAcrossLaunches() {
+    @Test("Icon style persists across launches")
+    func iconStyle_persistsAcrossLaunches() {
         IconManager.shared.currentStyle = .bolt
 
         // Verify stored
         let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle)
-        XCTAssertEqual(storedValue, "bolt")
+        #expect(storedValue == "bolt")
 
         // Verify current style
-        XCTAssertEqual(IconManager.shared.currentStyle, .bolt)
+        #expect(IconManager.shared.currentStyle == .bolt)
     }
 
-    func testIconStyle_allStyles() {
+    @Test("Icon style persists for all styles")
+    func iconStyle_allStyles() {
         for style in IconStyle.allCases {
             IconManager.shared.currentStyle = style
 
             let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle)
-            XCTAssertEqual(storedValue, style.rawValue,
-                           "Icon style \(style) should persist correctly")
+            #expect(storedValue == style.rawValue,
+                    "Icon style \(style) should persist correctly")
         }
     }
 
-    // Theme Persistence Tests
+    // MARK: - Theme Persistence Tests
 
-    func testTheme_persistsAcrossLaunches() {
+    @Test("Theme persists across launches")
+    func theme_persistsAcrossLaunches() {
         ThemeManager.shared.currentTheme = .dark
 
         // Verify stored
         let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.theme)
-        XCTAssertEqual(storedValue, "dark")
+        #expect(storedValue == "dark")
 
         // Verify current theme
-        XCTAssertEqual(ThemeManager.shared.currentTheme, .dark)
+        #expect(ThemeManager.shared.currentTheme == .dark)
     }
 
-    func testTheme_allThemes() {
+    @Test("Theme persists for all themes")
+    func theme_allThemes() {
         for theme in AppTheme.allCases {
             ThemeManager.shared.currentTheme = theme
 
             let storedValue = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.theme)
-            XCTAssertEqual(storedValue, theme.rawValue,
-                           "Theme \(theme) should persist correctly")
+            #expect(storedValue == theme.rawValue,
+                    "Theme \(theme) should persist correctly")
         }
     }
 
-    // Hotkey Persistence Tests
+    // MARK: - Hotkey Persistence Tests
 
-    func testHotkeyConfig_persistsAcrossLaunches() {
+    @Test("Hotkey config persists across launches")
+    func hotkeyConfig_persistsAcrossLaunches() {
         let customConfig = HotkeyConfig(keyCode: 0, modifiers: 256) // A with Cmd
         HotkeyManager.shared.currentConfig = customConfig
 
         // Verify stored
         let storedData = UserDefaultsStore.shared.data(forKey: UserDefaultsKeys.hotkeyConfig)
-        XCTAssertNotNil(storedData, "Hotkey config should be stored as data")
+        #expect(storedData != nil, "Hotkey config should be stored as data")
 
         // Verify current config
-        XCTAssertEqual(HotkeyManager.shared.currentConfig.keyCode, customConfig.keyCode)
-        XCTAssertEqual(HotkeyManager.shared.currentConfig.modifiers, customConfig.modifiers)
+        #expect(HotkeyManager.shared.currentConfig.keyCode == customConfig.keyCode)
+        #expect(HotkeyManager.shared.currentConfig.modifiers == customConfig.modifiers)
     }
 
-    func testHotkeyConfig_resetToDefault() {
+    @Test("Hotkey config reset to default")
+    func hotkeyConfig_resetToDefault() {
         // Set custom config
         let customConfig = HotkeyConfig(keyCode: 1, modifiers: 512)
         HotkeyManager.shared.currentConfig = customConfig
@@ -186,41 +192,44 @@ final class PersistenceIntegrationTests: XCTestCase {
 
         // Verify default is restored
         let defaultConfig = HotkeyConfig.defaultConfig
-        XCTAssertEqual(HotkeyManager.shared.currentConfig.keyCode, defaultConfig.keyCode)
-        XCTAssertEqual(HotkeyManager.shared.currentConfig.modifiers, defaultConfig.modifiers)
+        #expect(HotkeyManager.shared.currentConfig.keyCode == defaultConfig.keyCode)
+        #expect(HotkeyManager.shared.currentConfig.modifiers == defaultConfig.modifiers)
     }
 
-    // Notifications Persistence Tests
+    // MARK: - Notifications Persistence Tests
 
-    func testNotificationsEnabled_persistsAcrossLaunches() {
+    @Test("Notifications enabled persists across launches")
+    func notificationsEnabled_persistsAcrossLaunches() {
         NotificationManager.shared.notificationsEnabled = false
 
         // Verify stored
         let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.notificationsEnabled)
-        XCTAssertFalse(storedValue)
+        #expect(storedValue == false)
 
         // Verify current value
-        XCTAssertFalse(NotificationManager.shared.notificationsEnabled)
+        #expect(!NotificationManager.shared.notificationsEnabled)
     }
 
-    // Menu Bar Countdown Persistence Tests
+    // MARK: - Menu Bar Countdown Persistence Tests
 
-    func testShowCountdownInMenuBar_persistsAcrossLaunches() {
+    @Test("Show countdown in menu bar persists across launches")
+    func showCountdownInMenuBar_persistsAcrossLaunches() {
         let viewModel = CaffeineViewModel()
         viewModel.showCountdownInMenuBar = true
 
         // Verify stored
         let storedValue = UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.showCountdownInMenuBar)
-        XCTAssertTrue(storedValue)
+        #expect(storedValue == true)
 
         // Create new view model
         let newViewModel = CaffeineViewModel()
-        XCTAssertTrue(newViewModel.showCountdownInMenuBar, "Menu bar countdown setting should persist")
+        #expect(newViewModel.showCountdownInMenuBar, "Menu bar countdown setting should persist")
     }
 
-    // Combined Settings Tests
+    // MARK: - Combined Settings Tests
 
-    func testAllSettings_persistTogether() {
+    @Test("All settings persist together")
+    func allSettings_persistTogether() {
         // Set all settings
         let viewModel = CaffeineViewModel()
         viewModel.setTimerMode(true)
@@ -234,19 +243,20 @@ final class PersistenceIntegrationTests: XCTestCase {
         NotificationManager.shared.notificationsEnabled = true
 
         // Verify all stored
-        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.timerMode))
-        XCTAssertEqual(UserDefaultsStore.shared.double(forKey: UserDefaultsKeys.timerDuration), 1800)
-        XCTAssertFalse(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled))
-        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.showCountdownInMenuBar))
-        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language), "ko")
-        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle), "cup")
-        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.theme), "light")
-        XCTAssertTrue(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.notificationsEnabled))
+        #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.timerMode) == true)
+        #expect(UserDefaultsStore.shared.double(forKey: UserDefaultsKeys.timerDuration) == 1800)
+        #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled) == false)
+        #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.showCountdownInMenuBar) == true)
+        #expect(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language) == "ko")
+        #expect(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle) == "cup")
+        #expect(UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.theme) == "light")
+        #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.notificationsEnabled) == true)
     }
 
-    // Default Values Tests
+    // MARK: - Default Values Tests
 
-    func testDefaultValues_whenNoStoredData() {
+    @Test("Default values when no stored data")
+    func defaultValues_whenNoStoredData() {
         // Ensure no stored data
         for key in UserDefaultsKeys.all {
             UserDefaultsStore.shared.removeObject(forKey: key)
@@ -256,17 +266,18 @@ final class PersistenceIntegrationTests: XCTestCase {
         let viewModel = CaffeineViewModel()
 
         // Verify defaults
-        XCTAssertFalse(viewModel.isActive)
-        XCTAssertFalse(viewModel.timerMode)
-        XCTAssertEqual(viewModel.timerDuration, 0)
-        XCTAssertEqual(viewModel.timeRemaining, 0)
+        #expect(!viewModel.isActive)
+        #expect(!viewModel.timerMode)
+        #expect(viewModel.timerDuration == 0)
+        #expect(viewModel.timeRemaining == 0)
         // soundEnabled default is true
-        XCTAssertTrue(viewModel.soundEnabled)
+        #expect(viewModel.soundEnabled)
     }
 
-    // Data Migration Tests
+    // MARK: - Data Migration Tests
 
-    func testInvalidStoredData_handledGracefully() {
+    @Test("Invalid stored data handled gracefully")
+    func invalidStoredData_handledGracefully() {
         // Store invalid data
         UserDefaultsStore.shared.set("invalid", forKey: UserDefaultsKeys.timerDuration)
         UserDefaultsStore.shared.set("invalid", forKey: UserDefaultsKeys.timerMode)
@@ -275,7 +286,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         let viewModel = CaffeineViewModel()
 
         // Should have default values
-        XCTAssertEqual(viewModel.timerDuration, 0)
-        XCTAssertFalse(viewModel.timerMode)
+        #expect(viewModel.timerDuration == 0)
+        #expect(!viewModel.timerMode)
     }
 }

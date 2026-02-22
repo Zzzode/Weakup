@@ -1,244 +1,270 @@
-import XCTest
+import Testing
 import AppKit
 import Combine
 @testable import WeakupCore
 
-final class IconStyleTests: XCTestCase {
+@Suite("IconStyle Tests")
+struct IconStyleTests {
 
-    // Enum Cases Tests (IM-001)
+    // MARK: - Enum Cases Tests (IM-001)
 
-    func testAllCases_containsExpectedStyles() {
+    @Test("All cases contains expected styles")
+    func allCasesContainsExpectedStyles() {
         let allCases = IconStyle.allCases
-        XCTAssertEqual(allCases.count, 5, "Should have exactly 5 icon styles")
-        XCTAssertTrue(allCases.contains(.power), "Should contain power")
-        XCTAssertTrue(allCases.contains(.bolt), "Should contain bolt")
-        XCTAssertTrue(allCases.contains(.cup), "Should contain cup")
-        XCTAssertTrue(allCases.contains(.moon), "Should contain moon")
-        XCTAssertTrue(allCases.contains(.eye), "Should contain eye")
+        #expect(allCases.count == 5, "Should have exactly 5 icon styles")
+        #expect(allCases.contains(.power), "Should contain power")
+        #expect(allCases.contains(.bolt), "Should contain bolt")
+        #expect(allCases.contains(.cup), "Should contain cup")
+        #expect(allCases.contains(.moon), "Should contain moon")
+        #expect(allCases.contains(.eye), "Should contain eye")
     }
 
-    // Raw Value Tests (IM-002)
+    // MARK: - Raw Value Tests (IM-002)
 
-    func testRawValues() {
-        XCTAssertEqual(IconStyle.power.rawValue, "power")
-        XCTAssertEqual(IconStyle.bolt.rawValue, "bolt")
-        XCTAssertEqual(IconStyle.cup.rawValue, "cup")
-        XCTAssertEqual(IconStyle.moon.rawValue, "moon")
-        XCTAssertEqual(IconStyle.eye.rawValue, "eye")
+    @Test("Raw values")
+    func rawValues() {
+        #expect(IconStyle.power.rawValue == "power")
+        #expect(IconStyle.bolt.rawValue == "bolt")
+        #expect(IconStyle.cup.rawValue == "cup")
+        #expect(IconStyle.moon.rawValue == "moon")
+        #expect(IconStyle.eye.rawValue == "eye")
     }
 
-    // Identifiable Tests (IM-003)
+    // MARK: - Identifiable Tests (IM-003)
 
-    func testId_matchesRawValue() {
+    @Test("ID matches raw value")
+    func idMatchesRawValue() {
         for style in IconStyle.allCases {
-            XCTAssertEqual(style.id, style.rawValue, "ID should match raw value")
+            #expect(style.id == style.rawValue, "ID should match raw value")
         }
     }
 
-    // Localization Key Tests (IM-004)
+    // MARK: - Localization Key Tests (IM-004)
 
-    func testLocalizationKey_format() {
+    @Test("Localization key format")
+    func localizationKeyFormat() {
         for style in IconStyle.allCases {
-            XCTAssertEqual(style.localizationKey, "icon_\(style.rawValue)")
+            #expect(style.localizationKey == "icon_\(style.rawValue)")
         }
     }
 
-    func testLocalizationKey_power() {
-        XCTAssertEqual(IconStyle.power.localizationKey, "icon_power")
+    @Test("Localization key for power")
+    func localizationKeyPower() {
+        #expect(IconStyle.power.localizationKey == "icon_power")
     }
 
-    func testLocalizationKey_bolt() {
-        XCTAssertEqual(IconStyle.bolt.localizationKey, "icon_bolt")
+    @Test("Localization key for bolt")
+    func localizationKeyBolt() {
+        #expect(IconStyle.bolt.localizationKey == "icon_bolt")
     }
 
-    func testLocalizationKey_cup() {
-        XCTAssertEqual(IconStyle.cup.localizationKey, "icon_cup")
+    @Test("Localization key for cup")
+    func localizationKeyCup() {
+        #expect(IconStyle.cup.localizationKey == "icon_cup")
     }
 
-    func testLocalizationKey_moon() {
-        XCTAssertEqual(IconStyle.moon.localizationKey, "icon_moon")
+    @Test("Localization key for moon")
+    func localizationKeyMoon() {
+        #expect(IconStyle.moon.localizationKey == "icon_moon")
     }
 
-    func testLocalizationKey_eye() {
-        XCTAssertEqual(IconStyle.eye.localizationKey, "icon_eye")
+    @Test("Localization key for eye")
+    func localizationKeyEye() {
+        #expect(IconStyle.eye.localizationKey == "icon_eye")
     }
 
-    // Inactive Symbol Tests (IM-005)
+    // MARK: - Inactive Symbol Tests (IM-005)
 
-    func testInactiveSymbol_power() {
-        XCTAssertEqual(IconStyle.power.inactiveSymbol, "power.circle")
+    @Test("Inactive symbol for power")
+    func inactiveSymbolPower() {
+        #expect(IconStyle.power.inactiveSymbol == "power.circle")
     }
 
-    func testInactiveSymbol_bolt() {
-        XCTAssertEqual(IconStyle.bolt.inactiveSymbol, "bolt.circle")
+    @Test("Inactive symbol for bolt")
+    func inactiveSymbolBolt() {
+        #expect(IconStyle.bolt.inactiveSymbol == "bolt.circle")
     }
 
-    func testInactiveSymbol_cup() {
-        XCTAssertEqual(IconStyle.cup.inactiveSymbol, "cup.and.saucer")
+    @Test("Inactive symbol for cup")
+    func inactiveSymbolCup() {
+        #expect(IconStyle.cup.inactiveSymbol == "cup.and.saucer")
     }
 
-    func testInactiveSymbol_moon() {
-        XCTAssertEqual(IconStyle.moon.inactiveSymbol, "moon.zzz")
+    @Test("Inactive symbol for moon")
+    func inactiveSymbolMoon() {
+        #expect(IconStyle.moon.inactiveSymbol == "moon.zzz")
     }
 
-    func testInactiveSymbol_eye() {
-        XCTAssertEqual(IconStyle.eye.inactiveSymbol, "eye")
+    @Test("Inactive symbol for eye")
+    func inactiveSymbolEye() {
+        #expect(IconStyle.eye.inactiveSymbol == "eye")
     }
 
-    // Active Symbol Tests (IM-006)
+    // MARK: - Active Symbol Tests (IM-006)
 
-    func testActiveSymbol_power() {
-        XCTAssertEqual(IconStyle.power.activeSymbol, "power.circle.fill")
+    @Test("Active symbol for power")
+    func activeSymbolPower() {
+        #expect(IconStyle.power.activeSymbol == "power.circle.fill")
     }
 
-    func testActiveSymbol_bolt() {
-        XCTAssertEqual(IconStyle.bolt.activeSymbol, "bolt.circle.fill")
+    @Test("Active symbol for bolt")
+    func activeSymbolBolt() {
+        #expect(IconStyle.bolt.activeSymbol == "bolt.circle.fill")
     }
 
-    func testActiveSymbol_cup() {
-        XCTAssertEqual(IconStyle.cup.activeSymbol, "cup.and.saucer.fill")
+    @Test("Active symbol for cup")
+    func activeSymbolCup() {
+        #expect(IconStyle.cup.activeSymbol == "cup.and.saucer.fill")
     }
 
-    func testActiveSymbol_moon() {
-        XCTAssertEqual(IconStyle.moon.activeSymbol, "moon.zzz.fill")
+    @Test("Active symbol for moon")
+    func activeSymbolMoon() {
+        #expect(IconStyle.moon.activeSymbol == "moon.zzz.fill")
     }
 
-    func testActiveSymbol_eye() {
-        XCTAssertEqual(IconStyle.eye.activeSymbol, "eye.fill")
+    @Test("Active symbol for eye")
+    func activeSymbolEye() {
+        #expect(IconStyle.eye.activeSymbol == "eye.fill")
     }
 
-    func testAllStyles_haveValidSymbols() {
+    @Test("All styles have valid symbols")
+    func allStylesHaveValidSymbols() {
         for style in IconStyle.allCases {
-            XCTAssertFalse(style.inactiveSymbol.isEmpty, "Inactive symbol should not be empty for \(style)")
-            XCTAssertFalse(style.activeSymbol.isEmpty, "Active symbol should not be empty for \(style)")
+            #expect(!style.inactiveSymbol.isEmpty, "Inactive symbol should not be empty for \(style)")
+            #expect(!style.activeSymbol.isEmpty, "Active symbol should not be empty for \(style)")
         }
     }
 
-    // Symbol Differentiation Tests
+    // MARK: - Symbol Differentiation Tests
 
-    func testActiveAndInactiveSymbols_areDifferent() {
+    @Test("Active and inactive symbols are different")
+    func activeAndInactiveSymbolsAreDifferent() {
         for style in IconStyle.allCases {
-            XCTAssertNotEqual(
-                style.activeSymbol,
-                style.inactiveSymbol,
+            #expect(
+                style.activeSymbol != style.inactiveSymbol,
                 "Active and inactive symbols should be different for \(style)"
             )
         }
     }
 
-    func testActiveSymbols_containFill() {
+    @Test("Active symbols contain fill")
+    func activeSymbolsContainFill() {
         for style in IconStyle.allCases {
-            XCTAssertTrue(
+            #expect(
                 style.activeSymbol.contains("fill"),
                 "Active symbol should contain 'fill' for \(style)"
             )
         }
     }
 
-    // Initialization Tests
+    // MARK: - Initialization Tests
 
-    func testInit_fromValidRawValue() {
-        XCTAssertEqual(IconStyle(rawValue: "power"), .power)
-        XCTAssertEqual(IconStyle(rawValue: "bolt"), .bolt)
-        XCTAssertEqual(IconStyle(rawValue: "cup"), .cup)
-        XCTAssertEqual(IconStyle(rawValue: "moon"), .moon)
-        XCTAssertEqual(IconStyle(rawValue: "eye"), .eye)
+    @Test("Init from valid raw value")
+    func initFromValidRawValue() {
+        #expect(IconStyle(rawValue: "power") == .power)
+        #expect(IconStyle(rawValue: "bolt") == .bolt)
+        #expect(IconStyle(rawValue: "cup") == .cup)
+        #expect(IconStyle(rawValue: "moon") == .moon)
+        #expect(IconStyle(rawValue: "eye") == .eye)
     }
 
-    func testInit_fromInvalidRawValue() {
+    @Test("Init from invalid raw value")
+    func initFromInvalidRawValue() {
         let invalid = IconStyle(rawValue: "invalid")
-        XCTAssertNil(invalid, "Invalid raw value should return nil")
+        #expect(invalid == nil, "Invalid raw value should return nil")
     }
 
-    func testInit_fromEmptyRawValue() {
+    @Test("Init from empty raw value")
+    func initFromEmptyRawValue() {
         let empty = IconStyle(rawValue: "")
-        XCTAssertNil(empty, "Empty raw value should return nil")
+        #expect(empty == nil, "Empty raw value should return nil")
     }
 
-    func testInit_caseSensitive() {
-        XCTAssertNil(IconStyle(rawValue: "Power"), "Raw value should be case sensitive")
-        XCTAssertNil(IconStyle(rawValue: "BOLT"), "Raw value should be case sensitive")
+    @Test("Init case sensitive")
+    func initCaseSensitive() {
+        #expect(IconStyle(rawValue: "Power") == nil, "Raw value should be case sensitive")
+        #expect(IconStyle(rawValue: "BOLT") == nil, "Raw value should be case sensitive")
     }
 
-    // Sendable Conformance
+    // MARK: - Sendable Conformance
 
-    func testIconStyle_isSendable() {
+    @Test("IconStyle is Sendable")
+    func iconStyleIsSendable() async {
         let style: IconStyle = .power
-        Task {
+        await Task {
             let _ = style
-        }
+        }.value
     }
 
-    // CaseIterable Tests
+    // MARK: - CaseIterable Tests
 
-    func testCaseIterable_orderIsConsistent() {
+    @Test("CaseIterable order is consistent")
+    func caseIterableOrderIsConsistent() {
         let cases1 = IconStyle.allCases
         let cases2 = IconStyle.allCases
-        XCTAssertEqual(cases1, cases2, "allCases should return consistent order")
+        #expect(cases1 == cases2, "allCases should return consistent order")
     }
 }
 
+@Suite("IconManager Tests")
 @MainActor
-final class IconManagerTests: XCTestCase {
-
+struct IconManagerTests {
     private let userDefaultsKey = "WeakupIconStyle"
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         // Clear UserDefaults before each test
         UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
         // Reset callback
         IconManager.shared.onIconChanged = nil
     }
 
-    override func tearDown() async throws {
-        // Clean up after tests
-        UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
-        IconManager.shared.onIconChanged = nil
-        try await super.tearDown()
-    }
+    // MARK: - Singleton Tests (IM-007)
 
-    // Singleton Tests (IM-007)
-
-    func testShared_returnsSameInstance() {
+    @Test("Shared returns same instance")
+    func sharedReturnsSameInstance() {
         let instance1 = IconManager.shared
         let instance2 = IconManager.shared
-        XCTAssertTrue(instance1 === instance2, "Shared should return same instance")
+        #expect(instance1 === instance2, "Shared should return same instance")
     }
 
-    func testShared_isNotNil() {
-        XCTAssertNotNil(IconManager.shared, "Shared instance should not be nil")
+    @Test("Shared is not nil")
+    func sharedIsNotNil() {
+        #expect(IconManager.shared != nil, "Shared instance should not be nil")
     }
 
-    // Style Persistence Tests (IM-008)
+    // MARK: - Style Persistence Tests (IM-008)
 
-    func testSetStyle_persistsValue() {
+    @Test("Set style persists value")
+    func setStylePersistsValue() {
         let manager = IconManager.shared
         manager.currentStyle = .bolt
         let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
-        XCTAssertEqual(storedValue, "bolt", "Style should be persisted to UserDefaults")
+        #expect(storedValue == "bolt", "Style should be persisted to UserDefaults")
     }
 
-    func testSetStyle_persistsAllStyles() {
+    @Test("Set style persists all styles")
+    func setStylePersistsAllStyles() {
         let manager = IconManager.shared
         for style in IconStyle.allCases {
             manager.currentStyle = style
             let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
-            XCTAssertEqual(storedValue, style.rawValue, "Style \(style) should be persisted")
+            #expect(storedValue == style.rawValue, "Style \(style) should be persisted")
         }
     }
 
-    func testSetStyle_updatesCurrentStyle() {
+    @Test("Set style updates current style")
+    func setStyleUpdatesCurrentStyle() {
         let manager = IconManager.shared
         for style in IconStyle.allCases {
             manager.currentStyle = style
-            XCTAssertEqual(manager.currentStyle, style, "currentStyle should be updated to \(style)")
+            #expect(manager.currentStyle == style, "currentStyle should be updated to \(style)")
         }
     }
 
-    // Image Generation Tests (IM-009)
+    // MARK: - Image Generation Tests (IM-009)
 
-    func testImage_returnsImage() {
+    @Test("Image returns image")
+    func imageReturnsImage() {
         let manager = IconManager.shared
         for style in IconStyle.allCases {
             let activeImage = manager.image(for: style, isActive: true)
@@ -250,68 +276,79 @@ final class IconManagerTests: XCTestCase {
         }
     }
 
-    func testImage_forPower_active() {
+    @Test("Image for power active")
+    func imageForPowerActive() {
         let manager = IconManager.shared
         let image = manager.image(for: .power, isActive: true)
         // Verify method returns without crashing; image may be nil in test environment
         _ = image
     }
 
-    func testImage_forPower_inactive() {
+    @Test("Image for power inactive")
+    func imageForPowerInactive() {
         let manager = IconManager.shared
         let image = manager.image(for: .power, isActive: false)
         _ = image
     }
 
-    func testImage_forBolt_active() {
+    @Test("Image for bolt active")
+    func imageForBoltActive() {
         let manager = IconManager.shared
         let image = manager.image(for: .bolt, isActive: true)
         _ = image
     }
 
-    func testImage_forBolt_inactive() {
+    @Test("Image for bolt inactive")
+    func imageForBoltInactive() {
         let manager = IconManager.shared
         let image = manager.image(for: .bolt, isActive: false)
         _ = image
     }
 
-    func testImage_forCup_active() {
+    @Test("Image for cup active")
+    func imageForCupActive() {
         let manager = IconManager.shared
         let image = manager.image(for: .cup, isActive: true)
         _ = image
     }
 
-    func testImage_forCup_inactive() {
+    @Test("Image for cup inactive")
+    func imageForCupInactive() {
         let manager = IconManager.shared
         let image = manager.image(for: .cup, isActive: false)
         _ = image
     }
 
-    func testImage_forMoon_active() {
+    @Test("Image for moon active")
+    func imageForMoonActive() {
         let manager = IconManager.shared
         let image = manager.image(for: .moon, isActive: true)
         _ = image
     }
 
-    func testImage_forMoon_inactive() {
+    @Test("Image for moon inactive")
+    func imageForMoonInactive() {
         let manager = IconManager.shared
         let image = manager.image(for: .moon, isActive: false)
         _ = image
     }
 
-    func testImage_forEye_active() {
+    @Test("Image for eye active")
+    func imageForEyeActive() {
         let manager = IconManager.shared
         let image = manager.image(for: .eye, isActive: true)
         _ = image
     }
 
-    func testImage_forEye_inactive() {
+    @Test("Image for eye inactive")
+    func imageForEyeInactive() {
         let manager = IconManager.shared
         let image = manager.image(for: .eye, isActive: false)
         _ = image
     }
 
-    func testImage_allStyles_activeAndInactive() {
+    @Test("Image all styles active and inactive")
+    func imageAllStylesActiveAndInactive() {
         let manager = IconManager.shared
         for style in IconStyle.allCases {
             // Test both active and inactive states for each style
@@ -320,9 +357,10 @@ final class IconManagerTests: XCTestCase {
         }
     }
 
-    // Current Image Tests (IM-010)
+    // MARK: - Current Image Tests (IM-010)
 
-    func testCurrentImage_usesCurrentStyle() {
+    @Test("Current image uses current style")
+    func currentImageUsesCurrentStyle() {
         let manager = IconManager.shared
         manager.currentStyle = .moon
         // Verify method doesn't crash
@@ -330,21 +368,24 @@ final class IconManagerTests: XCTestCase {
         _ = manager.currentImage(isActive: false)
     }
 
-    func testCurrentImage_activeState() {
+    @Test("Current image active state")
+    func currentImageActiveState() {
         let manager = IconManager.shared
         manager.currentStyle = .power
         let image = manager.currentImage(isActive: true)
         _ = image
     }
 
-    func testCurrentImage_inactiveState() {
+    @Test("Current image inactive state")
+    func currentImageInactiveState() {
         let manager = IconManager.shared
         manager.currentStyle = .power
         let image = manager.currentImage(isActive: false)
         _ = image
     }
 
-    func testCurrentImage_changesWithStyle() {
+    @Test("Current image changes with style")
+    func currentImageChangesWithStyle() {
         let manager = IconManager.shared
         for style in IconStyle.allCases {
             manager.currentStyle = style
@@ -353,19 +394,21 @@ final class IconManagerTests: XCTestCase {
         }
     }
 
-    // Callback Tests (IM-011)
+    // MARK: - Callback Tests (IM-011)
 
-    func testOnIconChanged_calledWhenStyleChanges() {
+    @Test("onIconChanged called when style changes")
+    func onIconChangedCalledWhenStyleChanges() {
         let manager = IconManager.shared
         var callbackCalled = false
         manager.onIconChanged = {
             callbackCalled = true
         }
         manager.currentStyle = .eye
-        XCTAssertTrue(callbackCalled, "Callback should be called when style changes")
+        #expect(callbackCalled, "Callback should be called when style changes")
     }
 
-    func testOnIconChanged_calledForEachStyleChange() {
+    @Test("onIconChanged called for each style change")
+    func onIconChangedCalledForEachStyleChange() {
         let manager = IconManager.shared
         var callCount = 0
         manager.onIconChanged = {
@@ -376,10 +419,11 @@ final class IconManagerTests: XCTestCase {
         manager.currentStyle = .bolt
         manager.currentStyle = .cup
 
-        XCTAssertEqual(callCount, 3, "Callback should be called for each style change")
+        #expect(callCount == 3, "Callback should be called for each style change")
     }
 
-    func testOnIconChanged_notCalledWhenSetToSameStyle() {
+    @Test("onIconChanged called when set to same style")
+    func onIconChangedCalledWhenSetToSameStyle() {
         let manager = IconManager.shared
         manager.currentStyle = .power
         var callCount = 0
@@ -392,17 +436,19 @@ final class IconManagerTests: XCTestCase {
 
         // Note: Swift's didSet is called even when setting the same value
         // This test documents the actual behavior
-        XCTAssertEqual(callCount, 1, "Callback is called even when setting same style (Swift didSet behavior)")
+        #expect(callCount == 1, "Callback is called even when setting same style (Swift didSet behavior)")
     }
 
-    func testOnIconChanged_nilCallbackDoesNotCrash() {
+    @Test("onIconChanged nil callback does not crash")
+    func onIconChangedNilCallbackDoesNotCrash() {
         let manager = IconManager.shared
         manager.onIconChanged = nil
         // Should not crash
         manager.currentStyle = .bolt
     }
 
-    func testOnIconChanged_canBeReassigned() {
+    @Test("onIconChanged can be reassigned")
+    func onIconChangedCanBeReassigned() {
         let manager = IconManager.shared
         var firstCallbackCalled = false
         var secondCallbackCalled = false
@@ -411,28 +457,30 @@ final class IconManagerTests: XCTestCase {
             firstCallbackCalled = true
         }
         manager.currentStyle = .power
-        XCTAssertTrue(firstCallbackCalled)
+        #expect(firstCallbackCalled)
 
         manager.onIconChanged = {
             secondCallbackCalled = true
         }
         manager.currentStyle = .bolt
-        XCTAssertTrue(secondCallbackCalled)
+        #expect(secondCallbackCalled)
     }
 
-    // Style Cycling Tests
+    // MARK: - Style Cycling Tests
 
-    func testStyleCycling_throughAllStyles() {
+    @Test("Style cycling through all styles")
+    func styleCyclingThroughAllStyles() {
         let manager = IconManager.shared
         let styles = IconStyle.allCases
 
         for (index, style) in styles.enumerated() {
             manager.currentStyle = style
-            XCTAssertEqual(manager.currentStyle, style, "Style at index \(index) should be set correctly")
+            #expect(manager.currentStyle == style, "Style at index \(index) should be set correctly")
         }
     }
 
-    func testRapidStyleChanges() {
+    @Test("Rapid style changes")
+    func rapidStyleChanges() {
         let manager = IconManager.shared
         var callCount = 0
         manager.onIconChanged = {
@@ -446,28 +494,33 @@ final class IconManagerTests: XCTestCase {
             }
         }
 
-        XCTAssertEqual(callCount, 50, "Callback should be called for each rapid style change")
+        #expect(callCount == 50, "Callback should be called for each rapid style change")
     }
 
-    // ObservableObject Tests
+    // MARK: - ObservableObject Tests
 
-    func testIconManager_isObservableObject() {
+    @Test("IconManager is ObservableObject")
+    func iconManagerIsObservableObject() {
         let manager = IconManager.shared
         // Verify the manager conforms to ObservableObject by accessing objectWillChange
         _ = manager.objectWillChange
     }
 
-    func testCurrentStyle_isPublished() {
+    @Test("Current style is published")
+    func currentStyleIsPublished() async {
         let manager = IconManager.shared
-        let expectation = XCTestExpectation(description: "Published property should notify")
+        var notificationReceived = false
 
         let cancellable = manager.objectWillChange.sink {
-            expectation.fulfill()
+            notificationReceived = true
         }
 
         manager.currentStyle = .eye
 
-        wait(for: [expectation], timeout: 1.0)
+        // Give time for notification
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        #expect(notificationReceived)
         cancellable.cancel()
     }
 }

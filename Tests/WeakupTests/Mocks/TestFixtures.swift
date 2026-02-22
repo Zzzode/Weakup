@@ -242,6 +242,9 @@ enum HotkeyFixtures {
     ]
 }
 
+// Note: SerialTestObserver removed during Swift Testing migration.
+// Swift Testing uses @Suite(.serialized) for serial test execution instead.
+
 // UserDefaults Keys (use centralized keys from WeakupCore)
 
 typealias TestUserDefaultsKeys = WeakupCore.UserDefaultsKeys

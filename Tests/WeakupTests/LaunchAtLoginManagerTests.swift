@@ -1,8 +1,8 @@
-import XCTest
+import Testing
 import ServiceManagement
 @testable import WeakupCore
 
-// Mock Launch At Login Service
+// MARK: - Mock Launch At Login Service
 
 final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol, @unchecked Sendable {
     var mockStatus: SMAppService.Status = .notRegistered
@@ -40,7 +40,7 @@ final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol, @unchecked S
     }
 }
 
-// Mock Error for Testing
+// MARK: - Mock Error for Testing
 
 enum MockLaunchError: Error {
     case permissionDenied
@@ -56,131 +56,141 @@ enum MockLaunchError: Error {
     }
 }
 
-// LaunchAtLoginError Tests
+// MARK: - LaunchAtLoginError Tests
 
-final class LaunchAtLoginErrorTests: XCTestCase {
+@Suite("LaunchAtLoginError Tests")
+struct LaunchAtLoginErrorTests {
 
-    // Equatable Tests
+    // MARK: - Equatable Tests
 
-    func testEquatable_sameRegistrationFailed() {
+    @Test("Equatable same registration failed")
+    func equatableSameRegistrationFailed() {
         let error1 = LaunchAtLoginError.registrationFailed("test")
         let error2 = LaunchAtLoginError.registrationFailed("test")
-        XCTAssertEqual(error1, error2)
+        #expect(error1 == error2)
     }
 
-    func testEquatable_differentRegistrationFailed() {
+    @Test("Equatable different registration failed")
+    func equatableDifferentRegistrationFailed() {
         let error1 = LaunchAtLoginError.registrationFailed("test1")
         let error2 = LaunchAtLoginError.registrationFailed("test2")
-        XCTAssertNotEqual(error1, error2)
+        #expect(error1 != error2)
     }
 
-    func testEquatable_sameUnregistrationFailed() {
+    @Test("Equatable same unregistration failed")
+    func equatableSameUnregistrationFailed() {
         let error1 = LaunchAtLoginError.unregistrationFailed("test")
         let error2 = LaunchAtLoginError.unregistrationFailed("test")
-        XCTAssertEqual(error1, error2)
+        #expect(error1 == error2)
     }
 
-    func testEquatable_notSupported() {
+    @Test("Equatable not supported")
+    func equatableNotSupported() {
         let error1 = LaunchAtLoginError.notSupported
         let error2 = LaunchAtLoginError.notSupported
-        XCTAssertEqual(error1, error2)
+        #expect(error1 == error2)
     }
 
-    func testEquatable_permissionDenied() {
+    @Test("Equatable permission denied")
+    func equatablePermissionDenied() {
         let error1 = LaunchAtLoginError.permissionDenied
         let error2 = LaunchAtLoginError.permissionDenied
-        XCTAssertEqual(error1, error2)
+        #expect(error1 == error2)
     }
 
-    func testEquatable_differentTypes() {
+    @Test("Equatable different types")
+    func equatableDifferentTypes() {
         let error1 = LaunchAtLoginError.notSupported
         let error2 = LaunchAtLoginError.permissionDenied
-        XCTAssertNotEqual(error1, error2)
+        #expect(error1 != error2)
     }
 
-    // Localized Description Tests
+    // MARK: - Localized Description Tests
 
-    func testLocalizedDescription_registrationFailed() {
+    @Test("Localized description registration failed")
+    func localizedDescriptionRegistrationFailed() {
         let error = LaunchAtLoginError.registrationFailed("test message")
-        XCTAssertTrue(error.localizedDescription.contains("Failed to enable"))
-        XCTAssertTrue(error.localizedDescription.contains("test message"))
+        #expect(error.localizedDescription.contains("Failed to enable"))
+        #expect(error.localizedDescription.contains("test message"))
     }
 
-    func testLocalizedDescription_unregistrationFailed() {
+    @Test("Localized description unregistration failed")
+    func localizedDescriptionUnregistrationFailed() {
         let error = LaunchAtLoginError.unregistrationFailed("test message")
-        XCTAssertTrue(error.localizedDescription.contains("Failed to disable"))
-        XCTAssertTrue(error.localizedDescription.contains("test message"))
+        #expect(error.localizedDescription.contains("Failed to disable"))
+        #expect(error.localizedDescription.contains("test message"))
     }
 
-    func testLocalizedDescription_notSupported() {
+    @Test("Localized description not supported")
+    func localizedDescriptionNotSupported() {
         let error = LaunchAtLoginError.notSupported
-        XCTAssertTrue(error.localizedDescription.contains("not supported"))
+        #expect(error.localizedDescription.contains("not supported"))
     }
 
-    func testLocalizedDescription_permissionDenied() {
+    @Test("Localized description permission denied")
+    func localizedDescriptionPermissionDenied() {
         let error = LaunchAtLoginError.permissionDenied
-        XCTAssertTrue(error.localizedDescription.contains("Permission denied"))
-        XCTAssertTrue(error.localizedDescription.contains("System Settings"))
+        #expect(error.localizedDescription.contains("Permission denied"))
+        #expect(error.localizedDescription.contains("System Settings"))
     }
 
-    func testLocalizedDescription_unknown() {
+    @Test("Localized description unknown")
+    func localizedDescriptionUnknown() {
         let error = LaunchAtLoginError.unknown("unexpected error")
-        XCTAssertTrue(error.localizedDescription.contains("unexpected"))
+        #expect(error.localizedDescription.contains("unexpected"))
     }
 }
 
-// LaunchAtLoginManager Tests
+// MARK: - LaunchAtLoginManager Tests
 
+@Suite("LaunchAtLoginManager Tests")
 @MainActor
-final class LaunchAtLoginManagerTests: XCTestCase {
+struct LaunchAtLoginManagerTests {
 
-    var mockService: MockLaunchAtLoginService!
-    var manager: LaunchAtLoginManager!
+    var mockService: MockLaunchAtLoginService
+    var manager: LaunchAtLoginManager
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         mockService = MockLaunchAtLoginService()
         manager = LaunchAtLoginManager(service: mockService)
     }
 
-    override func tearDown() async throws {
-        mockService.reset()
-        mockService = nil
-        manager = nil
-        try await super.tearDown()
-    }
+    // MARK: - Initialization Tests
 
-    // Initialization Tests
-
-    func testInit_withNotRegisteredStatus_isEnabledFalse() {
+    @Test("Init with not registered status isEnabled false")
+    func initWithNotRegisteredStatusIsEnabledFalse() {
         mockService.mockStatus = .notRegistered
         let newManager = LaunchAtLoginManager(service: mockService)
-        XCTAssertFalse(newManager.isEnabled)
+        #expect(!newManager.isEnabled)
     }
 
-    func testInit_withEnabledStatus_isEnabledTrue() {
+    @Test("Init with enabled status isEnabled true")
+    func initWithEnabledStatusIsEnabledTrue() {
         mockService.mockStatus = .enabled
         let newManager = LaunchAtLoginManager(service: mockService)
-        XCTAssertTrue(newManager.isEnabled)
+        #expect(newManager.isEnabled)
     }
 
-    func testInit_noErrorByDefault() {
-        XCTAssertNil(manager.lastError)
-        XCTAssertFalse(manager.showError)
+    @Test("Init no error by default")
+    func initNoErrorByDefault() {
+        #expect(manager.lastError == nil)
+        #expect(!manager.showError)
     }
 
-    // Enable Tests
+    // MARK: - Enable Tests
 
-    func testEnable_success() {
+    @Test("Enable success")
+    func enableSuccess() {
         manager.isEnabled = true
 
-        XCTAssertEqual(mockService.registerCallCount, 1)
-        XCTAssertEqual(mockService.mockStatus, .enabled)
-        XCTAssertNil(manager.lastError)
-        XCTAssertFalse(manager.showError)
+        #expect(mockService.registerCallCount == 1)
+        #expect(mockService.mockStatus == .enabled)
+        #expect(manager.lastError == nil)
+        #expect(!manager.showError)
     }
 
-    func testEnable_failure_setsError() async {
+    @Test("Enable failure sets error")
+    func enableFailureSetsError() async {
         mockService.shouldThrowOnRegister = NSError(domain: "test", code: 999, userInfo: [NSLocalizedDescriptionKey: "Test error"])
 
         manager.isEnabled = true
@@ -189,12 +199,13 @@ final class LaunchAtLoginManagerTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 500_000_000)
         await Task.yield()
 
-        XCTAssertNotNil(manager.lastError, "Error should be set after failed registration")
-        XCTAssertTrue(manager.showError, "showError should be true after failed registration")
-        XCTAssertFalse(manager.isEnabled, "isEnabled should revert to false after failed registration")
+        #expect(manager.lastError != nil, "Error should be set after failed registration")
+        #expect(manager.showError, "showError should be true after failed registration")
+        #expect(!manager.isEnabled, "isEnabled should revert to false after failed registration")
     }
 
-    func testEnable_permissionDenied_setsCorrectError() async {
+    @Test("Enable permission denied sets correct error")
+    func enablePermissionDeniedSetsCorrectError() async {
         mockService.shouldThrowOnRegister = NSError(domain: "test", code: 1, userInfo: nil)
 
         manager.isEnabled = true
@@ -203,10 +214,11 @@ final class LaunchAtLoginManagerTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 500_000_000)
         await Task.yield()
 
-        XCTAssertEqual(manager.lastError, .permissionDenied, "Error should be permissionDenied for code 1")
+        #expect(manager.lastError == .permissionDenied, "Error should be permissionDenied for code 1")
     }
 
-    func testEnable_notSupported_setsCorrectError() async {
+    @Test("Enable not supported sets correct error")
+    func enableNotSupportedSetsCorrectError() async {
         mockService.shouldThrowOnRegister = NSError(domain: "test", code: 4, userInfo: nil)
 
         manager.isEnabled = true
@@ -215,64 +227,69 @@ final class LaunchAtLoginManagerTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 500_000_000)
         await Task.yield()
 
-        XCTAssertEqual(manager.lastError, .notSupported, "Error should be notSupported for code 4")
+        #expect(manager.lastError == .notSupported, "Error should be notSupported for code 4")
     }
 
-    // Disable Tests
+    // MARK: - Disable Tests
 
-    func testDisable_success() {
+    @Test("Disable success")
+    func disableSuccess() {
         // First enable
         mockService.mockStatus = .enabled
-        manager = LaunchAtLoginManager(service: mockService)
+        let newManager = LaunchAtLoginManager(service: mockService)
 
-        manager.isEnabled = false
+        newManager.isEnabled = false
 
-        XCTAssertEqual(mockService.unregisterCallCount, 1)
-        XCTAssertEqual(mockService.mockStatus, .notRegistered)
-        XCTAssertNil(manager.lastError)
+        #expect(mockService.unregisterCallCount == 1)
+        #expect(mockService.mockStatus == .notRegistered)
+        #expect(newManager.lastError == nil)
     }
 
-    func testDisable_failure_setsError() async {
+    @Test("Disable failure sets error")
+    func disableFailureSetsError() async {
         // First enable
         mockService.mockStatus = .enabled
-        manager = LaunchAtLoginManager(service: mockService)
+        let newManager = LaunchAtLoginManager(service: mockService)
         mockService.shouldThrowOnUnregister = NSError(domain: "test", code: 999, userInfo: [NSLocalizedDescriptionKey: "Test error"])
 
-        manager.isEnabled = false
+        newManager.isEnabled = false
 
         // Wait for async revert
         try? await Task.sleep(nanoseconds: 100_000_000)
 
-        XCTAssertNotNil(manager.lastError)
-        XCTAssertTrue(manager.showError)
+        #expect(newManager.lastError != nil)
+        #expect(newManager.showError)
     }
 
-    // No-op Tests (setting same value)
+    // MARK: - No-op Tests (setting same value)
 
-    func testSetSameValue_doesNotCallService() {
+    @Test("Set same value does not call service")
+    func setSameValueDoesNotCallService() {
         mockService.mockStatus = .notRegistered
-        manager = LaunchAtLoginManager(service: mockService)
+        let newManager = LaunchAtLoginManager(service: mockService)
 
         // Set to same value (false)
-        manager.isEnabled = false
+        newManager.isEnabled = false
 
-        XCTAssertEqual(mockService.registerCallCount, 0)
-        XCTAssertEqual(mockService.unregisterCallCount, 0)
+        #expect(mockService.registerCallCount == 0)
+        #expect(mockService.unregisterCallCount == 0)
     }
 
-    // Refresh Status Tests
+    // MARK: - Refresh Status Tests
 
-    func testRefreshStatus_updatesIsEnabled() {
+    @Test("Refresh status updates isEnabled")
+    func refreshStatusUpdatesIsEnabled() {
         mockService.mockStatus = .enabled
         manager.refreshStatus()
-        XCTAssertTrue(manager.isEnabled)
+        #expect(manager.isEnabled)
 
         mockService.mockStatus = .notRegistered
         manager.refreshStatus()
-        XCTAssertFalse(manager.isEnabled)
+        #expect(!manager.isEnabled)
     }
 
-    func testRefreshStatus_clearsError() async {
+    @Test("Refresh status clears error")
+    func refreshStatusClearsError() async {
         // First cause an error
         mockService.shouldThrowOnRegister = NSError(domain: "test", code: 999, userInfo: nil)
         manager.isEnabled = true
@@ -280,56 +297,60 @@ final class LaunchAtLoginManagerTests: XCTestCase {
         // Wait for async revert
         try? await Task.sleep(nanoseconds: 100_000_000)
 
-        XCTAssertNotNil(manager.lastError)
+        #expect(manager.lastError != nil)
 
         // Now refresh
         mockService.shouldThrowOnRegister = nil
         manager.refreshStatus()
 
-        XCTAssertNil(manager.lastError)
-        XCTAssertFalse(manager.showError)
+        #expect(manager.lastError == nil)
+        #expect(!manager.showError)
     }
 
-    // Clear Error Tests
+    // MARK: - Clear Error Tests
 
-    func testClearError_clearsLastError() async {
+    @Test("Clear error clears last error")
+    func clearErrorClearsLastError() async {
         mockService.shouldThrowOnRegister = NSError(domain: "test", code: 999, userInfo: nil)
         manager.isEnabled = true
 
         // Wait for async revert
         try? await Task.sleep(nanoseconds: 100_000_000)
 
-        XCTAssertNotNil(manager.lastError)
+        #expect(manager.lastError != nil)
 
         manager.clearError()
 
-        XCTAssertNil(manager.lastError)
-        XCTAssertFalse(manager.showError)
+        #expect(manager.lastError == nil)
+        #expect(!manager.showError)
     }
 
-    // Availability Tests
+    // MARK: - Availability Tests
 
-    func testIsAvailable_returnsTrue() {
+    @Test("isAvailable returns true")
+    func isAvailableReturnsTrue() {
         // On macOS 13+, this should return true
-        XCTAssertTrue(manager.isAvailable)
+        #expect(manager.isAvailable)
     }
 
-    // Current Status Tests
+    // MARK: - Current Status Tests
 
-    func testCurrentStatus_returnsServiceStatus() {
+    @Test("Current status returns service status")
+    func currentStatusReturnsServiceStatus() {
         mockService.mockStatus = .enabled
-        XCTAssertEqual(manager.currentStatus, .enabled)
+        #expect(manager.currentStatus == .enabled)
 
         mockService.mockStatus = .notRegistered
-        XCTAssertEqual(manager.currentStatus, .notRegistered)
+        #expect(manager.currentStatus == .notRegistered)
 
         mockService.mockStatus = .requiresApproval
-        XCTAssertEqual(manager.currentStatus, .requiresApproval)
+        #expect(manager.currentStatus == .requiresApproval)
     }
 
-    // Rapid Toggle Tests
+    // MARK: - Rapid Toggle Tests
 
-    func testRapidToggle_handlesCorrectly() async {
+    @Test("Rapid toggle handles correctly")
+    func rapidToggleHandlesCorrectly() async {
         manager.isEnabled = true
         manager.isEnabled = false
         manager.isEnabled = true
@@ -338,28 +359,31 @@ final class LaunchAtLoginManagerTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 100_000_000)
 
         // Should end up enabled
-        XCTAssertTrue(manager.isEnabled)
-        XCTAssertEqual(mockService.mockStatus, .enabled)
+        #expect(manager.isEnabled)
+        #expect(mockService.mockStatus == .enabled)
     }
 }
 
-// SMAppServiceWrapper Tests
+// MARK: - SMAppServiceWrapper Tests
 
-final class SMAppServiceWrapperTests: XCTestCase {
+@Suite("SMAppServiceWrapper Tests")
+struct SMAppServiceWrapperTests {
 
-    func testShared_returnsSameInstance() {
+    @Test("Shared returns same instance")
+    func sharedReturnsSameInstance() {
         let instance1 = SMAppServiceWrapper.shared
         let instance2 = SMAppServiceWrapper.shared
         // Since it's a struct, we can't check identity, but we can verify it exists
-        XCTAssertNotNil(instance1)
-        XCTAssertNotNil(instance2)
+        #expect(instance1 != nil)
+        #expect(instance2 != nil)
     }
 
-    func testStatus_returnsValidStatus() {
+    @Test("Status returns valid status")
+    func statusReturnsValidStatus() {
         let wrapper = SMAppServiceWrapper.shared
         let status = wrapper.status
         // Status should be one of the valid enum values
         let validStatuses: [SMAppService.Status] = [.notRegistered, .enabled, .requiresApproval, .notFound]
-        XCTAssertTrue(validStatuses.contains(status))
+        #expect(validStatuses.contains(status))
     }
 }

@@ -1,11 +1,12 @@
-import XCTest
+import Foundation
+import Testing
 @testable import WeakupCore
 
+@Suite("ActivityHistoryManager Tests", .serialized)
 @MainActor
-final class ActivityHistoryManagerTests: XCTestCase {
+struct ActivityHistoryManagerTests {
 
-    override func setUp() async throws {
-        try await super.setUp()
+    init() {
         // Clear history and reset filters before each test
         UserDefaultsStore.shared.removeObject(forKey: "WeakupActivityHistory")
         ActivityHistoryManager.shared.clearHistory()
@@ -14,53 +15,54 @@ final class ActivityHistoryManagerTests: XCTestCase {
         ActivityHistoryManager.shared.searchText = ""
     }
 
-    override func tearDown() async throws {
-        // Clean up after tests
-        ActivityHistoryManager.shared.clearHistory()
-        try await super.tearDown()
-    }
+    // MARK: - Singleton Tests
 
-    // Singleton Tests
-
-    func testShared_returnsSameInstance() {
+    @Test("Shared returns same instance")
+    func sharedReturnsSameInstance() {
         let instance1 = ActivityHistoryManager.shared
         let instance2 = ActivityHistoryManager.shared
-        XCTAssertTrue(instance1 === instance2)
+        #expect(instance1 === instance2)
     }
 
-    // Session Management Tests
+    // MARK: - Session Management Tests
 
-    func testStartSession_createsCurrentSession() {
+    @Test("Start session creates current session")
+    func startSessionCreatesCurrentSession() {
         let manager = ActivityHistoryManager.shared
-        XCTAssertNil(manager.currentSession)
+        #expect(manager.currentSession == nil)
 
         manager.startSession(timerMode: false, timerDuration: nil)
 
-        XCTAssertNotNil(manager.currentSession)
-        XCTAssertFalse(manager.currentSession!.wasTimerMode)
+        #expect(manager.currentSession != nil)
+        #expect(!manager.currentSession!.wasTimerMode)
+        manager.endSession()
     }
 
-    func testStartSession_withTimerMode() {
+    @Test("Start session with timer mode")
+    func startSessionWithTimerMode() {
         let manager = ActivityHistoryManager.shared
         manager.startSession(timerMode: true, timerDuration: 1800)
 
-        XCTAssertNotNil(manager.currentSession)
-        XCTAssertTrue(manager.currentSession!.wasTimerMode)
-        XCTAssertEqual(manager.currentSession!.timerDuration, 1800)
+        #expect(manager.currentSession != nil)
+        #expect(manager.currentSession!.wasTimerMode)
+        #expect(manager.currentSession!.timerDuration == 1800)
+        manager.endSession()
     }
 
-    func testEndSession_addsToHistory() {
+    @Test("End session adds to history")
+    func endSessionAddsToHistory() {
         let manager = ActivityHistoryManager.shared
         let initialCount = manager.sessions.count
 
         manager.startSession(timerMode: false, timerDuration: nil)
         manager.endSession()
 
-        XCTAssertEqual(manager.sessions.count, initialCount + 1)
-        XCTAssertNil(manager.currentSession)
+        #expect(manager.sessions.count == initialCount + 1)
+        #expect(manager.currentSession == nil)
     }
 
-    func testEndSession_insertsAtBeginning() {
+    @Test("End session inserts at beginning")
+    func endSessionInsertsAtBeginning() {
         let manager = ActivityHistoryManager.shared
 
         // Create first session
@@ -73,22 +75,24 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.endSession()
 
         // Second session should be first in list
-        XCTAssertNotEqual(manager.sessions.first?.id, firstSessionId)
-        XCTAssertTrue(manager.sessions.first?.wasTimerMode ?? false)
+        #expect(manager.sessions.first?.id != firstSessionId)
+        #expect(manager.sessions.first?.wasTimerMode ?? false)
     }
 
-    func testEndSession_withNoCurrentSession_doesNothing() {
+    @Test("End session with no current session does nothing")
+    func endSessionWithNoCurrentSessionDoesNothing() {
         let manager = ActivityHistoryManager.shared
         let initialCount = manager.sessions.count
 
         manager.endSession() // No current session
 
-        XCTAssertEqual(manager.sessions.count, initialCount)
+        #expect(manager.sessions.count == initialCount)
     }
 
-    // Clear History Tests
+    // MARK: - Clear History Tests
 
-    func testClearHistory_removesAllSessions() {
+    @Test("Clear history removes all sessions")
+    func clearHistoryRemovesAllSessions() {
         let manager = ActivityHistoryManager.shared
 
         // Add some sessions
@@ -97,27 +101,29 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.startSession(timerMode: true, timerDuration: 60)
         manager.endSession()
 
-        XCTAssertGreaterThan(manager.sessions.count, 0)
+        #expect(manager.sessions.count > 0)
 
         manager.clearHistory()
 
-        XCTAssertEqual(manager.sessions.count, 0)
+        #expect(manager.sessions.count == 0)
     }
 
-    // Statistics Tests
+    // MARK: - Statistics Tests
 
-    func testStatistics_emptyHistory_returnsZeros() {
+    @Test("Statistics empty history returns zeros")
+    func statisticsEmptyHistoryReturnsZeros() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
         let stats = manager.statistics
 
-        XCTAssertEqual(stats.totalSessions, 0)
-        XCTAssertEqual(stats.totalDuration, 0)
-        XCTAssertEqual(stats.averageSessionDuration, 0)
+        #expect(stats.totalSessions == 0)
+        #expect(stats.totalDuration == 0)
+        #expect(stats.averageSessionDuration == 0)
     }
 
-    func testStatistics_countsCompletedSessions() {
+    @Test("Statistics counts completed sessions")
+    func statisticsCountsCompletedSessions() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -129,10 +135,11 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         let stats = manager.statistics
 
-        XCTAssertEqual(stats.totalSessions, 2)
+        #expect(stats.totalSessions == 2)
     }
 
-    func testStatistics_excludesActiveSessions() {
+    @Test("Statistics excludes active sessions")
+    func statisticsExcludesActiveSessions() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -146,10 +153,12 @@ final class ActivityHistoryManagerTests: XCTestCase {
         let stats = manager.statistics
 
         // Should only count the completed session
-        XCTAssertEqual(stats.totalSessions, 1)
+        #expect(stats.totalSessions == 1)
+        manager.endSession()
     }
 
-    func testStatistics_calculatesAverageDuration() {
+    @Test("Statistics calculates average duration")
+    func statisticsCalculatesAverageDuration() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -161,12 +170,13 @@ final class ActivityHistoryManagerTests: XCTestCase {
         let stats = manager.statistics
 
         // With at least one session, average should be > 0 (even if tiny)
-        XCTAssertGreaterThanOrEqual(stats.averageSessionDuration, 0)
+        #expect(stats.averageSessionDuration >= 0)
     }
 
-    // Today/Week Statistics Tests
+    // MARK: - Today/Week Statistics Tests
 
-    func testStatistics_todaySessions_countsOnlyToday() {
+    @Test("Statistics today sessions counts only today")
+    func statisticsTodaySessionsCountsOnlyToday() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -177,11 +187,12 @@ final class ActivityHistoryManagerTests: XCTestCase {
         let stats = manager.statistics
 
         // Session created now should count as today
-        XCTAssertEqual(stats.todaySessions, 1)
-        XCTAssertGreaterThanOrEqual(stats.todayDuration, 0)
+        #expect(stats.todaySessions == 1)
+        #expect(stats.todayDuration >= 0)
     }
 
-    func testStatistics_weekSessions_countsThisWeek() {
+    @Test("Statistics week sessions counts this week")
+    func statisticsWeekSessionsCountsThisWeek() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -192,13 +203,14 @@ final class ActivityHistoryManagerTests: XCTestCase {
         let stats = manager.statistics
 
         // Session created now should count as this week
-        XCTAssertEqual(stats.weekSessions, 1)
-        XCTAssertGreaterThanOrEqual(stats.weekDuration, 0)
+        #expect(stats.weekSessions == 1)
+        #expect(stats.weekDuration >= 0)
     }
 
-    // Persistence Tests
+    // MARK: - Persistence Tests
 
-    func testPersistence_savesOnEnd() {
+    @Test("Persistence saves on end")
+    func persistenceSavesOnEnd() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -207,10 +219,11 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         // Verify data was saved to UserDefaults
         let data = UserDefaultsStore.shared.data(forKey: "WeakupActivityHistory")
-        XCTAssertNotNil(data)
+        #expect(data != nil)
     }
 
-    func testPersistence_dataIsValidJSON() {
+    @Test("Persistence data is valid JSON")
+    func persistenceDataIsValidJSON() throws {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -219,56 +232,55 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         // Verify saved data can be decoded
         guard let data = UserDefaultsStore.shared.data(forKey: "WeakupActivityHistory") else {
-            XCTFail("No data saved")
+            Issue.record("No data saved")
             return
         }
 
-        do {
-            let sessions = try JSONDecoder().decode([ActivitySession].self, from: data)
-            XCTAssertEqual(sessions.count, 1)
-            XCTAssertTrue(sessions[0].wasTimerMode)
-            XCTAssertEqual(sessions[0].timerDuration, 3600)
-        } catch {
-            XCTFail("Failed to decode saved sessions: \(error)")
-        }
+        let sessions = try JSONDecoder().decode([ActivitySession].self, from: data)
+        #expect(sessions.count == 1)
+        #expect(sessions[0].wasTimerMode)
+        #expect(sessions[0].timerDuration == 3600)
     }
 
-    // Timer Mode Session Tests
+    // MARK: - Timer Mode Session Tests
 
-    func testSession_timerMode_storesCorrectDuration() {
+    @Test("Session timer mode stores correct duration")
+    func sessionTimerModeStoresCorrectDuration() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
         let expectedDuration: TimeInterval = 1800 // 30 minutes
         manager.startSession(timerMode: true, timerDuration: expectedDuration)
 
-        XCTAssertNotNil(manager.currentSession)
-        XCTAssertTrue(manager.currentSession!.wasTimerMode)
-        XCTAssertEqual(manager.currentSession!.timerDuration, expectedDuration)
+        #expect(manager.currentSession != nil)
+        #expect(manager.currentSession!.wasTimerMode)
+        #expect(manager.currentSession!.timerDuration == expectedDuration)
 
         manager.endSession()
 
-        XCTAssertEqual(manager.sessions.first?.timerDuration, expectedDuration)
+        #expect(manager.sessions.first?.timerDuration == expectedDuration)
     }
 
-    func testSession_nonTimerMode_hasNilDuration() {
+    @Test("Session non-timer mode has nil duration")
+    func sessionNonTimerModeHasNilDuration() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
         manager.startSession(timerMode: false, timerDuration: nil)
 
-        XCTAssertNotNil(manager.currentSession)
-        XCTAssertFalse(manager.currentSession!.wasTimerMode)
-        XCTAssertNil(manager.currentSession!.timerDuration)
+        #expect(manager.currentSession != nil)
+        #expect(!manager.currentSession!.wasTimerMode)
+        #expect(manager.currentSession!.timerDuration == nil)
 
         manager.endSession()
 
-        XCTAssertNil(manager.sessions.first?.timerDuration)
+        #expect(manager.sessions.first?.timerDuration == nil)
     }
 
-    // Edge Case Tests
+    // MARK: - Edge Case Tests
 
-    func testRapidStartStop_maintainsConsistency() {
+    @Test("Rapid start stop maintains consistency")
+    func rapidStartStopMaintainsConsistency() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -278,11 +290,12 @@ final class ActivityHistoryManagerTests: XCTestCase {
             manager.endSession()
         }
 
-        XCTAssertEqual(manager.sessions.count, 10)
-        XCTAssertNil(manager.currentSession)
+        #expect(manager.sessions.count == 10)
+        #expect(manager.currentSession == nil)
     }
 
-    func testMultipleStartsWithoutEnd_onlyLastSessionActive() {
+    @Test("Multiple starts without end only last session active")
+    func multipleStartsWithoutEndOnlyLastSessionActive() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -294,12 +307,14 @@ final class ActivityHistoryManagerTests: XCTestCase {
         let secondSessionId = manager.currentSession?.id
 
         // Second start should replace first (current implementation)
-        XCTAssertNotEqual(firstSessionId, secondSessionId)
-        XCTAssertNotNil(manager.currentSession)
-        XCTAssertTrue(manager.currentSession!.wasTimerMode)
+        #expect(firstSessionId != secondSessionId)
+        #expect(manager.currentSession != nil)
+        #expect(manager.currentSession!.wasTimerMode)
+        manager.endSession()
     }
 
-    func testEndSession_calculatesCorrectDuration() {
+    @Test("End session calculates correct duration")
+    func endSessionCalculatesCorrectDuration() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -311,17 +326,18 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.endSession()
 
         guard let session = manager.sessions.first else {
-            XCTFail("No session in history")
+            Issue.record("No session in history")
             return
         }
 
         // Duration should be at least 0.1 seconds
-        XCTAssertGreaterThanOrEqual(session.duration, 0.1)
+        #expect(session.duration >= 0.1)
         // Duration should be reasonable (less than 1 second for this test)
-        XCTAssertLessThan(session.duration, 1.0)
+        #expect(session.duration < 1.0)
     }
 
-    func testClearHistory_alsoSavesToPersistence() {
+    @Test("Clear history also saves to persistence")
+    func clearHistoryAlsoSavesToPersistence() {
         let manager = ActivityHistoryManager.shared
 
         // Add some sessions
@@ -334,11 +350,12 @@ final class ActivityHistoryManagerTests: XCTestCase {
         // Verify persistence is also cleared
         if let data = UserDefaultsStore.shared.data(forKey: "WeakupActivityHistory") {
             let sessions = try? JSONDecoder().decode([ActivitySession].self, from: data)
-            XCTAssertEqual(sessions?.count ?? 0, 0)
+            #expect(sessions?.count ?? 0 == 0)
         }
     }
 
-    func testStatistics_calculatesCorrectTotalDuration() {
+    @Test("Statistics calculates correct total duration")
+    func statisticsCalculatesCorrectTotalDuration() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -351,15 +368,16 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         let stats = manager.statistics
 
-        XCTAssertEqual(stats.totalSessions, 3)
+        #expect(stats.totalSessions == 3)
         // Total duration should be sum of all session durations
         let calculatedTotal = manager.sessions.reduce(0) { $0 + $1.duration }
-        XCTAssertEqual(stats.totalDuration, calculatedTotal, accuracy: 0.001)
+        #expect(abs(stats.totalDuration - calculatedTotal) < 0.001)
     }
 
-    // Export Tests
+    // MARK: - Export Tests
 
-    func testExportJSON_createsValidData() {
+    @Test("Export JSON creates valid data")
+    func exportJSONCreatesValidData() throws {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -368,25 +386,22 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         let result = manager.exportHistory(format: .json)
 
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.format, .json)
-        XCTAssertTrue(result?.suggestedFilename.hasSuffix(".json") ?? false)
+        #expect(result != nil)
+        #expect(result?.format == .json)
+        #expect(result?.suggestedFilename.hasSuffix(".json") ?? false)
 
         // Verify JSON is valid
         if let data = result?.data {
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
-                let sessions = try decoder.decode([ActivitySession].self, from: data)
-                XCTAssertEqual(sessions.count, 1)
-                XCTAssertTrue(sessions[0].wasTimerMode)
-            } catch {
-                XCTFail("Invalid JSON: \(error)")
-            }
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let sessions = try decoder.decode([ActivitySession].self, from: data)
+            #expect(sessions.count == 1)
+            #expect(sessions[0].wasTimerMode)
         }
     }
 
-    func testExportCSV_createsValidData() {
+    @Test("Export CSV creates valid data")
+    func exportCSVCreatesValidData() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -395,33 +410,35 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         let result = manager.exportHistory(format: .csv)
 
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.format, .csv)
-        XCTAssertTrue(result?.suggestedFilename.hasSuffix(".csv") ?? false)
+        #expect(result != nil)
+        #expect(result?.format == .csv)
+        #expect(result?.suggestedFilename.hasSuffix(".csv") ?? false)
 
         // Verify CSV has header and data row
         if let data = result?.data, let csvString = String(data: data, encoding: .utf8) {
             let lines = csvString.components(separatedBy: .newlines).filter { !$0.isEmpty }
-            XCTAssertGreaterThanOrEqual(lines.count, 2) // Header + at least 1 data row
-            XCTAssertTrue(lines[0].contains("ID"))
-            XCTAssertTrue(lines[0].contains("Start Time"))
+            #expect(lines.count >= 2) // Header + at least 1 data row
+            #expect(lines[0].contains("ID"))
+            #expect(lines[0].contains("Start Time"))
         }
     }
 
-    func testExport_emptyHistory_returnsNil() {
+    @Test("Export empty history returns nil")
+    func exportEmptyHistoryReturnsNil() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
         let jsonResult = manager.exportHistory(format: .json)
         let csvResult = manager.exportHistory(format: .csv)
 
-        XCTAssertNil(jsonResult)
-        XCTAssertNil(csvResult)
+        #expect(jsonResult == nil)
+        #expect(csvResult == nil)
     }
 
-    // Import Tests
+    // MARK: - Import Tests
 
-    func testImportJSON_validData_succeeds() {
+    @Test("Import JSON valid data succeeds")
+    func importJSONValidDataSucceeds() throws {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -436,23 +453,21 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        guard let data = try? encoder.encode([session]) else {
-            XCTFail("Failed to encode test data")
-            return
-        }
+        let data = try encoder.encode([session])
 
         let result = manager.importHistory(from: data, format: .json)
 
         switch result {
         case .success(let imported, _):
-            XCTAssertEqual(imported, 1)
-            XCTAssertEqual(manager.sessions.count, 1)
+            #expect(imported == 1)
+            #expect(manager.sessions.count == 1)
         case .failure(let error):
-            XCTFail("Import failed: \(error)")
+            Issue.record("Import failed: \(error)")
         }
     }
 
-    func testImportJSON_invalidData_fails() {
+    @Test("Import JSON invalid data fails")
+    func importJSONInvalidDataFails() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -462,14 +477,15 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         switch result {
         case .success:
-            XCTFail("Should have failed with invalid data")
+            Issue.record("Should have failed with invalid data")
         case .failure:
             // Expected
             break
         }
     }
 
-    func testImportJSON_duplicateSessions_skipped() {
+    @Test("Import JSON duplicate sessions skipped")
+    func importJSONDuplicateSessionsSkipped() throws {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -485,10 +501,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        guard let data = try? encoder.encode([session]) else {
-            XCTFail("Failed to encode test data")
-            return
-        }
+        let data = try encoder.encode([session])
 
         // Import once
         _ = manager.importHistory(from: data, format: .json)
@@ -498,17 +511,18 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         switch result {
         case .success(let imported, let skipped):
-            XCTAssertEqual(imported, 0)
-            XCTAssertEqual(skipped, 1)
-            XCTAssertEqual(manager.sessions.count, 1) // Still only 1 session
+            #expect(imported == 0)
+            #expect(skipped == 1)
+            #expect(manager.sessions.count == 1) // Still only 1 session
         case .failure(let error):
-            XCTFail("Import failed: \(error)")
+            Issue.record("Import failed: \(error)")
         }
     }
 
-    // Filter Tests
+    // MARK: - Filter Tests
 
-    func testFilteredSessions_allFilter_returnsAll() {
+    @Test("Filtered sessions all filter returns all")
+    func filteredSessionsAllFilterReturnsAll() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
         manager.filterMode = .all
@@ -518,10 +532,11 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.startSession(timerMode: true, timerDuration: 60)
         manager.endSession()
 
-        XCTAssertEqual(manager.filteredSessions.count, 2)
+        #expect(manager.filteredSessions.count == 2)
     }
 
-    func testFilteredSessions_timerOnlyFilter() {
+    @Test("Filtered sessions timer only filter")
+    func filteredSessionsTimerOnlyFilter() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
         manager.filterMode = .timerOnly
@@ -531,11 +546,12 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.startSession(timerMode: true, timerDuration: 60)
         manager.endSession()
 
-        XCTAssertEqual(manager.filteredSessions.count, 1)
-        XCTAssertTrue(manager.filteredSessions.first?.wasTimerMode ?? false)
+        #expect(manager.filteredSessions.count == 1)
+        #expect(manager.filteredSessions.first?.wasTimerMode ?? false)
     }
 
-    func testFilteredSessions_manualOnlyFilter() {
+    @Test("Filtered sessions manual only filter")
+    func filteredSessionsManualOnlyFilter() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
         manager.filterMode = .manualOnly
@@ -545,13 +561,14 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.startSession(timerMode: true, timerDuration: 60)
         manager.endSession()
 
-        XCTAssertEqual(manager.filteredSessions.count, 1)
-        XCTAssertFalse(manager.filteredSessions.first?.wasTimerMode ?? true)
+        #expect(manager.filteredSessions.count == 1)
+        #expect(!(manager.filteredSessions.first?.wasTimerMode ?? true))
     }
 
-    // Sort Tests
+    // MARK: - Sort Tests
 
-    func testSortOrder_dateDescending() {
+    @Test("Sort order date descending")
+    func sortOrderDateDescending() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
         manager.sortOrder = .dateDescending
@@ -563,13 +580,14 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.endSession()
 
         let sessions = manager.filteredSessions
-        XCTAssertGreaterThanOrEqual(sessions.count, 2)
+        #expect(sessions.count >= 2)
         if sessions.count >= 2 {
-            XCTAssertGreaterThan(sessions[0].startTime, sessions[1].startTime)
+            #expect(sessions[0].startTime > sessions[1].startTime)
         }
     }
 
-    func testSortOrder_dateAscending() {
+    @Test("Sort order date ascending")
+    func sortOrderDateAscending() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
         manager.sortOrder = .dateAscending
@@ -581,24 +599,26 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.endSession()
 
         let sessions = manager.filteredSessions
-        XCTAssertGreaterThanOrEqual(sessions.count, 2)
+        #expect(sessions.count >= 2)
         if sessions.count >= 2 {
-            XCTAssertLessThan(sessions[0].startTime, sessions[1].startTime)
+            #expect(sessions[0].startTime < sessions[1].startTime)
         }
     }
 
-    // Daily Statistics Tests
+    // MARK: - Daily Statistics Tests
 
-    func testDailyStatistics_returns7Days() {
+    @Test("Daily statistics returns 7 days")
+    func dailyStatisticsReturns7Days() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
         let stats = manager.dailyStatistics(days: 7)
 
-        XCTAssertEqual(stats.count, 7)
+        #expect(stats.count == 7)
     }
 
-    func testDailyStatistics_todayHasData() {
+    @Test("Daily statistics today has data")
+    func dailyStatisticsTodayHasData() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -609,13 +629,14 @@ final class ActivityHistoryManagerTests: XCTestCase {
 
         // Last item should be today
         let today = stats.last
-        XCTAssertNotNil(today)
-        XCTAssertEqual(today?.sessionCount, 1)
+        #expect(today != nil)
+        #expect(today?.sessionCount == 1)
     }
 
-    // Delete Session Tests
+    // MARK: - Delete Session Tests
 
-    func testDeleteSession_removesFromHistory() {
+    @Test("Delete session removes from history")
+    func deleteSessionRemovesFromHistory() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -625,10 +646,11 @@ final class ActivityHistoryManagerTests: XCTestCase {
         let session = manager.sessions.first!
         manager.deleteSession(session)
 
-        XCTAssertEqual(manager.sessions.count, 0)
+        #expect(manager.sessions.count == 0)
     }
 
-    func testDeleteSession_preservesOtherSessions() {
+    @Test("Delete session preserves other sessions")
+    func deleteSessionPreservesOtherSessions() {
         let manager = ActivityHistoryManager.shared
         manager.clearHistory()
 
@@ -640,6 +662,6 @@ final class ActivityHistoryManagerTests: XCTestCase {
         let sessionToDelete = manager.sessions.first!
         manager.deleteSession(sessionToDelete)
 
-        XCTAssertEqual(manager.sessions.count, 1)
+        #expect(manager.sessions.count == 1)
     }
 }

@@ -1,277 +1,318 @@
-import XCTest
+import Testing
 @testable import WeakupCore
 
-final class AppLanguageTests: XCTestCase {
+@Suite("AppLanguage Tests")
+struct AppLanguageTests {
 
-    // Enum Cases Tests (AL-001)
+    // MARK: - Enum Cases Tests (AL-001)
 
-    func testAllCases_containsExpectedLanguages() {
+    @Test("All cases contains expected languages")
+    func allCasesContainsExpectedLanguages() {
         let allCases = AppLanguage.allCases
-        XCTAssertEqual(allCases.count, 8, "Should have exactly 8 languages")
-        XCTAssertTrue(allCases.contains(.english), "Should contain English")
-        XCTAssertTrue(allCases.contains(.chinese), "Should contain Chinese Simplified")
-        XCTAssertTrue(allCases.contains(.chineseTraditional), "Should contain Chinese Traditional")
-        XCTAssertTrue(allCases.contains(.japanese), "Should contain Japanese")
-        XCTAssertTrue(allCases.contains(.korean), "Should contain Korean")
-        XCTAssertTrue(allCases.contains(.french), "Should contain French")
-        XCTAssertTrue(allCases.contains(.german), "Should contain German")
-        XCTAssertTrue(allCases.contains(.spanish), "Should contain Spanish")
+        #expect(allCases.count == 8, "Should have exactly 8 languages")
+        #expect(allCases.contains(.english), "Should contain English")
+        #expect(allCases.contains(.chinese), "Should contain Chinese Simplified")
+        #expect(allCases.contains(.chineseTraditional), "Should contain Chinese Traditional")
+        #expect(allCases.contains(.japanese), "Should contain Japanese")
+        #expect(allCases.contains(.korean), "Should contain Korean")
+        #expect(allCases.contains(.french), "Should contain French")
+        #expect(allCases.contains(.german), "Should contain German")
+        #expect(allCases.contains(.spanish), "Should contain Spanish")
     }
 
-    func testAllCases_orderIsConsistent() {
+    @Test("All cases order is consistent")
+    func allCasesOrderIsConsistent() {
         let cases = AppLanguage.allCases
-        XCTAssertEqual(cases[0], .english)
-        XCTAssertEqual(cases[1], .chinese)
-        XCTAssertEqual(cases[2], .chineseTraditional)
-        XCTAssertEqual(cases[3], .japanese)
-        XCTAssertEqual(cases[4], .korean)
-        XCTAssertEqual(cases[5], .french)
-        XCTAssertEqual(cases[6], .german)
-        XCTAssertEqual(cases[7], .spanish)
+        #expect(cases[0] == .english)
+        #expect(cases[1] == .chinese)
+        #expect(cases[2] == .chineseTraditional)
+        #expect(cases[3] == .japanese)
+        #expect(cases[4] == .korean)
+        #expect(cases[5] == .french)
+        #expect(cases[6] == .german)
+        #expect(cases[7] == .spanish)
     }
 
-    // Raw Value Tests (AL-002 to AL-009)
+    // MARK: - Raw Value Tests (AL-002 to AL-009)
 
-    func testRawValue_english() {
-        XCTAssertEqual(AppLanguage.english.rawValue, "en")
+    @Test("Raw value for English")
+    func rawValueEnglish() {
+        #expect(AppLanguage.english.rawValue == "en")
     }
 
-    func testRawValue_chinese() {
-        XCTAssertEqual(AppLanguage.chinese.rawValue, "zh-Hans")
+    @Test("Raw value for Chinese")
+    func rawValueChinese() {
+        #expect(AppLanguage.chinese.rawValue == "zh-Hans")
     }
 
-    func testRawValue_chineseTraditional() {
-        XCTAssertEqual(AppLanguage.chineseTraditional.rawValue, "zh-Hant")
+    @Test("Raw value for Chinese Traditional")
+    func rawValueChineseTraditional() {
+        #expect(AppLanguage.chineseTraditional.rawValue == "zh-Hant")
     }
 
-    func testRawValue_japanese() {
-        XCTAssertEqual(AppLanguage.japanese.rawValue, "ja")
+    @Test("Raw value for Japanese")
+    func rawValueJapanese() {
+        #expect(AppLanguage.japanese.rawValue == "ja")
     }
 
-    func testRawValue_korean() {
-        XCTAssertEqual(AppLanguage.korean.rawValue, "ko")
+    @Test("Raw value for Korean")
+    func rawValueKorean() {
+        #expect(AppLanguage.korean.rawValue == "ko")
     }
 
-    func testRawValue_french() {
-        XCTAssertEqual(AppLanguage.french.rawValue, "fr")
+    @Test("Raw value for French")
+    func rawValueFrench() {
+        #expect(AppLanguage.french.rawValue == "fr")
     }
 
-    func testRawValue_german() {
-        XCTAssertEqual(AppLanguage.german.rawValue, "de")
+    @Test("Raw value for German")
+    func rawValueGerman() {
+        #expect(AppLanguage.german.rawValue == "de")
     }
 
-    func testRawValue_spanish() {
-        XCTAssertEqual(AppLanguage.spanish.rawValue, "es")
+    @Test("Raw value for Spanish")
+    func rawValueSpanish() {
+        #expect(AppLanguage.spanish.rawValue == "es")
     }
 
-    func testRawValue_allAreUnique() {
+    @Test("All raw values are unique")
+    func rawValueAllAreUnique() {
         let rawValues = AppLanguage.allCases.map { $0.rawValue }
         let uniqueRawValues = Set(rawValues)
-        XCTAssertEqual(rawValues.count, uniqueRawValues.count, "All raw values should be unique")
+        #expect(rawValues.count == uniqueRawValues.count, "All raw values should be unique")
     }
 
-    func testRawValue_allAreValidLocaleIdentifiers() {
+    @Test("All raw values are valid locale identifiers")
+    func rawValueAllAreValidLocaleIdentifiers() {
         for language in AppLanguage.allCases {
             let rawValue = language.rawValue
-            XCTAssertFalse(rawValue.isEmpty, "Raw value should not be empty for \(language)")
-            XCTAssertTrue(rawValue.count >= 2, "Raw value should be at least 2 characters for \(language)")
+            #expect(!rawValue.isEmpty, "Raw value should not be empty for \(language)")
+            #expect(rawValue.count >= 2, "Raw value should be at least 2 characters for \(language)")
         }
     }
 
-    // Identifiable Tests (AL-010)
+    // MARK: - Identifiable Tests (AL-010)
 
-    func testId_matchesRawValue() {
+    @Test("ID matches raw value")
+    func idMatchesRawValue() {
         for language in AppLanguage.allCases {
-            XCTAssertEqual(language.id, language.rawValue, "ID should match raw value for \(language)")
+            #expect(language.id == language.rawValue, "ID should match raw value for \(language)")
         }
     }
 
-    func testId_conformsToIdentifiable() {
+    @Test("Conforms to Identifiable")
+    func idConformsToIdentifiable() {
         let language: any Identifiable = AppLanguage.english
-        XCTAssertNotNil(language.id)
+        #expect(language.id != nil)
     }
 
-    // Display Name Tests (AL-011 to AL-013)
+    // MARK: - Display Name Tests (AL-011 to AL-013)
 
-    func testDisplayName_english() {
-        XCTAssertEqual(AppLanguage.english.displayName, "English")
+    @Test("Display name for English")
+    func displayNameEnglish() {
+        #expect(AppLanguage.english.displayName == "English")
     }
 
-    func testDisplayName_chinese() {
-        XCTAssertEqual(AppLanguage.chinese.displayName, "简体中文")
+    @Test("Display name for Chinese")
+    func displayNameChinese() {
+        #expect(AppLanguage.chinese.displayName == "简体中文")
     }
 
-    func testDisplayName_chineseTraditional() {
-        XCTAssertEqual(AppLanguage.chineseTraditional.displayName, "繁體中文")
+    @Test("Display name for Chinese Traditional")
+    func displayNameChineseTraditional() {
+        #expect(AppLanguage.chineseTraditional.displayName == "繁體中文")
     }
 
-    func testDisplayName_japanese() {
-        XCTAssertEqual(AppLanguage.japanese.displayName, "日本語")
+    @Test("Display name for Japanese")
+    func displayNameJapanese() {
+        #expect(AppLanguage.japanese.displayName == "日本語")
     }
 
-    func testDisplayName_korean() {
-        XCTAssertEqual(AppLanguage.korean.displayName, "한국어")
+    @Test("Display name for Korean")
+    func displayNameKorean() {
+        #expect(AppLanguage.korean.displayName == "한국어")
     }
 
-    func testDisplayName_french() {
-        XCTAssertEqual(AppLanguage.french.displayName, "Francais")
+    @Test("Display name for French")
+    func displayNameFrench() {
+        #expect(AppLanguage.french.displayName == "Francais")
     }
 
-    func testDisplayName_german() {
-        XCTAssertEqual(AppLanguage.german.displayName, "Deutsch")
+    @Test("Display name for German")
+    func displayNameGerman() {
+        #expect(AppLanguage.german.displayName == "Deutsch")
     }
 
-    func testDisplayName_spanish() {
-        XCTAssertEqual(AppLanguage.spanish.displayName, "Espanol")
+    @Test("Display name for Spanish")
+    func displayNameSpanish() {
+        #expect(AppLanguage.spanish.displayName == "Espanol")
     }
 
-    func testDisplayName_allLanguagesHaveDisplayNames() {
+    @Test("All languages have display names")
+    func displayNameAllLanguagesHaveDisplayNames() {
         for language in AppLanguage.allCases {
-            XCTAssertFalse(language.displayName.isEmpty, "Display name should not be empty for \(language)")
+            #expect(!language.displayName.isEmpty, "Display name should not be empty for \(language)")
         }
     }
 
-    func testDisplayName_allAreUnique() {
+    @Test("All display names are unique")
+    func displayNameAllAreUnique() {
         let displayNames = AppLanguage.allCases.map { $0.displayName }
         let uniqueDisplayNames = Set(displayNames)
-        XCTAssertEqual(displayNames.count, uniqueDisplayNames.count, "All display names should be unique")
+        #expect(displayNames.count == uniqueDisplayNames.count, "All display names should be unique")
     }
 
-    func testDisplayName_nativeLanguageNames() {
+    @Test("Display names are in native language")
+    func displayNameNativeLanguageNames() {
         // Verify display names are in native language format
-        XCTAssertTrue(AppLanguage.chinese.displayName.contains("中文"), "Chinese should contain native characters")
-        XCTAssertTrue(AppLanguage.chineseTraditional.displayName.contains("中文"), "Traditional Chinese should contain native characters")
-        XCTAssertTrue(AppLanguage.japanese.displayName.contains("日本"), "Japanese should contain native characters")
-        XCTAssertTrue(AppLanguage.korean.displayName.contains("한국"), "Korean should contain native characters")
+        #expect(AppLanguage.chinese.displayName.contains("中文"), "Chinese should contain native characters")
+        #expect(AppLanguage.chineseTraditional.displayName.contains("中文"), "Traditional Chinese should contain native characters")
+        #expect(AppLanguage.japanese.displayName.contains("日本"), "Japanese should contain native characters")
+        #expect(AppLanguage.korean.displayName.contains("한국"), "Korean should contain native characters")
     }
 
-    // Bundle Tests (AL-014)
+    // MARK: - Bundle Tests (AL-014)
 
-    func testBundle_returnsBundle() {
+    @Test("Bundle returns bundle")
+    func bundleReturnsBundle() {
         for language in AppLanguage.allCases {
             let bundle = language.bundle
-            XCTAssertNotNil(bundle, "Bundle should not be nil for \(language)")
+            #expect(bundle != nil, "Bundle should not be nil for \(language)")
         }
     }
 
-    func testBundle_returnsBundleType() {
+    @Test("Bundle returns bundle type")
+    func bundleReturnsBundleType() {
         for language in AppLanguage.allCases {
             let bundle = language.bundle
-            XCTAssertFalse(bundle.bundlePath.isEmpty, "Bundle path should not be empty for \(language)")
+            #expect(!bundle.bundlePath.isEmpty, "Bundle path should not be empty for \(language)")
         }
     }
 
-    func testBundle_fallsBackToMainBundle() {
+    @Test("Bundle falls back to main bundle")
+    func bundleFallsBackToMainBundle() {
         // When lproj doesn't exist, should fall back to main bundle
         for language in AppLanguage.allCases {
             let bundle = language.bundle
             // Bundle should never be nil (falls back to main bundle)
-            XCTAssertNotNil(bundle)
+            #expect(bundle != nil)
         }
     }
 
-    // Initialization Tests (AL-015, AL-016)
+    // MARK: - Initialization Tests (AL-015, AL-016)
 
-    func testInit_fromValidRawValue() {
-        XCTAssertEqual(AppLanguage(rawValue: "en"), .english)
-        XCTAssertEqual(AppLanguage(rawValue: "zh-Hans"), .chinese)
-        XCTAssertEqual(AppLanguage(rawValue: "zh-Hant"), .chineseTraditional)
-        XCTAssertEqual(AppLanguage(rawValue: "ja"), .japanese)
-        XCTAssertEqual(AppLanguage(rawValue: "ko"), .korean)
-        XCTAssertEqual(AppLanguage(rawValue: "fr"), .french)
-        XCTAssertEqual(AppLanguage(rawValue: "de"), .german)
-        XCTAssertEqual(AppLanguage(rawValue: "es"), .spanish)
+    @Test("Init from valid raw value")
+    func initFromValidRawValue() {
+        #expect(AppLanguage(rawValue: "en") == .english)
+        #expect(AppLanguage(rawValue: "zh-Hans") == .chinese)
+        #expect(AppLanguage(rawValue: "zh-Hant") == .chineseTraditional)
+        #expect(AppLanguage(rawValue: "ja") == .japanese)
+        #expect(AppLanguage(rawValue: "ko") == .korean)
+        #expect(AppLanguage(rawValue: "fr") == .french)
+        #expect(AppLanguage(rawValue: "de") == .german)
+        #expect(AppLanguage(rawValue: "es") == .spanish)
     }
 
-    func testInit_fromInvalidRawValue() {
-        XCTAssertNil(AppLanguage(rawValue: "invalid"), "Invalid raw value should return nil")
-        XCTAssertNil(AppLanguage(rawValue: ""), "Empty raw value should return nil")
-        XCTAssertNil(AppLanguage(rawValue: "EN"), "Case-sensitive: uppercase should return nil")
-        XCTAssertNil(AppLanguage(rawValue: "english"), "Full name should return nil")
-        XCTAssertNil(AppLanguage(rawValue: "zh"), "Partial code should return nil")
-        XCTAssertNil(AppLanguage(rawValue: "pt"), "Unsupported language should return nil")
-        XCTAssertNil(AppLanguage(rawValue: "ru"), "Unsupported language should return nil")
+    @Test("Init from invalid raw value")
+    func initFromInvalidRawValue() {
+        #expect(AppLanguage(rawValue: "invalid") == nil, "Invalid raw value should return nil")
+        #expect(AppLanguage(rawValue: "") == nil, "Empty raw value should return nil")
+        #expect(AppLanguage(rawValue: "EN") == nil, "Case-sensitive: uppercase should return nil")
+        #expect(AppLanguage(rawValue: "english") == nil, "Full name should return nil")
+        #expect(AppLanguage(rawValue: "zh") == nil, "Partial code should return nil")
+        #expect(AppLanguage(rawValue: "pt") == nil, "Unsupported language should return nil")
+        #expect(AppLanguage(rawValue: "ru") == nil, "Unsupported language should return nil")
     }
 
-    func testInit_caseSensitivity() {
+    @Test("Init case sensitivity")
+    func initCaseSensitivity() {
         // Raw values are case-sensitive
-        XCTAssertNil(AppLanguage(rawValue: "EN"))
-        XCTAssertNil(AppLanguage(rawValue: "ZH-HANS"))
-        XCTAssertNil(AppLanguage(rawValue: "Zh-Hans"))
-        XCTAssertNotNil(AppLanguage(rawValue: "en"))
-        XCTAssertNotNil(AppLanguage(rawValue: "zh-Hans"))
+        #expect(AppLanguage(rawValue: "EN") == nil)
+        #expect(AppLanguage(rawValue: "ZH-HANS") == nil)
+        #expect(AppLanguage(rawValue: "Zh-Hans") == nil)
+        #expect(AppLanguage(rawValue: "en") != nil)
+        #expect(AppLanguage(rawValue: "zh-Hans") != nil)
     }
 
-    // CaseIterable Conformance Tests
+    // MARK: - CaseIterable Conformance Tests
 
-    func testCaseIterable_conformance() {
+    @Test("CaseIterable conformance")
+    func caseIterableConformance() {
         let allCases = AppLanguage.allCases
-        XCTAssertEqual(allCases.count, 8)
+        #expect(allCases.count == 8)
     }
 
-    func testCaseIterable_canIterate() {
+    @Test("CaseIterable can iterate")
+    func caseIterableCanIterate() {
         var count = 0
         for _ in AppLanguage.allCases {
             count += 1
         }
-        XCTAssertEqual(count, 8)
+        #expect(count == 8)
     }
 
-    // Equatable Tests
+    // MARK: - Equatable Tests
 
-    func testEquatable_sameLanguage() {
-        XCTAssertEqual(AppLanguage.english, AppLanguage.english)
-        XCTAssertEqual(AppLanguage.chinese, AppLanguage.chinese)
+    @Test("Equatable same language")
+    func equatableSameLanguage() {
+        #expect(AppLanguage.english == AppLanguage.english)
+        #expect(AppLanguage.chinese == AppLanguage.chinese)
     }
 
-    func testEquatable_differentLanguage() {
-        XCTAssertNotEqual(AppLanguage.english, AppLanguage.chinese)
-        XCTAssertNotEqual(AppLanguage.chinese, AppLanguage.chineseTraditional)
-        XCTAssertNotEqual(AppLanguage.japanese, AppLanguage.korean)
+    @Test("Equatable different language")
+    func equatableDifferentLanguage() {
+        #expect(AppLanguage.english != AppLanguage.chinese)
+        #expect(AppLanguage.chinese != AppLanguage.chineseTraditional)
+        #expect(AppLanguage.japanese != AppLanguage.korean)
     }
 
-    // Hashable Tests
+    // MARK: - Hashable Tests
 
-    func testHashable_canBeUsedInSet() {
+    @Test("Hashable can be used in Set")
+    func hashableCanBeUsedInSet() {
         var languageSet: Set<AppLanguage> = []
         languageSet.insert(.english)
         languageSet.insert(.chinese)
         languageSet.insert(.english) // Duplicate
 
-        XCTAssertEqual(languageSet.count, 2)
-        XCTAssertTrue(languageSet.contains(.english))
-        XCTAssertTrue(languageSet.contains(.chinese))
+        #expect(languageSet.count == 2)
+        #expect(languageSet.contains(.english))
+        #expect(languageSet.contains(.chinese))
     }
 
-    func testHashable_canBeUsedAsDictionaryKey() {
+    @Test("Hashable can be used as dictionary key")
+    func hashableCanBeUsedAsDictionaryKey() {
         var languageDict: [AppLanguage: String] = [:]
         languageDict[.english] = "Hello"
         languageDict[.chinese] = "你好"
 
-        XCTAssertEqual(languageDict[.english], "Hello")
-        XCTAssertEqual(languageDict[.chinese], "你好")
+        #expect(languageDict[.english] == "Hello")
+        #expect(languageDict[.chinese] == "你好")
     }
 
-    // String Convertible Tests
+    // MARK: - String Convertible Tests
 
-    func testStringConvertible_description() {
+    @Test("String convertible description")
+    func stringConvertibleDescription() {
         // AppLanguage should have meaningful string representation via rawValue
         for language in AppLanguage.allCases {
             let description = String(describing: language)
-            XCTAssertFalse(description.isEmpty)
+            #expect(!description.isEmpty)
         }
     }
 
-    // Edge Cases
+    // MARK: - Edge Cases
 
-    func testEdgeCase_allLanguagesCanBeCompared() {
+    @Test("Edge case: all languages can be compared")
+    func edgeCaseAllLanguagesCanBeCompared() {
         let sorted = AppLanguage.allCases.sorted { $0.rawValue < $1.rawValue }
-        XCTAssertEqual(sorted.count, 8)
+        #expect(sorted.count == 8)
     }
 
-    func testEdgeCase_languageCanBeOptional() {
+    @Test("Edge case: language can be optional")
+    func edgeCaseLanguageCanBeOptional() {
         let optionalLanguage: AppLanguage? = .english
-        XCTAssertNotNil(optionalLanguage)
-        XCTAssertEqual(optionalLanguage, .english)
+        #expect(optionalLanguage != nil)
+        #expect(optionalLanguage == .english)
     }
 }

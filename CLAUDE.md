@@ -162,15 +162,25 @@ open Weakup.app
 ### Testing
 
 ```bash
-# Run all tests
+# Run all tests (Swift Testing + XCTest)
 swift test
 
-# Run specific test class
+# Run specific test suite
 swift test --filter CaffeineViewModelTests
 
 # Run with verbose output
 swift test --verbose
+
+# Run tests with coverage
+swift test --enable-code-coverage
+
+# If sandbox errors occur
+swift test --disable-sandbox
 ```
+
+**Testing Frameworks:**
+- **Swift Testing** - Used for unit and integration tests (modern `@Test` syntax)
+- **XCTest** - Used only for UI tests (XCUITest framework requirement)
 
 ### Testing Power Assertions
 
@@ -253,16 +263,50 @@ Text(L10n.shared.menuSettings)
 
 ## Testing Guidelines
 
+### Testing Frameworks
+
+The project uses a **mixed testing approach**:
+- **Swift Testing** - For unit and integration tests (modern, cleaner syntax)
+- **XCTest** - For UI tests only (XCUITest framework requirement)
+
+### Swift Testing Syntax
+
+```swift
+import Testing
+@testable import WeakupCore
+
+@Suite("Example Tests")
+@MainActor
+struct ExampleTests {
+    @Test("Description of what this tests")
+    func exampleTest() {
+        let result = someFunction()
+        #expect(result == expectedValue)
+    }
+
+    @Test("Parameterized test", arguments: [1, 2, 3])
+    func parameterizedTest(value: Int) {
+        #expect(value > 0)
+    }
+}
+```
+
 ### Unit Tests
 - Test all public methods of managers
 - Test state transitions in CaffeineViewModel
 - Test localization key coverage
-- Use mocks for external dependencies
+- Use `UserDefaultsStore` for test isolation
+- Use `@Suite` to group related tests
 
 ### Integration Tests
 - Test full sleep prevention cycle
 - Test timer expiry flow
 - Test notification delivery
+
+### UI Tests (XCTest Only)
+- UI tests remain on XCTest (Swift Testing limitation)
+- Located in `Tests/WeakupUITests/`
+- Require Xcode project and accessibility permissions
 
 ### Manual Tests
 - Toggle sleep prevention on/off
