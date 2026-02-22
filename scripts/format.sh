@@ -8,6 +8,17 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_DIR"
 
+SWIFT_VERSION_FILE="$PROJECT_DIR/.swift-version"
+if [ -f "$SWIFT_VERSION_FILE" ]; then
+    REQUIRED_SWIFT_VERSION=$(cat "$SWIFT_VERSION_FILE" | tr -d '[:space:]')
+    CURRENT_SWIFT_VERSION=$(swift --version | awk '/Apple Swift version/ {print $4}')
+    if [[ "$CURRENT_SWIFT_VERSION" != "$REQUIRED_SWIFT_VERSION"* ]]; then
+        echo "Swift version mismatch. Required: $REQUIRED_SWIFT_VERSION, Current: $CURRENT_SWIFT_VERSION"
+        echo "Use mise: mise install swift@$REQUIRED_SWIFT_VERSION && mise use swift@$REQUIRED_SWIFT_VERSION"
+        exit 1
+    fi
+fi
+
 if command -v swiftformat &> /dev/null; then
     echo "Running SwiftFormat..."
     swiftformat Sources --config .swiftformat
