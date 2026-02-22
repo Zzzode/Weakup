@@ -5,10 +5,16 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 env:
   SWIFT_VERSION: "6.0"
@@ -32,8 +38,10 @@ jobs:
       - name: Cache Swift packages
         uses: actions/cache@v4
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          path: |
+            .build
+            ~/.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved', 'Package.swift') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
@@ -148,6 +156,7 @@ jobs:
     name: Memory Leak Detection
     runs-on: macos-14
     needs: test
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -161,8 +170,10 @@ jobs:
       - name: Cache Swift packages
         uses: actions/cache@v4
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          path: |
+            .build
+            ~/.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved', 'Package.swift') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
@@ -204,6 +215,7 @@ jobs:
     name: Performance Benchmarks
     runs-on: macos-14
     needs: test
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -217,8 +229,10 @@ jobs:
       - name: Cache Swift packages
         uses: actions/cache@v4
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          path: |
+            .build
+            ~/.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved', 'Package.swift') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
@@ -291,6 +305,9 @@ jobs:
       - name: Install SwiftLint
         run: brew install swiftlint
 
+      - name: Install SwiftFormat
+        run: brew install swiftformat
+
       - name: Run SwiftLint
         id: swiftlint
         run: |
@@ -303,6 +320,9 @@ jobs:
 
           echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
           echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+
+      - name: Run SwiftFormat Lint
+        run: swiftformat --lint Sources --config .swiftformat
 
       - name: Upload SwiftLint Report
         uses: actions/upload-artifact@v4
@@ -340,8 +360,10 @@ jobs:
       - name: Cache Swift packages
         uses: actions/cache@v4
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          path: |
+            .build
+            ~/.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved', 'Package.swift') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
