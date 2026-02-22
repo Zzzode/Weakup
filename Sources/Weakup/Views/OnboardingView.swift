@@ -170,16 +170,16 @@ public final class OnboardingManager: ObservableObject {
     private let userDefaultsKey = "WeakupOnboardingComplete"
 
     private init() {
-        self.shouldShowOnboarding = !UserDefaults.standard.bool(forKey: userDefaultsKey)
+        self.shouldShowOnboarding = !UserDefaultsStore.shared.bool(forKey: userDefaultsKey)
     }
 
     public func markOnboardingComplete() {
-        UserDefaults.standard.set(true, forKey: userDefaultsKey)
+        UserDefaultsStore.shared.set(true, forKey: userDefaultsKey)
         shouldShowOnboarding = false
     }
 
     public func resetOnboarding() {
-        UserDefaults.standard.set(false, forKey: userDefaultsKey)
+        UserDefaultsStore.shared.set(false, forKey: userDefaultsKey)
         shouldShowOnboarding = true
     }
 }

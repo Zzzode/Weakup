@@ -235,7 +235,7 @@ public final class ActivityHistoryManager: ObservableObject {
     // Persistence
 
     private func loadSessions() {
-        guard let data = UserDefaults.standard.data(forKey: UserDefaultsKeys.activityHistory) else {
+        guard let data = UserDefaultsStore.shared.data(forKey: UserDefaultsKeys.activityHistory) else {
             return
         }
         do {
@@ -250,7 +250,7 @@ public final class ActivityHistoryManager: ObservableObject {
     private func saveSessions() {
         do {
             let data = try JSONEncoder().encode(sessions)
-            UserDefaults.standard.set(data, forKey: UserDefaultsKeys.activityHistory)
+            UserDefaultsStore.shared.set(data, forKey: UserDefaultsKeys.activityHistory)
         } catch {
             Logger.error("Failed to save activity history", error: error, category: .history)
         }

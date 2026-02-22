@@ -9,9 +9,9 @@ final class CaffeineViewModelTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // Clear UserDefaults before each test
-        UserDefaults.standard.removeObject(forKey: "WeakupSoundEnabled")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerMode")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerDuration")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupSoundEnabled")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerMode")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerDuration")
         viewModel = CaffeineViewModel()
     }
 
@@ -122,7 +122,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testSetTimerDuration_persistsValue() {
         viewModel.setTimerDuration(7200)
-        let storedValue = UserDefaults.standard.double(forKey: "WeakupTimerDuration")
+        let storedValue = UserDefaultsStore.shared.double(forKey: "WeakupTimerDuration")
         XCTAssertEqual(storedValue, 7200, "Duration should be persisted to UserDefaults")
     }
 
@@ -137,7 +137,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testSetTimerMode_persistsValue() {
         viewModel.setTimerMode(true)
-        let storedValue = UserDefaults.standard.bool(forKey: "WeakupTimerMode")
+        let storedValue = UserDefaultsStore.shared.bool(forKey: "WeakupTimerMode")
         XCTAssertTrue(storedValue, "Timer mode should be persisted to UserDefaults")
     }
 
@@ -166,7 +166,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testSoundEnabled_persistsValue() {
         viewModel.soundEnabled = false
-        let storedValue = UserDefaults.standard.bool(forKey: "WeakupSoundEnabled")
+        let storedValue = UserDefaultsStore.shared.bool(forKey: "WeakupSoundEnabled")
         XCTAssertFalse(storedValue, "Sound enabled should be persisted to UserDefaults")
     }
 
@@ -184,12 +184,12 @@ final class CaffeineViewModelTests: XCTestCase {
 
         // Toggle to false
         viewModel.showCountdownInMenuBar = false
-        let storedValue = UserDefaults.standard.bool(forKey: "WeakupShowCountdownInMenuBar")
+        let storedValue = UserDefaultsStore.shared.bool(forKey: "WeakupShowCountdownInMenuBar")
         XCTAssertFalse(storedValue, "Show countdown should be persisted to UserDefaults")
 
         // Toggle back to true
         viewModel.showCountdownInMenuBar = true
-        let storedValueTrue = UserDefaults.standard.bool(forKey: "WeakupShowCountdownInMenuBar")
+        let storedValueTrue = UserDefaultsStore.shared.bool(forKey: "WeakupShowCountdownInMenuBar")
         XCTAssertTrue(storedValueTrue, "Show countdown true should be persisted to UserDefaults")
     }
 
@@ -395,7 +395,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testInitialState_loadsPersistedTimerMode() {
         // Set a value in UserDefaults
-        UserDefaults.standard.set(true, forKey: "WeakupTimerMode")
+        UserDefaultsStore.shared.set(true, forKey: "WeakupTimerMode")
 
         // Create a new ViewModel
         let newViewModel = CaffeineViewModel()
@@ -410,7 +410,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testInitialState_loadsPersistedTimerDuration() {
         // Set a value in UserDefaults
-        UserDefaults.standard.set(7200.0, forKey: "WeakupTimerDuration")
+        UserDefaultsStore.shared.set(7200.0, forKey: "WeakupTimerDuration")
 
         // Create a new ViewModel
         let newViewModel = CaffeineViewModel()
@@ -425,7 +425,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testInitialState_loadsPersistedSoundEnabled() {
         // Set a value in UserDefaults
-        UserDefaults.standard.set(false, forKey: "WeakupSoundEnabled")
+        UserDefaultsStore.shared.set(false, forKey: "WeakupSoundEnabled")
 
         // Create a new ViewModel
         let newViewModel = CaffeineViewModel()
@@ -440,7 +440,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testInitialState_handlesCorruptedBoolValue() {
         // Set a corrupted value (string instead of bool)
-        UserDefaults.standard.set("invalid", forKey: "WeakupSoundEnabled")
+        UserDefaultsStore.shared.set("invalid", forKey: "WeakupSoundEnabled")
 
         // Create a new ViewModel - should handle gracefully
         let newViewModel = CaffeineViewModel()
@@ -456,7 +456,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testInitialState_handlesCorruptedDoubleValue() {
         // Set a corrupted value (string instead of double)
-        UserDefaults.standard.set("invalid", forKey: "WeakupTimerDuration")
+        UserDefaultsStore.shared.set("invalid", forKey: "WeakupTimerDuration")
 
         // Create a new ViewModel - should handle gracefully
         let newViewModel = CaffeineViewModel()
@@ -472,7 +472,7 @@ final class CaffeineViewModelTests: XCTestCase {
 
     func testInitialState_handlesNegativeTimerDuration() {
         // Set a negative value in UserDefaults
-        UserDefaults.standard.set(-100.0, forKey: "WeakupTimerDuration")
+        UserDefaultsStore.shared.set(-100.0, forKey: "WeakupTimerDuration")
 
         // Create a new ViewModel
         let newViewModel = CaffeineViewModel()

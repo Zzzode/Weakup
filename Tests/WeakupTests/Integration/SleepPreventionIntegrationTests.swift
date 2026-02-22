@@ -11,9 +11,9 @@ final class SleepPreventionIntegrationTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // Clear UserDefaults before each test
-        UserDefaults.standard.removeObject(forKey: "WeakupSoundEnabled")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerMode")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerDuration")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupSoundEnabled")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerMode")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerDuration")
 
         viewModel = CaffeineViewModel()
         // Disable sound for tests
@@ -203,9 +203,9 @@ final class TimerCountdownIntegrationTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        UserDefaults.standard.removeObject(forKey: "WeakupSoundEnabled")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerMode")
-        UserDefaults.standard.removeObject(forKey: "WeakupTimerDuration")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupSoundEnabled")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerMode")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerDuration")
 
         viewModel = CaffeineViewModel()
         viewModel.soundEnabled = false

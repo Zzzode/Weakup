@@ -154,12 +154,12 @@ final class ThemeManagerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // Clear UserDefaults before each test
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
     }
 
     override func tearDown() async throws {
         // Clean up after tests
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
         try await super.tearDown()
     }
 
@@ -197,28 +197,28 @@ final class ThemeManagerTests: XCTestCase {
     func testSetTheme_persistsValue() {
         let manager = ThemeManager.shared
         manager.currentTheme = .dark
-        let storedValue = UserDefaults.standard.string(forKey: userDefaultsKey)
+        let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
         XCTAssertEqual(storedValue, "dark", "Theme should be persisted to UserDefaults")
     }
 
     func testSetTheme_persistsSystem() {
         let manager = ThemeManager.shared
         manager.currentTheme = .system
-        let storedValue = UserDefaults.standard.string(forKey: userDefaultsKey)
+        let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
         XCTAssertEqual(storedValue, "system", "System theme should be persisted")
     }
 
     func testSetTheme_persistsLight() {
         let manager = ThemeManager.shared
         manager.currentTheme = .light
-        let storedValue = UserDefaults.standard.string(forKey: userDefaultsKey)
+        let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
         XCTAssertEqual(storedValue, "light", "Light theme should be persisted")
     }
 
     func testSetTheme_persistsDark() {
         let manager = ThemeManager.shared
         manager.currentTheme = .dark
-        let storedValue = UserDefaults.standard.string(forKey: userDefaultsKey)
+        let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
         XCTAssertEqual(storedValue, "dark", "Dark theme should be persisted")
     }
 
@@ -226,7 +226,7 @@ final class ThemeManagerTests: XCTestCase {
         let manager = ThemeManager.shared
         for theme in AppTheme.allCases {
             manager.currentTheme = theme
-            let storedValue = UserDefaults.standard.string(forKey: userDefaultsKey)
+            let storedValue = UserDefaultsStore.shared.string(forKey: userDefaultsKey)
             XCTAssertEqual(storedValue, theme.rawValue, "Theme \(theme) should be persisted")
         }
     }
@@ -416,11 +416,11 @@ final class ThemeManagerTests: XCTestCase {
 
         // Set a theme
         manager.currentTheme = .dark
-        XCTAssertEqual(UserDefaults.standard.string(forKey: userDefaultsKey), "dark")
+        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: userDefaultsKey), "dark")
 
         // Clear and set another
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
         manager.currentTheme = .light
-        XCTAssertEqual(UserDefaults.standard.string(forKey: userDefaultsKey), "light")
+        XCTAssertEqual(UserDefaultsStore.shared.string(forKey: userDefaultsKey), "light")
     }
 }

@@ -103,7 +103,7 @@ public class L10n: ObservableObject {
     }
 
     private func loadLanguage() {
-        let savedLanguage = UserDefaults.standard.string(forKey: UserDefaultsKeys.language)
+        let savedLanguage = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.language)
         if let savedLanguage, let language = AppLanguage(rawValue: savedLanguage) {
             currentLanguage = language
         } else {
@@ -142,8 +142,8 @@ public class L10n: ObservableObject {
     /// SwiftUI views observing `currentLanguage` will update automatically.
     public func setLanguage(_ language: AppLanguage) {
         currentLanguage = language
-        UserDefaults.standard.set(language.rawValue, forKey: UserDefaultsKeys.language)
-        UserDefaults.standard.synchronize()
+        UserDefaultsStore.shared.set(language.rawValue, forKey: UserDefaultsKeys.language)
+        UserDefaultsStore.shared.synchronize()
         Logger.preferenceChanged(key: UserDefaultsKeys.language, value: language.rawValue)
     }
 

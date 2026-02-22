@@ -43,7 +43,9 @@ public final class NotificationManager: NSObject, ObservableObject, Notification
     /// The value is persisted to UserDefaults.
     @Published public var notificationsEnabled: Bool {
         didSet {
-            UserDefaults.standard.set(notificationsEnabled, forKey: UserDefaultsKeys.notificationsEnabled)
+            UserDefaultsStore.shared.set(
+                notificationsEnabled, forKey: UserDefaultsKeys.notificationsEnabled
+            )
             Logger.preferenceChanged(key: UserDefaultsKeys.notificationsEnabled, value: notificationsEnabled)
         }
     }
@@ -66,7 +68,7 @@ public final class NotificationManager: NSObject, ObservableObject, Notification
     }
 
     override private init() {
-        self.notificationsEnabled = UserDefaults.standard
+        self.notificationsEnabled = UserDefaultsStore.shared
             .object(forKey: UserDefaultsKeys.notificationsEnabled) as? Bool ?? true
         super.init()
 

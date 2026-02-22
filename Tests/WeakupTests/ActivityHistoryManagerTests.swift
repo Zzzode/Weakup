@@ -7,7 +7,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // Clear history and reset filters before each test
-        UserDefaults.standard.removeObject(forKey: "WeakupActivityHistory")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupActivityHistory")
         ActivityHistoryManager.shared.clearHistory()
         ActivityHistoryManager.shared.filterMode = .all
         ActivityHistoryManager.shared.sortOrder = .dateDescending
@@ -206,7 +206,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.endSession()
 
         // Verify data was saved to UserDefaults
-        let data = UserDefaults.standard.data(forKey: "WeakupActivityHistory")
+        let data = UserDefaultsStore.shared.data(forKey: "WeakupActivityHistory")
         XCTAssertNotNil(data)
     }
 
@@ -218,7 +218,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.endSession()
 
         // Verify saved data can be decoded
-        guard let data = UserDefaults.standard.data(forKey: "WeakupActivityHistory") else {
+        guard let data = UserDefaultsStore.shared.data(forKey: "WeakupActivityHistory") else {
             XCTFail("No data saved")
             return
         }
@@ -332,7 +332,7 @@ final class ActivityHistoryManagerTests: XCTestCase {
         manager.clearHistory()
 
         // Verify persistence is also cleared
-        if let data = UserDefaults.standard.data(forKey: "WeakupActivityHistory") {
+        if let data = UserDefaultsStore.shared.data(forKey: "WeakupActivityHistory") {
             let sessions = try? JSONDecoder().decode([ActivitySession].self, from: data)
             XCTAssertEqual(sessions?.count ?? 0, 0)
         }

@@ -12,7 +12,7 @@ final class TimerIntegrationTests: XCTestCase {
         try await super.setUp()
         // Clear UserDefaults before each test
         for key in UserDefaultsKeys.all {
-            UserDefaults.standard.removeObject(forKey: key)
+            UserDefaultsStore.shared.removeObject(forKey: key)
         }
 
         viewModel = CaffeineViewModel()

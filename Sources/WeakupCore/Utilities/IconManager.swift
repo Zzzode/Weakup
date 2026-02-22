@@ -49,7 +49,8 @@ public final class IconManager: ObservableObject {
 
     @Published public var currentStyle: IconStyle {
         didSet {
-            UserDefaults.standard.set(currentStyle.rawValue, forKey: UserDefaultsKeys.iconStyle)
+            UserDefaultsStore.shared.set(currentStyle.rawValue, forKey: UserDefaultsKeys.iconStyle)
+            UserDefaultsStore.shared.synchronize()
             Logger.preferenceChanged(key: UserDefaultsKeys.iconStyle, value: currentStyle.rawValue)
             onIconChanged?()
         }
@@ -58,7 +59,7 @@ public final class IconManager: ObservableObject {
     public var onIconChanged: (() -> Void)?
 
     private init() {
-        let savedStyle = UserDefaults.standard.string(forKey: UserDefaultsKeys.iconStyle)
+        let savedStyle = UserDefaultsStore.shared.string(forKey: UserDefaultsKeys.iconStyle)
         if let savedStyle, let style = IconStyle(rawValue: savedStyle) {
             self.currentStyle = style
         } else {
