@@ -109,7 +109,7 @@ Execute in this order for optimal feedback:
 
 4. **Version** (Utility)
    ```bash
-   swift test --filter AppVersionTests
+   swift test --filter VersionTests
    ```
 
 5. **L10n** (Localization)
@@ -142,11 +142,27 @@ Execute in this order for optimal feedback:
     swift test --filter NotificationManagerTests
     ```
 
+11. **LaunchAtLoginManager** (Login item)
+    ```bash
+    swift test --filter LaunchAtLoginManagerTests
+    ```
+
 ### 3.3 Integration Tests
 
 ```bash
 swift test --filter SleepPreventionIntegrationTests
-swift test --filter TimerCountdownIntegrationTests
+swift test --filter TimerIntegrationTests
+swift test --filter PersistenceIntegrationTests
+swift test --filter LocalizationIntegrationTests
+```
+
+If you see `sandbox-exec: sandbox_apply: Operation not permitted`, rerun with sandbox disabled:
+
+```bash
+swift test --disable-sandbox --filter SleepPreventionIntegrationTests
+swift test --disable-sandbox --filter TimerIntegrationTests
+swift test --disable-sandbox --filter PersistenceIntegrationTests
+swift test --disable-sandbox --filter LocalizationIntegrationTests
 ```
 
 ---
@@ -172,6 +188,7 @@ swift test --filter TimerCountdownIntegrationTests
 - [ ] **MT-010**: Verify countdown is accurate (check at 1 min mark)
 - [ ] **MT-011**: Let timer expire - verify auto-stop
 - [ ] **MT-012**: Verify notification appears on expiry
+- [ ] **MT-012a**: Disable notifications - verify no expiry notification
 
 #### Language Switching
 
@@ -207,6 +224,8 @@ swift test --filter TimerCountdownIntegrationTests
 - [ ] **MT-030**: Quit while active - verify clean shutdown
 - [ ] **MT-031**: Change duration while active - verify stops correctly
 - [ ] **MT-032**: Open multiple settings windows - verify only one opens
+- [ ] **MT-033**: Toggle menu bar countdown - verify title shows/hides
+- [ ] **MT-034**: Toggle launch at login - verify status updates
 
 ### 4.2 Verification Commands
 

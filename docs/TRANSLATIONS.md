@@ -46,7 +46,7 @@ Edit the new file with translations.
 
 ### Step 3: Update L10n.swift
 
-Add the new language to the `AppLanguage` enum in `Sources/Weakup/L10n.swift`:
+Add the new language to the `AppLanguage` enum in `Sources/WeakupCore/Utilities/L10n.swift`:
 
 ```swift
 enum AppLanguage: String, CaseIterable, Identifiable {

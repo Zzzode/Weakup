@@ -289,10 +289,10 @@ All documentation is complete and ready for team review. The architecture provid
 
 ## Files Created
 
-1. `/Users/bytedance/Develop/Weakup/ARCHITECTURE.md` (450+ lines)
-2. `/Users/bytedance/Develop/Weakup/TEST_INFRASTRUCTURE.md` (900+ lines)
-3. `/Users/bytedance/Develop/Weakup/REFACTORING_PLAN.md` (600+ lines)
-4. `/Users/bytedance/Develop/Weakup/ARCHITECTURE_DIAGRAMS.md` (500+ lines)
-5. `/Users/bytedance/Develop/Weakup/ARCHITECTURE_SUMMARY.md` (this file)
+1. `docs/ARCHITECTURE.md` (450+ lines)
+2. `docs/archive/TEST_INFRASTRUCTURE.md` (900+ lines)
+3. `docs/archive/REFACTORING_PLAN.md` (600+ lines)
+4. `docs/archive/ARCHITECTURE_DIAGRAMS.md` (500+ lines)
+5. `docs/archive/ARCHITECTURE_SUMMARY.md` (this file)
 
 **Total:** 2,450+ lines of comprehensive documentation

@@ -249,7 +249,8 @@ Sources/
 │   │   └── AppDelegate.swift        # Menu bar, system integration
 │   ├── Views/
 │   │   ├── SettingsView.swift       # Main settings UI
-│   │   └── HistoryView.swift        # Activity history UI
+│   │   ├── HistoryView.swift        # Activity history UI
+│   │   └── OnboardingView.swift     # First-launch onboarding UI
 │   └── *.lproj/                     # Localization strings
 │       └── Localizable.strings
 │
@@ -266,7 +267,11 @@ Sources/
         ├── NotificationManager.swift # System notifications
         ├── ActivityHistoryManager.swift # Session history
         ├── LaunchAtLoginManager.swift   # Login item
-        └── Version.swift            # App version info
+        ├── Version.swift            # App version info
+        ├── TimeFormatter.swift      # Countdown formatting
+        └── Constants.swift          # App constants
+    └── Protocols/
+        └── NotificationManaging.swift # Notification abstraction
 ```
 
 ## Core Components
@@ -298,7 +303,14 @@ IOPMAssertionCreateWithName(
     kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
     IOPMAssertionLevel(kIOPMAssertionLevelOn),
     "Weakup preventing sleep" as CFString,
-    &id
+    &systemID
+)
+
+IOPMAssertionCreateWithName(
+    kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
+    IOPMAssertionLevel(kIOPMAssertionLevelOn),
+    "Weakup preventing sleep" as CFString,
+    &displayID
 )
 ```
 
@@ -323,6 +335,7 @@ Responsibilities:
 | `NotificationManager` | System notifications | `notificationsEnabled`, `isAuthorized` |
 | `ActivityHistoryManager` | Session history | `sessions`, `statistics`, `exportHistory()` |
 | `LaunchAtLoginManager` | Login item | `isEnabled` |
+| `OnboardingManager` | First-launch flow | `shouldShowOnboarding` |
 
 ### 4. Models
 
@@ -358,7 +371,7 @@ public struct ActivityStatistics: Sendable {
 | Framework | Purpose |
 |-----------|---------|
 | SwiftUI | Settings UI, History view |
-| AppKit | Menu bar, popover, system integration |
+| AppKit | Menu bar, settings window, system integration |
 | IOKit | Power management (IOPMAssertion) |
 | Foundation | Core utilities, UserDefaults, JSON |
 | Carbon | Keyboard event handling |

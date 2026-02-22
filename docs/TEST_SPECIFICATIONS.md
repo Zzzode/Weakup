@@ -26,20 +26,17 @@
 ```
 Tests/
 ├── WeakupTests/
-│   ├── Unit/
-│   │   ├── ViewModels/
-│   │   │   └── CaffeineViewModelTests.swift
-│   │   ├── Models/
-│   │   │   └── ActivitySessionTests.swift
-│   │   └── Utilities/
-│   │       ├── L10nTests.swift
-│   │       ├── AppLanguageTests.swift
-│   │       ├── IconManagerTests.swift
-│   │       ├── ThemeManagerTests.swift
-│   │       ├── HotkeyManagerTests.swift
-│   │       ├── ActivityHistoryManagerTests.swift
-│   │       ├── NotificationManagerTests.swift
-│   │       └── VersionTests.swift
+│   ├── CaffeineViewModelTests.swift
+│   ├── ActivitySessionTests.swift
+│   ├── ActivityHistoryManagerTests.swift
+│   ├── L10nTests.swift
+│   ├── AppLanguageTests.swift
+│   ├── IconManagerTests.swift
+│   ├── ThemeManagerTests.swift
+│   ├── HotkeyManagerTests.swift
+│   ├── LaunchAtLoginManagerTests.swift
+│   ├── NotificationManagerTests.swift
+│   ├── VersionTests.swift
 │   ├── Integration/
 │   │   ├── SleepPreventionIntegrationTests.swift
 │   │   ├── TimerIntegrationTests.swift
@@ -48,7 +45,9 @@ Tests/
 │   └── Mocks/
 │       ├── MockUserDefaults.swift
 │       ├── MockNotificationCenter.swift
-│       └── MockIOPMAssertion.swift
+│       ├── MockNotificationManager.swift
+│       ├── MockSleepPreventionService.swift
+│       └── TestFixtures.swift
 └── WeakupUITests/
     ├── MenuBarUITests.swift
     ├── SettingsPopoverUITests.swift
@@ -523,7 +522,7 @@ pmset -g assertions | grep PreventUserIdleSystemSleep
 
 ---
 
-### 4.2 Settings Popover UI Tests
+### 4.2 Settings Window UI Tests
 
 **File**: `Tests/WeakupUITests/SettingsPopoverUITests.swift`
 
@@ -531,7 +530,7 @@ pmset -g assertions | grep PreventUserIdleSystemSleep
 
 | ID | Test Name | Description | Priority |
 |----|-----------|-------------|----------|
-| SP-001 | `testSettingsPopover_opens` | Popover opens from menu | P0 |
+| SP-001 | `testSettingsPopover_opens` | Settings window opens from menu | P0 |
 | SP-002 | `testStatusIndicator_reflectsState` | Status indicator correct | P0 |
 | SP-003 | `testToggleButton_changesState` | Toggle button works | P0 |
 | SP-004 | `testTimerModeToggle_enablesDisables` | Timer mode toggle works | P0 |
@@ -555,7 +554,7 @@ pmset -g assertions | grep PreventUserIdleSystemSleep
 | ID | Test Name | Description | Priority |
 |----|-----------|-------------|----------|
 | KS-001 | `testDefaultShortcut_togglesCaffeine` | Cmd+Ctrl+0 toggles | P0 |
-| KS-002 | `testShortcut_worksWhenPopoverClosed` | Works without popover | P1 |
+| KS-002 | `testShortcut_worksWhenPopoverClosed` | Works without settings window | P1 |
 | KS-003 | `testCustomShortcut_canBeRecorded` | Custom shortcut recording | P1 |
 | KS-004 | `testShortcut_resetToDefault` | Reset to default works | P1 |
 

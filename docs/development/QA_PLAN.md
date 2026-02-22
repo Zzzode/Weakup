@@ -4,10 +4,15 @@
 
 **Weakup** is a macOS menu bar application that prevents system sleep. It provides:
 - Menu bar status icon with toggle functionality
-- Timer mode with preset durations (15m, 30m, 1h, 2h, 3h)
+- Timer mode with preset durations and custom durations (up to 24h)
+- Menu bar countdown display when timer is active
 - Keyboard shortcut (Cmd+Ctrl+0) for quick toggle
-- Bilingual support (English, Chinese Simplified)
-- Settings popover with language selection
+- Hotkey customization with conflict detection
+- Multi-language support (8 languages) with real-time switching
+- Settings window with theme, sound, notifications, and launch-at-login options
+- Timer expiry notifications
+- Launch at login support
+- First-launch onboarding
 
 **Target Platform:** macOS 13.0+
 **Architecture:** Swift 6.0, SwiftUI, AppKit, IOKit
@@ -66,15 +71,15 @@
 | `test_setLanguage_persists` | Language preference saved to UserDefaults | P0 |
 | `test_setLanguage_updatesStrings` | UI strings update after language change | P0 |
 | `test_englishStrings_allKeysExist` | All localization keys have English values | P1 |
-| `test_chineseStrings_allKeysExist` | All localization keys have Chinese values | P1 |
+| `test_allLanguages_allKeysExist` | All localization keys have values across languages | P1 |
 | `test_stringForKey_returnsCorrectValue` | string(forKey:) returns expected localized string | P1 |
 
 ### 3.3 AppLanguage Tests
 
 | Test Case | Description | Priority |
 |-----------|-------------|----------|
-| `test_allCases_containsExpectedLanguages` | Enum contains english and chinese | P1 |
-| `test_displayName_correctForEachLanguage` | Display names are "English" and "Chinese" | P1 |
+| `test_allCases_containsExpectedLanguages` | Enum contains all supported languages | P1 |
+| `test_displayName_correctForEachLanguage` | Display names are correct for each language | P1 |
 | `test_bundle_returnsValidBundle` | Bundle property returns valid localization bundle | P1 |
 
 ---
@@ -116,11 +121,11 @@
 | `test_tooltip_updatesOnToggle` | Tooltip shows correct on/off status | P1 |
 | `test_menu_showsSettingsAndQuit` | Right-click menu shows Settings and Quit options | P0 |
 
-### 5.2 Settings Popover Tests
+### 5.2 Settings Window Tests
 
 | Test Case | Description | Priority |
 |-----------|-------------|----------|
-| `test_settingsPopover_opens` | Clicking Settings opens popover | P0 |
+| `test_settingsWindow_opens` | Clicking Settings opens window | P0 |
 | `test_statusIndicator_reflectsState` | Green/gray circle matches active state | P0 |
 | `test_toggleButton_changesState` | Turn On/Off button toggles caffeine state | P0 |
 | `test_timerModeToggle_enablesDisables` | Timer mode toggle works correctly | P0 |
@@ -134,7 +139,7 @@
 | Test Case | Description | Priority |
 |-----------|-------------|----------|
 | `test_cmdCtrl0_togglesCaffeine` | Cmd+Ctrl+0 toggles sleep prevention | P0 |
-| `test_shortcut_worksWhenPopoverClosed` | Shortcut works without popover open | P1 |
+| `test_shortcut_worksWhenWindowClosed` | Shortcut works without settings window open | P1 |
 
 ---
 
@@ -173,8 +178,8 @@
 
 | Scenario | Expected Behavior | Priority |
 |----------|-------------------|----------|
-| Multiple popover opens | Only one popover instance | P1 |
-| Popover open during toggle | UI updates correctly | P1 |
+| Multiple settings windows | Only one settings window instance | P1 |
+| Settings window open during toggle | UI updates correctly | P1 |
 | Menu bar hidden by system | App still functional via shortcut | P2 |
 | Display configuration change | Status item repositions correctly | P2 |
 
@@ -185,12 +190,12 @@
 ### 7.1 Flow: Basic Sleep Prevention
 
 ```
-1. User clicks menu bar icon
-2. Settings popover opens
-3. User clicks "Turn On"
-4. Icon changes to filled state
-5. System sleep is prevented
-6. User clicks "Turn Off"
+1. User left-clicks the menu bar icon
+2. App toggles to active state
+3. Icon changes to filled state
+4. System sleep is prevented
+5. User left-clicks the menu bar icon again
+6. App toggles to inactive state
 7. Icon changes to unfilled state
 8. System sleep is allowed
 ```
@@ -204,7 +209,7 @@
 ### 7.2 Flow: Timer Mode Usage
 
 ```
-1. User opens settings
+1. User opens settings from the menu bar context menu
 2. User enables Timer Mode toggle
 3. Duration picker appears
 4. User selects "30m"
@@ -238,7 +243,7 @@
 ### 7.4 Flow: Keyboard Shortcut Toggle
 
 ```
-1. App is running (popover closed)
+1. App is running (settings window closed)
 2. User presses Cmd+Ctrl+0
 3. Sleep prevention toggles
 4. Icon updates to reflect new state
@@ -247,7 +252,7 @@
 **Acceptance Criteria:**
 - [ ] Shortcut works globally when app is active
 - [ ] State change is immediate
-- [ ] Icon updates without opening popover
+- [ ] Icon updates without opening settings window
 
 ---
 

@@ -5,24 +5,34 @@ This document describes testing practices and procedures for Weakup.
 ## Test Architecture
 
 ```
-Tests/WeakupTests/
-├── Unit Tests
-│   ├── CaffeineViewModelTests.swift     # Core logic (90% coverage target)
-│   ├── L10nTests.swift                  # Localization (85% coverage target)
-│   ├── ActivityHistoryManagerTests.swift # History tracking
-│   ├── HotkeyManagerTests.swift         # Keyboard shortcuts
-│   ├── IconManagerTests.swift           # Icon management
-│   ├── ThemeManagerTests.swift          # Theme management
-│   ├── NotificationManagerTests.swift   # Notifications
-│   ├── ActivitySessionTests.swift       # Data models
-│   ├── AppLanguageTests.swift           # Language enum
-│   └── VersionTests.swift               # Version info
-├── Integration Tests
-│   └── SleepPreventionIntegrationTests.swift
-└── Mocks
-    ├── MockUserDefaults.swift
-    ├── MockSleepPreventionService.swift
-    └── TestFixtures.swift
+Tests/
+├── WeakupTests/
+│   ├── CaffeineViewModelTests.swift        # Core logic (90% coverage target)
+│   ├── L10nTests.swift                     # Localization (85% coverage target)
+│   ├── ActivityHistoryManagerTests.swift   # History tracking
+│   ├── HotkeyManagerTests.swift            # Keyboard shortcuts
+│   ├── IconManagerTests.swift              # Icon management
+│   ├── ThemeManagerTests.swift             # Theme management
+│   ├── NotificationManagerTests.swift      # Notifications
+│   ├── LaunchAtLoginManagerTests.swift     # Login item
+│   ├── ActivitySessionTests.swift          # Data models
+│   ├── AppLanguageTests.swift              # Language enum
+│   ├── VersionTests.swift                  # Version info
+│   ├── Integration/
+│   │   ├── SleepPreventionIntegrationTests.swift
+│   │   ├── TimerIntegrationTests.swift
+│   │   ├── PersistenceIntegrationTests.swift
+│   │   └── LocalizationIntegrationTests.swift
+│   └── Mocks/
+│       ├── MockNotificationCenter.swift
+│       ├── MockNotificationManager.swift
+│       ├── MockSleepPreventionService.swift
+│       ├── MockUserDefaults.swift
+│       └── TestFixtures.swift
+└── WeakupUITests/
+    ├── MenuBarUITests.swift
+    ├── SettingsPopoverUITests.swift
+    └── KeyboardShortcutUITests.swift
 ```
 
 ## Running Tests
@@ -44,6 +54,12 @@ swift test --filter CaffeineViewModelTests/testToggle_startsWhenInactive
 
 # Run tests with coverage (requires Xcode)
 swift test --enable-code-coverage
+```
+
+If you see `sandbox-exec: sandbox_apply: Operation not permitted`, rerun with sandbox disabled:
+
+```bash
+swift test --disable-sandbox
 ```
 
 ### With Xcode
@@ -68,6 +84,7 @@ open Weakup.xcodeproj
 | IconManager | 80% | - |
 | ThemeManager | 80% | - |
 | NotificationManager | 70% | - |
+| LaunchAtLoginManager | 75% | - |
 | Models | 90% | - |
 
 ## Unit Test Examples
