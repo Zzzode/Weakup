@@ -23,7 +23,7 @@ jobs:
   # Unit and Integration Tests
   test:
     name: Test Suite
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - name: Checkout
@@ -31,13 +31,31 @@ jobs:
 
       - name: Read Swift version
         run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
-
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: ${{ env.SWIFT_VERSION }}
-      - name: Verify Swift version
-        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
+      - name: Select Xcode for Swift version
+        run: |
+          CANDIDATES=(/Applications/Xcode_*.app /Applications/Xcode.app)
+          FOUND=""
+          for XCODE_PATH in "${CANDIDATES[@]}"; do
+            if [ -d "$XCODE_PATH" ]; then
+              ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+              if [ "$ACTUAL_VERSION" = "${{ env.SWIFT_VERSION }}" ]; then
+                sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+                FOUND="$XCODE_PATH"
+                break
+              fi
+            fi
+          done
+          if [ -z "$FOUND" ]; then
+            echo "::error::Swift version ${{ env.SWIFT_VERSION }} not found on runner"
+            for XCODE_PATH in "${CANDIDATES[@]}"; do
+              if [ -d "$XCODE_PATH" ]; then
+                ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+                echo "Found Xcode: $XCODE_PATH (Swift $ACTUAL_VERSION)"
+              fi
+            done
+            exit 1
+          fi
+          xcrun swift --version
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -50,12 +68,12 @@ jobs:
             ${{ runner.os }}-spm-
 
       - name: Build for Testing
-        run: swift build --build-tests
+        run: xcrun swift build --build-tests
 
       - name: Run Unit Tests
         id: unit_tests
         run: |
-          swift test \
+          xcrun swift test \
             --enable-code-coverage \
             --filter "WeakupTests" \
             --parallel \
@@ -71,7 +89,7 @@ jobs:
       - name: Run Integration Tests
         id: integration_tests
         run: |
-          swift test \
+          xcrun swift test \
             --enable-code-coverage \
             --filter "Integration" \
             2>&1 | tee integration_output.txt || true
@@ -158,7 +176,7 @@ jobs:
   # Memory Leak Detection
   memory-check:
     name: Memory Leak Detection
-    runs-on: macos-14
+    runs-on: macos-15
     needs: test
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
@@ -168,13 +186,31 @@ jobs:
 
       - name: Read Swift version
         run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
-
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: ${{ env.SWIFT_VERSION }}
-      - name: Verify Swift version
-        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
+      - name: Select Xcode for Swift version
+        run: |
+          CANDIDATES=(/Applications/Xcode_*.app /Applications/Xcode.app)
+          FOUND=""
+          for XCODE_PATH in "${CANDIDATES[@]}"; do
+            if [ -d "$XCODE_PATH" ]; then
+              ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+              if [ "$ACTUAL_VERSION" = "${{ env.SWIFT_VERSION }}" ]; then
+                sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+                FOUND="$XCODE_PATH"
+                break
+              fi
+            fi
+          done
+          if [ -z "$FOUND" ]; then
+            echo "::error::Swift version ${{ env.SWIFT_VERSION }} not found on runner"
+            for XCODE_PATH in "${CANDIDATES[@]}"; do
+              if [ -d "$XCODE_PATH" ]; then
+                ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+                echo "Found Xcode: $XCODE_PATH (Swift $ACTUAL_VERSION)"
+              fi
+            done
+            exit 1
+          fi
+          xcrun swift --version
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -187,7 +223,7 @@ jobs:
             ${{ runner.os }}-spm-
 
       - name: Build Debug Binary
-        run: swift build -c debug
+        run: xcrun swift build -c debug
 
       - name: Run Memory Leak Check
         id: leaks
@@ -199,10 +235,10 @@ jobs:
           echo "Running memory analysis..."
 
           # Run tests with sanitizer if available
-          swift test 2>&1 | head -100 || true
+          xcrun swift test 2>&1 | head -100 || true
 
           # Check for obvious memory issues in build
-          if swift build -c debug 2>&1 | grep -i "memory\|leak"; then
+          if xcrun swift build -c debug 2>&1 | grep -i "memory\|leak"; then
             echo "::warning::Potential memory issues detected in build output"
           fi
 
@@ -222,7 +258,7 @@ jobs:
   # Performance Benchmarks
   benchmark:
     name: Performance Benchmarks
-    runs-on: macos-14
+    runs-on: macos-15
     needs: test
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
@@ -232,13 +268,31 @@ jobs:
 
       - name: Read Swift version
         run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
-
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: ${{ env.SWIFT_VERSION }}
-      - name: Verify Swift version
-        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
+      - name: Select Xcode for Swift version
+        run: |
+          CANDIDATES=(/Applications/Xcode_*.app /Applications/Xcode.app)
+          FOUND=""
+          for XCODE_PATH in "${CANDIDATES[@]}"; do
+            if [ -d "$XCODE_PATH" ]; then
+              ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+              if [ "$ACTUAL_VERSION" = "${{ env.SWIFT_VERSION }}" ]; then
+                sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+                FOUND="$XCODE_PATH"
+                break
+              fi
+            fi
+          done
+          if [ -z "$FOUND" ]; then
+            echo "::error::Swift version ${{ env.SWIFT_VERSION }} not found on runner"
+            for XCODE_PATH in "${CANDIDATES[@]}"; do
+              if [ -d "$XCODE_PATH" ]; then
+                ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+                echo "Found Xcode: $XCODE_PATH (Swift $ACTUAL_VERSION)"
+              fi
+            done
+            exit 1
+          fi
+          xcrun swift --version
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -251,7 +305,7 @@ jobs:
             ${{ runner.os }}-spm-
 
       - name: Build Release Binary
-        run: swift build -c release
+        run: xcrun swift build -c release
 
       - name: Run Performance Tests
         id: benchmark
@@ -262,7 +316,7 @@ jobs:
           # Measure build time
           echo "### Build Performance" >> benchmark_results.md
           START_TIME=$(date +%s)
-          swift build -c release 2>&1
+          xcrun swift build -c release 2>&1
           END_TIME=$(date +%s)
           BUILD_TIME=$((END_TIME - START_TIME))
           echo "- Release build time: ${BUILD_TIME}s" >> benchmark_results.md
@@ -282,7 +336,7 @@ jobs:
           echo "" >> benchmark_results.md
           echo "### Test Performance" >> benchmark_results.md
           START_TIME=$(date +%s)
-          swift test --parallel 2>&1 || true
+          xcrun swift test --parallel 2>&1 || true
           END_TIME=$(date +%s)
           TEST_TIME=$((END_TIME - START_TIME))
           echo "- Test suite execution time: ${TEST_TIME}s" >> benchmark_results.md
@@ -310,7 +364,7 @@ jobs:
   # Code Quality and Linting
   lint:
     name: Code Quality
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - name: Checkout
@@ -359,7 +413,7 @@ jobs:
   # Build App Bundle
   build-app:
     name: Build App Bundle
-    runs-on: macos-14
+    runs-on: macos-15
     needs: [test, lint]
 
     steps:
@@ -368,13 +422,31 @@ jobs:
 
       - name: Read Swift version
         run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
-
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: ${{ env.SWIFT_VERSION }}
-      - name: Verify Swift version
-        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
+      - name: Select Xcode for Swift version
+        run: |
+          CANDIDATES=(/Applications/Xcode_*.app /Applications/Xcode.app)
+          FOUND=""
+          for XCODE_PATH in "${CANDIDATES[@]}"; do
+            if [ -d "$XCODE_PATH" ]; then
+              ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+              if [ "$ACTUAL_VERSION" = "${{ env.SWIFT_VERSION }}" ]; then
+                sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+                FOUND="$XCODE_PATH"
+                break
+              fi
+            fi
+          done
+          if [ -z "$FOUND" ]; then
+            echo "::error::Swift version ${{ env.SWIFT_VERSION }} not found on runner"
+            for XCODE_PATH in "${CANDIDATES[@]}"; do
+              if [ -d "$XCODE_PATH" ]; then
+                ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+                echo "Found Xcode: $XCODE_PATH (Swift $ACTUAL_VERSION)"
+              fi
+            done
+            exit 1
+          fi
+          xcrun swift --version
 
       - name: Cache Swift packages
         uses: actions/cache@v4
@@ -424,7 +496,7 @@ jobs:
   # Final Status Check
   ci-status:
     name: CI Status
-    runs-on: macos-14
+    runs-on: macos-15
     needs: [test, lint, build-app, memory-check, benchmark]
     if: always()
 

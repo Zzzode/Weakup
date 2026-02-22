@@ -11,21 +11,45 @@ permissions:
 jobs:
   build-release:
     name: Build Release
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "16.2"
+
       - name: Read Swift version
         run: echo "SWIFT_VERSION=$(cat .swift-version)" >> $GITHUB_ENV
 
-      - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: ${{ env.SWIFT_VERSION }}
-      - name: Verify Swift version
-        run: swift --version | grep -q "Apple Swift version ${{ env.SWIFT_VERSION }}"
+      - name: Select Xcode for Swift version
+        run: |
+          CANDIDATES=(/Applications/Xcode_*.app /Applications/Xcode.app)
+          FOUND=""
+          for XCODE_PATH in "${CANDIDATES[@]}"; do
+            if [ -d "$XCODE_PATH" ]; then
+              ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+              if [ "$ACTUAL_VERSION" = "${{ env.SWIFT_VERSION }}" ]; then
+                sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+                FOUND="$XCODE_PATH"
+                break
+              fi
+            fi
+          done
+          if [ -z "$FOUND" ]; then
+            echo "::error::Swift version ${{ env.SWIFT_VERSION }} not found on runner"
+            for XCODE_PATH in "${CANDIDATES[@]}"; do
+              if [ -d "$XCODE_PATH" ]; then
+                ACTUAL_VERSION=$(DEVELOPER_DIR="$XCODE_PATH/Contents/Developer" xcrun swift --version | awk '/Apple Swift version/ {print $4}')
+                echo "Found Xcode: $XCODE_PATH (Swift $ACTUAL_VERSION)"
+              fi
+            done
+            exit 1
+          fi
+          xcrun swift --version
 
       - name: Get Version
         id: version
