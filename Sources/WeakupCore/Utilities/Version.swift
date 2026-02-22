@@ -4,8 +4,8 @@ import Foundation
 
 public enum AppVersion {
     // Default version (used as fallback)
-    private static let defaultVersion = "1.0.0"
-    private static let defaultBuild = "1"
+    private static let defaultVersion = "1.1.0"
+    private static let defaultBuild = "2"
 
     public static var string: String {
         // Try to read from bundle first, fallback to default
@@ -26,11 +26,17 @@ public enum AppVersion {
         "\(string) (\(build))"
     }
 
-    // Semantic version components
-    public static var components: (major: Int, minor: Int, patch: Int) {
+    public struct Components: Sendable {
+        public let major: Int
+        public let minor: Int
+        public let patch: Int
+    }
+
+    /// Semantic version components
+    public static var components: Components {
         let parts = string.split(separator: ".").compactMap { Int($0) }
-        return (
-            major: parts.count > 0 ? parts[0] : 1,
+        return Components(
+            major: !parts.isEmpty ? parts[0] : 1,
             minor: parts.count > 1 ? parts[1] : 0,
             patch: parts.count > 2 ? parts[2] : 0
         )
