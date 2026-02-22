@@ -18,7 +18,7 @@ final class SettingsPopoverUITests: XCTestCase {
         app = nil
     }
 
-    // MARK: - Helper Methods
+    // Helper Methods
 
     private func openSettings() -> Bool {
         let menuBar = app.menuBars
@@ -42,7 +42,7 @@ final class SettingsPopoverUITests: XCTestCase {
         return true
     }
 
-    // MARK: - Popover Tests
+    // Popover Tests
 
     func testSettingsPopover_opens() throws {
         XCTAssertTrue(openSettings(), "Settings popover should open")
@@ -52,7 +52,7 @@ final class SettingsPopoverUITests: XCTestCase {
         XCTAssertTrue(popover.waitForExistence(timeout: 2), "Settings popover should be visible")
     }
 
-    // MARK: - Status Indicator Tests
+    // Status Indicator Tests
 
     func testStatusIndicator_reflectsState() throws {
         guard openSettings() else {
@@ -73,7 +73,7 @@ final class SettingsPopoverUITests: XCTestCase {
                       "Status indicator should be visible")
     }
 
-    // MARK: - Toggle Button Tests
+    // Toggle Button Tests
 
     func testToggleButton_changesState() throws {
         guard openSettings() else {
@@ -101,7 +101,7 @@ final class SettingsPopoverUITests: XCTestCase {
         XCTAssertTrue(popover.exists, "Popover should still be visible")
     }
 
-    // MARK: - Timer Mode Tests
+    // Timer Mode Tests
 
     func testTimerModeToggle_enablesDisables() throws {
         guard openSettings() else {
@@ -187,7 +187,7 @@ final class SettingsPopoverUITests: XCTestCase {
         }
     }
 
-    // MARK: - Timer Display Tests
+    // Timer Display Tests
 
     func testTimerDisplay_showsCountdown() throws {
         guard openSettings() else {
@@ -208,7 +208,7 @@ final class SettingsPopoverUITests: XCTestCase {
         _ = timerDisplay.exists
     }
 
-    // MARK: - Language Picker Tests
+    // Language Picker Tests
 
     func testLanguagePicker_switchesLanguage() throws {
         guard openSettings() else {
@@ -245,7 +245,7 @@ final class SettingsPopoverUITests: XCTestCase {
         }
     }
 
-    // MARK: - Theme Picker Tests
+    // Theme Picker Tests
 
     func testThemePicker_switchesTheme() throws {
         guard openSettings() else {
@@ -282,7 +282,7 @@ final class SettingsPopoverUITests: XCTestCase {
         }
     }
 
-    // MARK: - Icon Picker Tests
+    // Icon Picker Tests
 
     func testIconPicker_switchesIcon() throws {
         guard openSettings() else {
@@ -307,7 +307,7 @@ final class SettingsPopoverUITests: XCTestCase {
         }
     }
 
-    // MARK: - Sound Toggle Tests
+    // Sound Toggle Tests
 
     func testSoundToggle_togglesSound() throws {
         guard openSettings() else {
@@ -337,7 +337,7 @@ final class SettingsPopoverUITests: XCTestCase {
         }
     }
 
-    // MARK: - Hotkey Section Tests
+    // Hotkey Section Tests
 
     func testHotkeySection_displaysShortcut() throws {
         guard openSettings() else {

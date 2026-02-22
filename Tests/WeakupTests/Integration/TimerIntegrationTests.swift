@@ -27,7 +27,7 @@ final class TimerIntegrationTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Timer Accuracy Tests
+    // Timer Accuracy Tests
 
     func testTimerAccuracy_shortDuration() async throws {
         viewModel.setTimerMode(true)
@@ -58,7 +58,7 @@ final class TimerIntegrationTests: XCTestCase {
         viewModel.stop()
     }
 
-    // MARK: - Auto-Stop Tests
+    // Auto-Stop Tests
 
     func testTimerAutoStop_stopsAtZero() async throws {
         viewModel.setTimerMode(true)
@@ -93,7 +93,7 @@ final class TimerIntegrationTests: XCTestCase {
         viewModel.stop()
     }
 
-    // MARK: - Manual Stop Tests
+    // Manual Stop Tests
 
     func testManualStop_cancelsTimer() async throws {
         viewModel.setTimerMode(true)
@@ -133,7 +133,7 @@ final class TimerIntegrationTests: XCTestCase {
         XCTAssertEqual(viewModel.timeRemaining, 0)
     }
 
-    // MARK: - Timer Mode Toggle Tests
+    // Timer Mode Toggle Tests
 
     func testTimerModeToggle_whileActive() async throws {
         viewModel.setTimerMode(true)
@@ -166,7 +166,7 @@ final class TimerIntegrationTests: XCTestCase {
         XCTAssertEqual(viewModel.timerDuration, 1800, "Duration should be preserved across mode toggles")
     }
 
-    // MARK: - Duration Change Tests
+    // Duration Change Tests
 
     func testDurationChange_whileActive_stops() {
         viewModel.setTimerMode(true)
@@ -192,7 +192,7 @@ final class TimerIntegrationTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive)
     }
 
-    // MARK: - Timer Without Timer Mode
+    // Timer Without Timer Mode
 
     func testStart_withoutTimerMode_noCountdown() {
         viewModel.setTimerMode(false)
@@ -218,7 +218,7 @@ final class TimerIntegrationTests: XCTestCase {
         viewModel.stop()
     }
 
-    // MARK: - Restart Timer Tests
+    // Restart Timer Tests
 
     func testRestartTimer_usesSameDuration() async throws {
         viewModel.setTimerMode(true)
@@ -240,7 +240,7 @@ final class TimerIntegrationTests: XCTestCase {
         viewModel.stop()
     }
 
-    // MARK: - Edge Cases
+    // Edge Cases
 
     func testVeryShortTimer() async throws {
         viewModel.setTimerMode(true)

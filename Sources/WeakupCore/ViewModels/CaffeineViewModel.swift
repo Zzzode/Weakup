@@ -153,7 +153,7 @@ public final class CaffeineViewModel: ObservableObject {
         // Note: deinit runs on arbitrary thread, cleanup should be done via notification
     }
 
-    // MARK: - Public Methods
+    // Public Methods
 
     /// Toggles the sleep prevention state.
     ///

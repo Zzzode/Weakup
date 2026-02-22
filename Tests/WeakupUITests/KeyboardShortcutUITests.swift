@@ -18,7 +18,7 @@ final class KeyboardShortcutUITests: XCTestCase {
         app = nil
     }
 
-    // MARK: - Helper Methods
+    // Helper Methods
 
     private func openSettings() -> Bool {
         let menuBar = app.menuBars
@@ -42,7 +42,7 @@ final class KeyboardShortcutUITests: XCTestCase {
         return true
     }
 
-    // MARK: - Default Shortcut Tests
+    // Default Shortcut Tests
 
     func testDefaultShortcut_togglesCaffeine() throws {
         // Test that Cmd+Ctrl+0 toggles caffeine
@@ -94,7 +94,7 @@ final class KeyboardShortcutUITests: XCTestCase {
         XCTAssertTrue(statusItem.exists)
     }
 
-    // MARK: - Custom Shortcut Tests
+    // Custom Shortcut Tests
 
     func testCustomShortcut_canBeRecorded() throws {
         guard openSettings() else {
@@ -147,7 +147,7 @@ final class KeyboardShortcutUITests: XCTestCase {
         }
     }
 
-    // MARK: - Shortcut Conflict Tests
+    // Shortcut Conflict Tests
 
     func testShortcut_conflictDetection() throws {
         guard openSettings() else {
@@ -176,7 +176,7 @@ final class KeyboardShortcutUITests: XCTestCase {
         }
     }
 
-    // MARK: - Modifier Key Tests
+    // Modifier Key Tests
 
     func testShortcut_requiresModifiers() throws {
         guard openSettings() else {
@@ -205,7 +205,7 @@ final class KeyboardShortcutUITests: XCTestCase {
         }
     }
 
-    // MARK: - Recording State Tests
+    // Recording State Tests
 
     func testRecording_canBeCancelled() throws {
         guard openSettings() else {
@@ -267,7 +267,7 @@ final class KeyboardShortcutUITests: XCTestCase {
         }
     }
 
-    // MARK: - Function Key Tests
+    // Function Key Tests
 
     func testShortcut_functionKeys() throws {
         guard openSettings() else {

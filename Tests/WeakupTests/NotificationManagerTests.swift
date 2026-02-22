@@ -17,7 +17,7 @@ final class NotificationManagerTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Singleton Tests
+    // Singleton Tests
 
     func testShared_returnsSameInstance() {
         let instance1 = NotificationManager.shared
@@ -25,7 +25,7 @@ final class NotificationManagerTests: XCTestCase {
         XCTAssertTrue(instance1 === instance2, "Shared should return same instance")
     }
 
-    // MARK: - Notifications Enabled Tests
+    // Notifications Enabled Tests
 
     func testNotificationsEnabled_defaultTrue() {
         // Note: Since NotificationManager is a singleton, this tests the current state
@@ -60,7 +60,7 @@ final class NotificationManagerTests: XCTestCase {
         XCTAssertEqual(manager.notificationsEnabled, original)
     }
 
-    // MARK: - Authorization Tests
+    // Authorization Tests
 
     func testIsAuthorized_isAccessible() {
         let manager = NotificationManager.shared
@@ -75,7 +75,7 @@ final class NotificationManagerTests: XCTestCase {
         manager.requestAuthorization()
     }
 
-    // MARK: - Notification Scheduling Tests
+    // Notification Scheduling Tests
 
     func testScheduleTimerExpiryNotification_whenDisabled_doesNotSchedule() {
         let manager = NotificationManager.shared
@@ -94,7 +94,7 @@ final class NotificationManagerTests: XCTestCase {
         manager.cancelPendingNotifications()
     }
 
-    // MARK: - Callback Tests
+    // Callback Tests
 
     func testOnRestartRequested_canBeSet() {
         let manager = NotificationManager.shared
@@ -118,7 +118,7 @@ final class NotificationManagerTests: XCTestCase {
         XCTAssertNil(manager.onRestartRequested)
     }
 
-    // MARK: - Observable Tests
+    // Observable Tests
 
     func testNotificationManager_isObservableObject() {
         let manager: any ObservableObject = NotificationManager.shared

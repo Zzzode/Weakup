@@ -5,7 +5,7 @@ import UserNotifications
 /// Provides isolated notification handling that doesn't affect the system
 class MockNotificationCenter {
 
-    // MARK: - State
+    // State
 
     /// Pending notification requests
     private(set) var pendingRequests: [UNNotificationRequest] = []
@@ -22,7 +22,7 @@ class MockNotificationCenter {
     /// Authorization options that were requested
     private(set) var requestedAuthorizationOptions: UNAuthorizationOptions?
 
-    // MARK: - Tracking
+    // Tracking
 
     /// Number of times authorization was requested
     private(set) var authorizationRequestCount = 0
@@ -48,7 +48,7 @@ class MockNotificationCenter {
         case getDeliveredNotifications
     }
 
-    // MARK: - Mock Implementation
+    // Mock Implementation
 
     func add(_ request: UNNotificationRequest, completion: ((Error?) -> Void)? = nil) {
         scheduleCount += 1
@@ -105,7 +105,7 @@ class MockNotificationCenter {
         completionHandler(deliveredNotifications)
     }
 
-    // MARK: - Test Helpers
+    // Test Helpers
 
     /// Reset all state and counters
     func reset() {
@@ -132,7 +132,7 @@ class MockNotificationCenter {
 
     /// Simulate delivering a pending notification
     func simulateDelivery(identifier: String) {
-        guard let request = pendingRequests.first(where: { $0.identifier == identifier }) else {
+        guard pendingRequests.contains(where: { $0.identifier == identifier }) else {
             return
         }
         pendingRequests.removeAll { $0.identifier == identifier }
@@ -146,7 +146,7 @@ class MockNotificationCenter {
     }
 }
 
-// MARK: - Mock Notification Settings
+// Mock Notification Settings
 
 /// Mock notification settings for testing
 struct MockNotificationSettings {
@@ -157,7 +157,7 @@ struct MockNotificationSettings {
     }
 }
 
-// MARK: - Mock Notification Content Builder
+// Mock Notification Content Builder
 
 /// Helper for creating mock notification content in tests
 enum MockNotificationContentBuilder {

@@ -73,7 +73,7 @@ class MockUserDefaults: UserDefaults {
         return true
     }
 
-    // MARK: - Test Helpers
+    // Test Helpers
 
     /// Reset all stored values
     func reset() {

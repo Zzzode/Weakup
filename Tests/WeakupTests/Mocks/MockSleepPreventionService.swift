@@ -10,11 +10,11 @@ protocol SleepPreventionServiceProtocol {
 
 /// Mock implementation of sleep prevention service for testing
 class MockSleepPreventionService: SleepPreventionServiceProtocol {
-    // MARK: - State
+    // State
 
     private(set) var isAssertionActive = false
 
-    // MARK: - Configuration
+    // Configuration
 
     /// Whether createAssertion should succeed
     var shouldSucceed = true
@@ -22,7 +22,7 @@ class MockSleepPreventionService: SleepPreventionServiceProtocol {
     /// Simulated delay for assertion creation (in seconds)
     var creationDelay: TimeInterval = 0
 
-    // MARK: - Tracking
+    // Tracking
 
     /// Number of times createAssertion was called
     private(set) var createCount = 0
@@ -38,7 +38,7 @@ class MockSleepPreventionService: SleepPreventionServiceProtocol {
         case release
     }
 
-    // MARK: - Protocol Implementation
+    // Protocol Implementation
 
     func createAssertion() -> Bool {
         createCount += 1
@@ -63,7 +63,7 @@ class MockSleepPreventionService: SleepPreventionServiceProtocol {
         operationHistory.append(.release)
     }
 
-    // MARK: - Test Helpers
+    // Test Helpers
 
     /// Reset all state and counters
     func reset() {

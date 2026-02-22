@@ -1,12 +1,12 @@
 import Foundation
 
-// MARK: - Time Formatter
+// Time Formatter
 
 /// Centralized time formatting utilities for consistent display across the app.
 /// Provides various formats for duration display in different contexts.
 public enum TimeFormatter {
 
-    // MARK: - Countdown Format (HH:MM:SS or MM:SS)
+    // Countdown Format (HH:MM:SS or MM:SS)
 
     /// Formats a time interval as a countdown string.
     /// - Parameter interval: The time interval in seconds.
@@ -28,7 +28,7 @@ public enum TimeFormatter {
         return String(format: "%02d:%02d", minutes, seconds)
     }
 
-    // MARK: - Human-Readable Duration (Xh Ym)
+    // Human-Readable Duration (Xh Ym)
 
     /// Formats a time interval as a human-readable duration string.
     /// - Parameter interval: The time interval in seconds.
@@ -54,7 +54,7 @@ public enum TimeFormatter {
         }
     }
 
-    // MARK: - Compact Duration (Xh Ym or HH:MM:SS)
+    // Compact Duration (Xh Ym or HH:MM:SS)
 
     /// Formats a time interval for session history display.
     /// Uses HH:MM:SS format for precision.
@@ -68,7 +68,7 @@ public enum TimeFormatter {
         countdown(interval)
     }
 
-    // MARK: - Components
+    // Components
 
     public struct TimeComponents: Sendable {
         public let hours: Int

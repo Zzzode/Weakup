@@ -1,7 +1,7 @@
 import Foundation
 @testable import WeakupCore
 
-// MARK: - Timer Duration Fixtures
+// Timer Duration Fixtures
 
 enum TestTimerDurations {
     // Use centralized constants from AppConstants
@@ -29,7 +29,7 @@ enum TestTimerDurations {
     ]
 }
 
-// MARK: - Localization Test Data
+// Localization Test Data
 
 @MainActor
 enum LocalizationTestData {
@@ -97,7 +97,7 @@ enum LocalizationTestData {
     }
 }
 
-// MARK: - Activity Session Fixtures
+// Activity Session Fixtures
 
 enum ActivitySessionFixtures {
     /// Create an active session (no end time)
@@ -142,7 +142,7 @@ enum ActivitySessionFixtures {
     }
 }
 
-// MARK: - History Filter and Sort Fixtures (Dev3)
+// History Filter and Sort Fixtures (Dev3)
 
 enum HistoryFilterFixtures {
     /// Expected filter modes (to be implemented by Dev3)
@@ -168,7 +168,7 @@ enum HistoryFilterFixtures {
     ]
 }
 
-// MARK: - Hotkey Conflict Fixtures (Dev5)
+// Hotkey Conflict Fixtures (Dev5)
 
 enum HotkeyConflictFixtures {
     /// Common system shortcuts that should trigger conflicts
@@ -199,7 +199,7 @@ enum HotkeyConflictFixtures {
     ]
 }
 
-// MARK: - Icon Style Fixtures
+// Icon Style Fixtures
 
 enum IconStyleFixtures {
     static let allStyles: [IconStyle] = IconStyle.allCases
@@ -213,7 +213,7 @@ enum IconStyleFixtures {
     ]
 }
 
-// MARK: - Theme Fixtures
+// Theme Fixtures
 
 enum ThemeFixtures {
     static let allThemes: [AppTheme] = AppTheme.allCases
@@ -225,7 +225,7 @@ enum ThemeFixtures {
     ]
 }
 
-// MARK: - Hotkey Fixtures
+// Hotkey Fixtures
 
 enum HotkeyFixtures {
     static let defaultKeyCode: UInt32 = 29 // kVK_ANSI_0
@@ -242,11 +242,11 @@ enum HotkeyFixtures {
     ]
 }
 
-// MARK: - UserDefaults Keys (use centralized keys from WeakupCore)
+// UserDefaults Keys (use centralized keys from WeakupCore)
 
 typealias TestUserDefaultsKeys = WeakupCore.UserDefaultsKeys
 
-// MARK: - Test Utilities
+// Test Utilities
 
 enum TestUtilities {
     /// Wait for a condition with timeout

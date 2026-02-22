@@ -1,11 +1,11 @@
 import Foundation
 
-// MARK: - App Constants
+// App Constants
 
 /// Application-wide constants and configuration values.
 public enum AppConstants {
 
-    // MARK: - Timer Presets
+    // Timer Presets
 
     /// Preset timer durations in seconds.
     public enum TimerPresets {
@@ -46,17 +46,17 @@ public enum AppConstants {
         ]
     }
 
-    // MARK: - Timer Configuration
+    // Timer Configuration
 
     /// Timer update interval in seconds.
     public static let timerUpdateInterval: TimeInterval = 0.5
 
-    // MARK: - History Configuration
+    // History Configuration
 
     /// Maximum number of activity sessions to store.
     public static let maxStoredSessions = 100
 
-    // MARK: - UI Configuration
+    // UI Configuration
 
     /// Settings window dimensions.
     public enum SettingsWindow {
@@ -72,12 +72,12 @@ public enum AppConstants {
         public static let sessionListMaxHeight: CGFloat = 150
     }
 
-    // MARK: - Power Assertion
+    // Power Assertion
 
     /// The reason string for the IOPMAssertion.
     public static let powerAssertionReason = "Weakup preventing sleep"
 
-    // MARK: - Notification Identifiers
+    // Notification Identifiers
 
     /// Notification-related identifiers.
     public enum Notifications {
@@ -94,7 +94,7 @@ public enum AppConstants {
         public static let dismissAction = "DISMISS"
     }
 
-    // MARK: - Hotkey
+    // Hotkey
 
     /// Default hotkey configuration.
     public enum Hotkey {

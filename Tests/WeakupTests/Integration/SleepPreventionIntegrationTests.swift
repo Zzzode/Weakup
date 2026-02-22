@@ -29,7 +29,7 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Basic Sleep Prevention Tests
+    // Basic Sleep Prevention Tests
 
     func testSleepPrevention_startsCorrectly() {
         XCTAssertFalse(viewModel.isActive)
@@ -67,7 +67,7 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         }
     }
 
-    // MARK: - Rapid Toggle Tests
+    // Rapid Toggle Tests
 
     func testMultipleToggle_maintainsConsistentState() {
         for i in 0..<10 {
@@ -99,7 +99,7 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive)
     }
 
-    // MARK: - Start/Stop Edge Cases
+    // Start/Stop Edge Cases
 
     func testStart_whenAlreadyActive_remainsActive() {
         viewModel.start()
@@ -124,7 +124,7 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive, "Multiple stops should not cause error")
     }
 
-    // MARK: - Timer Mode Integration
+    // Timer Mode Integration
 
     func testTimerMode_startWithDuration() {
         viewModel.setTimerMode(true)
@@ -161,7 +161,7 @@ final class SleepPreventionIntegrationTests: XCTestCase {
         XCTAssertFalse(viewModel.isActive, "Changing duration while active should stop")
     }
 
-    // MARK: - State Consistency Tests
+    // State Consistency Tests
 
     func testStateConsistency_afterMultipleOperations() {
         // Perform various operations
@@ -194,7 +194,7 @@ final class SleepPreventionIntegrationTests: XCTestCase {
     }
 }
 
-// MARK: - Timer Countdown Integration Tests
+// Timer Countdown Integration Tests
 
 @MainActor
 final class TimerCountdownIntegrationTests: XCTestCase {

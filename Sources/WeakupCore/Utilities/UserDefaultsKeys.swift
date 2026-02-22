@@ -1,12 +1,12 @@
 import Foundation
 
-// MARK: - UserDefaults Keys
+// UserDefaults Keys
 
 /// Centralized UserDefaults key management for the Weakup application.
 /// All keys follow the "Weakup" prefix convention for namespace isolation.
 public enum UserDefaultsKeys {
 
-    // MARK: - CaffeineViewModel Keys
+    // CaffeineViewModel Keys
 
     /// Whether sound feedback is enabled when toggling sleep prevention.
     public static let soundEnabled = "WeakupSoundEnabled"
@@ -20,12 +20,12 @@ public enum UserDefaultsKeys {
     /// Whether to show countdown in the menu bar.
     public static let showCountdownInMenuBar = "WeakupShowCountdownInMenuBar"
 
-    // MARK: - Notification Keys
+    // Notification Keys
 
     /// Whether notifications are enabled for timer expiry.
     public static let notificationsEnabled = "WeakupNotificationsEnabled"
 
-    // MARK: - Appearance Keys
+    // Appearance Keys
 
     /// The current app language (stored as AppLanguage.rawValue).
     public static let language = "WeakupLanguage"
@@ -36,7 +36,7 @@ public enum UserDefaultsKeys {
     /// The current icon style (stored as IconStyle.rawValue).
     public static let iconStyle = "WeakupIconStyle"
 
-    // MARK: - Hotkey Keys
+    // Hotkey Keys
 
     /// The hotkey configuration (stored as JSON-encoded HotkeyConfig).
     public static let hotkeyConfig = "WeakupHotkeyConfig"
@@ -44,12 +44,12 @@ public enum UserDefaultsKeys {
     /// Whether to override detected hotkey conflicts.
     public static let hotkeyOverrideConflicts = "WeakupOverrideConflicts"
 
-    // MARK: - History Keys
+    // History Keys
 
     /// The activity history (stored as JSON-encoded [ActivitySession]).
     public static let activityHistory = "WeakupActivityHistory"
 
-    // MARK: - Utility
+    // Utility
 
     /// All UserDefaults keys used by the application.
     /// Useful for cleanup during testing or app reset.

@@ -3,7 +3,7 @@ import XCTest
 
 final class AppLanguageTests: XCTestCase {
 
-    // MARK: - Enum Cases Tests (AL-001)
+    // Enum Cases Tests (AL-001)
 
     func testAllCases_containsExpectedLanguages() {
         let allCases = AppLanguage.allCases
@@ -30,7 +30,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertEqual(cases[7], .spanish)
     }
 
-    // MARK: - Raw Value Tests (AL-002 to AL-009)
+    // Raw Value Tests (AL-002 to AL-009)
 
     func testRawValue_english() {
         XCTAssertEqual(AppLanguage.english.rawValue, "en")
@@ -78,7 +78,7 @@ final class AppLanguageTests: XCTestCase {
         }
     }
 
-    // MARK: - Identifiable Tests (AL-010)
+    // Identifiable Tests (AL-010)
 
     func testId_matchesRawValue() {
         for language in AppLanguage.allCases {
@@ -91,7 +91,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertNotNil(language.id)
     }
 
-    // MARK: - Display Name Tests (AL-011 to AL-013)
+    // Display Name Tests (AL-011 to AL-013)
 
     func testDisplayName_english() {
         XCTAssertEqual(AppLanguage.english.displayName, "English")
@@ -145,7 +145,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertTrue(AppLanguage.korean.displayName.contains("한국"), "Korean should contain native characters")
     }
 
-    // MARK: - Bundle Tests (AL-014)
+    // Bundle Tests (AL-014)
 
     func testBundle_returnsBundle() {
         for language in AppLanguage.allCases {
@@ -157,7 +157,7 @@ final class AppLanguageTests: XCTestCase {
     func testBundle_returnsBundleType() {
         for language in AppLanguage.allCases {
             let bundle = language.bundle
-            XCTAssertTrue(bundle is Bundle, "Should return Bundle type for \(language)")
+            XCTAssertFalse(bundle.bundlePath.isEmpty, "Bundle path should not be empty for \(language)")
         }
     }
 
@@ -170,7 +170,7 @@ final class AppLanguageTests: XCTestCase {
         }
     }
 
-    // MARK: - Initialization Tests (AL-015, AL-016)
+    // Initialization Tests (AL-015, AL-016)
 
     func testInit_fromValidRawValue() {
         XCTAssertEqual(AppLanguage(rawValue: "en"), .english)
@@ -202,7 +202,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertNotNil(AppLanguage(rawValue: "zh-Hans"))
     }
 
-    // MARK: - CaseIterable Conformance Tests
+    // CaseIterable Conformance Tests
 
     func testCaseIterable_conformance() {
         let allCases = AppLanguage.allCases
@@ -217,7 +217,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertEqual(count, 8)
     }
 
-    // MARK: - Equatable Tests
+    // Equatable Tests
 
     func testEquatable_sameLanguage() {
         XCTAssertEqual(AppLanguage.english, AppLanguage.english)
@@ -230,7 +230,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertNotEqual(AppLanguage.japanese, AppLanguage.korean)
     }
 
-    // MARK: - Hashable Tests
+    // Hashable Tests
 
     func testHashable_canBeUsedInSet() {
         var languageSet: Set<AppLanguage> = []
@@ -252,7 +252,7 @@ final class AppLanguageTests: XCTestCase {
         XCTAssertEqual(languageDict[.chinese], "你好")
     }
 
-    // MARK: - String Convertible Tests
+    // String Convertible Tests
 
     func testStringConvertible_description() {
         // AppLanguage should have meaningful string representation via rawValue
@@ -262,7 +262,7 @@ final class AppLanguageTests: XCTestCase {
         }
     }
 
-    // MARK: - Edge Cases
+    // Edge Cases
 
     func testEdgeCase_allLanguagesCanBeCompared() {
         let sorted = AppLanguage.allCases.sorted { $0.rawValue < $1.rawValue }
