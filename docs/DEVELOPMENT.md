@@ -59,23 +59,44 @@ Weakup/
 ├── Package.swift              # Swift Package Manager configuration
 ├── build.sh                   # Build script for creating .app bundle
 ├── Sources/
-│   └── Weakup/
-│       ├── main.swift         # Main application code
-│       ├── L10n.swift         # Localization system
-│       ├── en.lproj/          # English localization
-│       │   └── Localizable.strings
-│       └── zh-Hans.lproj/     # Chinese localization
-│           └── Localizable.strings
+│   ├── Weakup/                # App target (UI + lifecycle)
+│   │   ├── main.swift         # Application entry point
+│   │   ├── App/
+│   │   │   └── AppDelegate.swift
+│   │   ├── Views/
+│   │   │   ├── SettingsView.swift
+│   │   │   ├── OnboardingView.swift
+│   │   │   └── HistoryView.swift
+│   │   ├── en.lproj/          # English localization
+│   │   │   └── Localizable.strings
+│   │   ├── zh-Hans.lproj/     # Chinese localization
+│   │   │   └── Localizable.strings
+│   │   └── ... other .lproj folders
+│   └── WeakupCore/            # Core target (logic + managers)
+│       ├── ViewModels/
+│       │   └── CaffeineViewModel.swift
+│       ├── Utilities/
+│       │   ├── L10n.swift
+│       │   ├── HotkeyManager.swift
+│       │   ├── IconManager.swift
+│       │   ├── ThemeManager.swift
+│       │   ├── NotificationManager.swift
+│       │   ├── ActivityHistoryManager.swift
+│       │   └── LaunchAtLoginManager.swift
+│       ├── Models/
+│       │   └── ActivitySession.swift
+│       └── Protocols/
+│           └── NotificationManaging.swift
+├── Tests/                     # Unit, integration, and UI tests
 ├── docs/                      # Documentation
 ├── Weakup.app/                # Built application (generated)
-└── .build/                    # Swift build artifacts (generated)
 ```
 
 ## Development Workflow
 
 ### Making Changes
 
-1. Edit source files in `Sources/Weakup/`
+1. Edit source files in `Sources/Weakup/` or `Sources/WeakupCore/`
 2. Rebuild with `./build.sh`
 3. Test with `open Weakup.app`
 
@@ -105,16 +126,21 @@ swift build
 
 ## Code Organization
 
-### main.swift
+### App Entry
 
-Contains the core application components:
+- `Sources/Weakup/main.swift` defines the entry point and wires `AppDelegate`.
+- `Sources/Weakup/App/AppDelegate.swift` owns the status item, settings window, onboarding window, and hotkey registration.
 
-| Component | Lines | Description |
-|-----------|-------|-------------|
-| `WeakupApp` | 8-16 | Application entry point |
-| `AppDelegate` | 20-94 | System integration, menu bar |
-| `CaffeineViewModel` | 98-174 | Business logic, state management |
-| `SettingsView` | 178-294 | SwiftUI user interface |
+### Core Logic
+
+- `Sources/WeakupCore/ViewModels/CaffeineViewModel.swift` owns sleep prevention state, timer logic, and preferences.
+- `Sources/WeakupCore/Utilities/` contains managers like `L10n`, `HotkeyManager`, `IconManager`, `ThemeManager`, `NotificationManager`, `ActivityHistoryManager`, and `LaunchAtLoginManager`.
+
+### UI Views
+
+- `Sources/Weakup/Views/SettingsView.swift` is the primary settings window UI.
+- `Sources/Weakup/Views/OnboardingView.swift` handles first-launch onboarding.
+- `Sources/Weakup/Views/HistoryView.swift` renders session history, export/import, and charts.
 
 ### L10n.swift
 
@@ -140,7 +166,7 @@ Localization system:
 Toggle("New Setting", isOn: $viewModel.newSetting)
 ```
 
-1. Add localized strings to both `.strings` files:
+1. Add localized strings to all `.strings` files:
 
 ```
 "new_setting" = "New Setting";
@@ -154,7 +180,7 @@ var newSetting: String { string(forKey: "new_setting") }
 
 ### Adding a New Menu Item
 
-In `AppDelegate.updateMenu()`:
+In `AppDelegate.showContextMenu()`:
 
 ```swift
 menu.addItem(NSMenuItem(
