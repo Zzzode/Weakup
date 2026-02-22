@@ -1,6 +1,6 @@
 import XCTest
 
-// MARK: - Swift Testing Migration Note
+// Swift Testing Migration Note
 // These UI tests intentionally use XCTest framework and cannot be migrated to Swift Testing.
 // Swift Testing does not support UI testing - XCUIApplication, XCUIElement, and the entire
 // XCUITest framework are only available through XCTest. This is a documented limitation

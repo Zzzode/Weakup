@@ -21,7 +21,7 @@ struct SleepPreventionIntegrationTests {
         viewModel.soundEnabled = false
     }
 
-    // MARK: - Basic Sleep Prevention Tests
+    // Basic Sleep Prevention Tests
 
     @Test("Sleep prevention starts correctly")
     func sleepPrevention_startsCorrectly() {
@@ -60,7 +60,7 @@ struct SleepPreventionIntegrationTests {
         #expect(output.contains(AppConstants.powerAssertionReason))
     }
 
-    // MARK: - Rapid Toggle Tests
+    // Rapid Toggle Tests
 
     @Test("Multiple toggle maintains consistent state")
     func multipleToggle_maintainsConsistentState() {
@@ -94,7 +94,7 @@ struct SleepPreventionIntegrationTests {
         #expect(!viewModel.isActive)
     }
 
-    // MARK: - Start/Stop Edge Cases
+    // Start/Stop Edge Cases
 
     @Test("Start when already active remains active")
     func start_whenAlreadyActive_remainsActive() {
@@ -123,7 +123,7 @@ struct SleepPreventionIntegrationTests {
         #expect(!viewModel.isActive, "Multiple stops should not cause error")
     }
 
-    // MARK: - Timer Mode Integration
+    // Timer Mode Integration
 
     @Test("Timer mode start with duration")
     func timerMode_startWithDuration() {
@@ -164,7 +164,7 @@ struct SleepPreventionIntegrationTests {
         #expect(!viewModel.isActive, "Changing duration while active should stop")
     }
 
-    // MARK: - State Consistency Tests
+    // State Consistency Tests
 
     @Test("State consistency after multiple operations")
     func stateConsistency_afterMultipleOperations() {
@@ -181,7 +181,7 @@ struct SleepPreventionIntegrationTests {
         #expect(viewModel.timeRemaining == 0)
     }
 
-    // MARK: - Helper Methods
+    // Helper Methods
 
     private func pmsetAssertionsOutput() throws -> String {
         let process = Process()
@@ -200,7 +200,7 @@ struct SleepPreventionIntegrationTests {
     }
 }
 
-// MARK: - Timer Countdown Integration Tests
+// Timer Countdown Integration Tests
 
 @Suite("Timer Countdown Integration Tests", .serialized)
 @MainActor

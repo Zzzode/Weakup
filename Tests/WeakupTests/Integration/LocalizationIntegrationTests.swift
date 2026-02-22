@@ -14,7 +14,7 @@ struct LocalizationIntegrationTests {
         L10n.shared.setLanguage(.english)
     }
 
-    // MARK: - String Existence Tests
+    // String Existence Tests
 
     @Test("All strings exist in English")
     func allStrings_existInEnglish() {
@@ -73,7 +73,7 @@ struct LocalizationIntegrationTests {
         }
     }
 
-    // MARK: - Language Switch Tests
+    // Language Switch Tests
 
     @Test("Language switch updates all UI")
     func languageSwitch_updatesAllUI() {
@@ -134,7 +134,7 @@ struct LocalizationIntegrationTests {
         #expect(L10n.shared.currentLanguage == .english)
     }
 
-    // MARK: - Fallback Tests
+    // Fallback Tests
 
     @Test("Fallback for unknown key")
     func fallback_unknownKey() {
@@ -160,7 +160,7 @@ struct LocalizationIntegrationTests {
         }
     }
 
-    // MARK: - Duration String Tests
+    // Duration String Tests
 
     @Test("Duration strings exist in all languages")
     func durationStrings_allExist() {
@@ -182,7 +182,7 @@ struct LocalizationIntegrationTests {
         }
     }
 
-    // MARK: - Theme String Tests
+    // Theme String Tests
 
     @Test("Theme strings exist in all languages")
     func themeStrings_allExist() {
@@ -198,7 +198,7 @@ struct LocalizationIntegrationTests {
         }
     }
 
-    // MARK: - Notification String Tests
+    // Notification String Tests
 
     @Test("Notification strings exist in all languages")
     func notificationStrings_allExist() {
@@ -216,7 +216,7 @@ struct LocalizationIntegrationTests {
         }
     }
 
-    // MARK: - Language Detection Tests
+    // Language Detection Tests
 
     @Test("Language detection for English variants")
     func languageDetection_englishVariants() {
@@ -262,7 +262,7 @@ struct LocalizationIntegrationTests {
         #expect(L10n.shared.currentLanguage == .spanish)
     }
 
-    // MARK: - Observable Tests
+    // Observable Tests
 
     @Test("Language change triggers observation")
     func languageChange_triggersObservation() {

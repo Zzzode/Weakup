@@ -11,7 +11,7 @@ struct NotificationManagerTests {
         UserDefaultsStore.shared.removeObject(forKey: "WeakupNotificationsEnabled")
     }
 
-    // MARK: - Singleton Tests
+    // Singleton Tests
 
     @Test("Shared returns same instance")
     func sharedReturnsSameInstance() {
@@ -20,7 +20,7 @@ struct NotificationManagerTests {
         #expect(instance1 === instance2, "Shared should return same instance")
     }
 
-    // MARK: - Notifications Enabled Tests
+    // Notifications Enabled Tests
 
     @Test("Notifications enabled default true")
     func notificationsEnabledDefaultTrue() {
@@ -58,7 +58,7 @@ struct NotificationManagerTests {
         #expect(manager.notificationsEnabled == original)
     }
 
-    // MARK: - Authorization Tests
+    // Authorization Tests
 
     @Test("isAuthorized is accessible")
     func isAuthorizedIsAccessible() {
@@ -75,7 +75,7 @@ struct NotificationManagerTests {
         manager.requestAuthorization()
     }
 
-    // MARK: - Notification Scheduling Tests
+    // Notification Scheduling Tests
 
     @Test("Schedule timer expiry notification when disabled does not schedule")
     func scheduleTimerExpiryNotificationWhenDisabledDoesNotSchedule() {
@@ -96,7 +96,7 @@ struct NotificationManagerTests {
         manager.cancelPendingNotifications()
     }
 
-    // MARK: - Callback Tests
+    // Callback Tests
 
     @Test("onRestartRequested can be set")
     func onRestartRequestedCanBeSet() {
@@ -122,7 +122,7 @@ struct NotificationManagerTests {
         #expect(manager.onRestartRequested == nil)
     }
 
-    // MARK: - Observable Tests
+    // Observable Tests
 
     @Test("NotificationManager is ObservableObject")
     func notificationManagerIsObservableObject() {

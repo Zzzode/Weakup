@@ -6,7 +6,7 @@ import Combine
 @Suite("AppTheme Tests")
 struct AppThemeTests {
 
-    // MARK: - Enum Cases Tests (TM-001)
+    // Enum Cases Tests (TM-001)
 
     @Test("All cases contains expected themes")
     func allCasesContainsExpectedThemes() {
@@ -22,7 +22,7 @@ struct AppThemeTests {
         #expect(AppTheme.allCases.count == 3)
     }
 
-    // MARK: - Raw Value Tests (TM-002)
+    // Raw Value Tests (TM-002)
 
     @Test("Raw value for system")
     func rawValueSystem() {
@@ -46,7 +46,7 @@ struct AppThemeTests {
         #expect(rawValues.count == uniqueRawValues.count, "All raw values should be unique")
     }
 
-    // MARK: - Identifiable Tests (TM-003)
+    // Identifiable Tests (TM-003)
 
     @Test("ID matches raw value")
     func idMatchesRawValue() {
@@ -70,7 +70,7 @@ struct AppThemeTests {
         #expect(AppTheme.dark.id == "dark")
     }
 
-    // MARK: - Localization Key Tests (TM-004)
+    // Localization Key Tests (TM-004)
 
     @Test("Localization key for system")
     func localizationKeySystem() {
@@ -95,7 +95,7 @@ struct AppThemeTests {
         }
     }
 
-    // MARK: - Color Scheme Tests (TM-005, TM-006, TM-007)
+    // Color Scheme Tests (TM-005, TM-006, TM-007)
 
     @Test("Color scheme for system returns nil")
     func colorSchemeSystemReturnsNil() {
@@ -123,7 +123,7 @@ struct AppThemeTests {
         }
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     @Test("Init from valid raw value")
     func initFromValidRawValue() {
@@ -151,7 +151,7 @@ struct AppThemeTests {
         #expect(AppTheme(rawValue: "Dark") == nil, "Raw value should be case sensitive")
     }
 
-    // MARK: - Sendable Conformance
+    // Sendable Conformance
 
     @Test("AppTheme is Sendable")
     func appThemeIsSendable() async {
@@ -161,7 +161,7 @@ struct AppThemeTests {
         }.value
     }
 
-    // MARK: - CaseIterable Tests
+    // CaseIterable Tests
 
     @Test("CaseIterable order is consistent")
     func caseIterableOrderIsConsistent() {
@@ -182,7 +182,7 @@ struct ThemeManagerTests {
         UserDefaultsStore.shared.removeObject(forKey: userDefaultsKey)
     }
 
-    // MARK: - Singleton Tests (TM-008)
+    // Singleton Tests (TM-008)
 
     @Test("Shared returns same instance")
     func sharedReturnsSameInstance() {
@@ -196,7 +196,7 @@ struct ThemeManagerTests {
         #expect(ThemeManager.shared != nil, "Shared instance should not be nil")
     }
 
-    // MARK: - Default Theme Tests (TM-009)
+    // Default Theme Tests (TM-009)
 
     @Test("Default theme is system")
     func defaultThemeIsSystem() {
@@ -215,7 +215,7 @@ struct ThemeManagerTests {
         #expect(AppTheme.allCases.contains(manager.currentTheme), "Current theme should be a valid theme")
     }
 
-    // MARK: - Theme Persistence Tests (TM-010)
+    // Theme Persistence Tests (TM-010)
 
     @Test("Set theme persists value")
     func setThemePersistsValue() {
@@ -268,7 +268,7 @@ struct ThemeManagerTests {
         }
     }
 
-    // MARK: - Effective Color Scheme Tests (TM-011)
+    // Effective Color Scheme Tests (TM-011)
 
     @Test("Effective color scheme matches theme")
     func effectiveColorSchemeMatchesTheme() {
@@ -317,7 +317,7 @@ struct ThemeManagerTests {
         }
     }
 
-    // MARK: - Theme Switching Tests
+    // Theme Switching Tests
 
     @Test("Theme switching system to light")
     func themeSwitchingSystemToLight() {
@@ -391,7 +391,7 @@ struct ThemeManagerTests {
         }
     }
 
-    // MARK: - Rapid Theme Changes
+    // Rapid Theme Changes
 
     @Test("Rapid theme changes")
     func rapidThemeChanges() {
@@ -405,7 +405,7 @@ struct ThemeManagerTests {
         }
     }
 
-    // MARK: - ObservableObject Tests
+    // ObservableObject Tests
 
     @Test("ThemeManager is ObservableObject")
     func themeManagerIsObservableObject() {
@@ -452,7 +452,7 @@ struct ThemeManagerTests {
         cancellable.cancel()
     }
 
-    // MARK: - Persistence Verification Tests
+    // Persistence Verification Tests
 
     @Test("Persistence survives clear")
     func persistenceSurvivesClear() {

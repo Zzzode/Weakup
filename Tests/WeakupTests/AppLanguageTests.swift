@@ -4,7 +4,7 @@ import Testing
 @Suite("AppLanguage Tests")
 struct AppLanguageTests {
 
-    // MARK: - Enum Cases Tests (AL-001)
+    // Enum Cases Tests (AL-001)
 
     @Test("All cases contains expected languages")
     func allCasesContainsExpectedLanguages() {
@@ -33,7 +33,7 @@ struct AppLanguageTests {
         #expect(cases[7] == .spanish)
     }
 
-    // MARK: - Raw Value Tests (AL-002 to AL-009)
+    // Raw Value Tests (AL-002 to AL-009)
 
     @Test("Raw value for English")
     func rawValueEnglish() {
@@ -91,7 +91,7 @@ struct AppLanguageTests {
         }
     }
 
-    // MARK: - Identifiable Tests (AL-010)
+    // Identifiable Tests (AL-010)
 
     @Test("ID matches raw value")
     func idMatchesRawValue() {
@@ -106,7 +106,7 @@ struct AppLanguageTests {
         #expect(language.id != nil)
     }
 
-    // MARK: - Display Name Tests (AL-011 to AL-013)
+    // Display Name Tests (AL-011 to AL-013)
 
     @Test("Display name for English")
     func displayNameEnglish() {
@@ -171,7 +171,7 @@ struct AppLanguageTests {
         #expect(AppLanguage.korean.displayName.contains("한국"), "Korean should contain native characters")
     }
 
-    // MARK: - Bundle Tests (AL-014)
+    // Bundle Tests (AL-014)
 
     @Test("Bundle returns bundle")
     func bundleReturnsBundle() {
@@ -199,7 +199,7 @@ struct AppLanguageTests {
         }
     }
 
-    // MARK: - Initialization Tests (AL-015, AL-016)
+    // Initialization Tests (AL-015, AL-016)
 
     @Test("Init from valid raw value")
     func initFromValidRawValue() {
@@ -234,7 +234,7 @@ struct AppLanguageTests {
         #expect(AppLanguage(rawValue: "zh-Hans") != nil)
     }
 
-    // MARK: - CaseIterable Conformance Tests
+    // CaseIterable Conformance Tests
 
     @Test("CaseIterable conformance")
     func caseIterableConformance() {
@@ -251,7 +251,7 @@ struct AppLanguageTests {
         #expect(count == 8)
     }
 
-    // MARK: - Equatable Tests
+    // Equatable Tests
 
     @Test("Equatable same language")
     func equatableSameLanguage() {
@@ -266,7 +266,7 @@ struct AppLanguageTests {
         #expect(AppLanguage.japanese != AppLanguage.korean)
     }
 
-    // MARK: - Hashable Tests
+    // Hashable Tests
 
     @Test("Hashable can be used in Set")
     func hashableCanBeUsedInSet() {
@@ -290,7 +290,7 @@ struct AppLanguageTests {
         #expect(languageDict[.chinese] == "你好")
     }
 
-    // MARK: - String Convertible Tests
+    // String Convertible Tests
 
     @Test("String convertible description")
     func stringConvertibleDescription() {
@@ -301,7 +301,7 @@ struct AppLanguageTests {
         }
     }
 
-    // MARK: - Edge Cases
+    // Edge Cases
 
     @Test("Edge case: all languages can be compared")
     func edgeCaseAllLanguagesCanBeCompared() {

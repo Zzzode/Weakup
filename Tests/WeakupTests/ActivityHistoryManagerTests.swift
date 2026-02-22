@@ -15,7 +15,7 @@ struct ActivityHistoryManagerTests {
         ActivityHistoryManager.shared.searchText = ""
     }
 
-    // MARK: - Singleton Tests
+    // Singleton Tests
 
     @Test("Shared returns same instance")
     func sharedReturnsSameInstance() {
@@ -24,7 +24,7 @@ struct ActivityHistoryManagerTests {
         #expect(instance1 === instance2)
     }
 
-    // MARK: - Session Management Tests
+    // Session Management Tests
 
     @Test("Start session creates current session")
     func startSessionCreatesCurrentSession() {
@@ -89,7 +89,7 @@ struct ActivityHistoryManagerTests {
         #expect(manager.sessions.count == initialCount)
     }
 
-    // MARK: - Clear History Tests
+    // Clear History Tests
 
     @Test("Clear history removes all sessions")
     func clearHistoryRemovesAllSessions() {
@@ -108,7 +108,7 @@ struct ActivityHistoryManagerTests {
         #expect(manager.sessions.count == 0)
     }
 
-    // MARK: - Statistics Tests
+    // Statistics Tests
 
     @Test("Statistics empty history returns zeros")
     func statisticsEmptyHistoryReturnsZeros() {
@@ -173,7 +173,7 @@ struct ActivityHistoryManagerTests {
         #expect(stats.averageSessionDuration >= 0)
     }
 
-    // MARK: - Today/Week Statistics Tests
+    // Today/Week Statistics Tests
 
     @Test("Statistics today sessions counts only today")
     func statisticsTodaySessionsCountsOnlyToday() {
@@ -207,7 +207,7 @@ struct ActivityHistoryManagerTests {
         #expect(stats.weekDuration >= 0)
     }
 
-    // MARK: - Persistence Tests
+    // Persistence Tests
 
     @Test("Persistence saves on end")
     func persistenceSavesOnEnd() {
@@ -242,7 +242,7 @@ struct ActivityHistoryManagerTests {
         #expect(sessions[0].timerDuration == 3600)
     }
 
-    // MARK: - Timer Mode Session Tests
+    // Timer Mode Session Tests
 
     @Test("Session timer mode stores correct duration")
     func sessionTimerModeStoresCorrectDuration() {
@@ -277,7 +277,7 @@ struct ActivityHistoryManagerTests {
         #expect(manager.sessions.first?.timerDuration == nil)
     }
 
-    // MARK: - Edge Case Tests
+    // Edge Case Tests
 
     @Test("Rapid start stop maintains consistency")
     func rapidStartStopMaintainsConsistency() {
@@ -374,7 +374,7 @@ struct ActivityHistoryManagerTests {
         #expect(abs(stats.totalDuration - calculatedTotal) < 0.001)
     }
 
-    // MARK: - Export Tests
+    // Export Tests
 
     @Test("Export JSON creates valid data")
     func exportJSONCreatesValidData() throws {
@@ -435,7 +435,7 @@ struct ActivityHistoryManagerTests {
         #expect(csvResult == nil)
     }
 
-    // MARK: - Import Tests
+    // Import Tests
 
     @Test("Import JSON valid data succeeds")
     func importJSONValidDataSucceeds() throws {
@@ -519,7 +519,7 @@ struct ActivityHistoryManagerTests {
         }
     }
 
-    // MARK: - Filter Tests
+    // Filter Tests
 
     @Test("Filtered sessions all filter returns all")
     func filteredSessionsAllFilterReturnsAll() {
@@ -565,7 +565,7 @@ struct ActivityHistoryManagerTests {
         #expect(!(manager.filteredSessions.first?.wasTimerMode ?? true))
     }
 
-    // MARK: - Sort Tests
+    // Sort Tests
 
     @Test("Sort order date descending")
     func sortOrderDateDescending() {
@@ -605,7 +605,7 @@ struct ActivityHistoryManagerTests {
         }
     }
 
-    // MARK: - Daily Statistics Tests
+    // Daily Statistics Tests
 
     @Test("Daily statistics returns 7 days")
     func dailyStatisticsReturns7Days() {
@@ -633,7 +633,7 @@ struct ActivityHistoryManagerTests {
         #expect(today?.sessionCount == 1)
     }
 
-    // MARK: - Delete Session Tests
+    // Delete Session Tests
 
     @Test("Delete session removes from history")
     func deleteSessionRemovesFromHistory() {
