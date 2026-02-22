@@ -75,23 +75,29 @@ open Weakup.app
 Weakup/
 ├── Package.swift              # Swift Package 配置
 ├── build.sh                   # 构建脚本
-├── Sources/Weakup/
-│   ├── main.swift             # 主程序代码
-│   │   ├── WeakupApp          # 入口点
-│   │   ├── AppDelegate        # 系统集成
-│   │   ├── CaffeineViewModel  # 业务逻辑
-│   │   └── SettingsView       # SwiftUI 界面
-│   ├── L10n.swift             # 本地化系统
-│   ├── en.lproj/              # 英文本地化
-│   │   └── Localizable.strings
-│   └── zh-Hans.lproj/         # 中文本地化
-│       └── Localizable.strings
+├── Sources/
+│   ├── Weakup/                # App 目标（UI + 生命周期）
+│   │   ├── main.swift
+│   │   ├── App/
+│   │   │   └── AppDelegate.swift
+│   │   ├── Views/
+│   │   │   ├── SettingsView.swift
+│   │   │   ├── OnboardingView.swift
+│   │   │   └── HistoryView.swift
+│   │   ├── en.lproj/
+│   │   └── ... 其他 .lproj 目录
+│   └── WeakupCore/            # Core 目标（逻辑 + 管理器）
+│       ├── ViewModels/
+│       ├── Utilities/
+│       ├── Models/
+│       └── Protocols/
 ├── docs/                      # 文档
 │   ├── ARCHITECTURE.md        # 系统架构
 │   ├── DEVELOPMENT.md         # 开发指南
 │   ├── TESTING.md             # 测试指南
 │   ├── TRANSLATIONS.md        # 翻译指南
 │   └── PRIVACY.md             # 隐私政策
+├── Tests/                     # 单元、集成、UI 测试
 └── Weakup.app/                # 构建的应用程序
 ```
 
@@ -158,6 +164,8 @@ func toggleCaffeine(){viewModel.toggle();updateStatusIcon()}
 - [ ] 定时模式按预期工作
 - [ ] 键盘快捷键 (Cmd+Ctrl+0) 功能正常
 - [ ] 语言切换正常
+- [ ] 计时结束通知符合开关设置
+- [ ] 开机自启开关生效
 - [ ] 应用完全退出
 - [ ] 无内存泄漏或崩溃
 
