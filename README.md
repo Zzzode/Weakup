@@ -120,15 +120,19 @@ open Weakup.app
 
 ### Planned
 
-- [ ] Launch at login preference
-- [ ] Activity history and statistics
-- [ ] Keyboard shortcut conflict detection
+- [ ] Schedule-based activation (time-of-day rules)
+- [ ] Menu bar widget for quick stats
+- [ ] Shortcuts app integration
 
-### Recently Completed
+### Recently Completed (v1.1.0)
 
-- [x] macOS notification when timer expires
-- [x] Display countdown in menu bar
-- [x] Homebrew Cask formula
+- [x] Launch at login preference
+- [x] Activity history with export/import (CSV/JSON)
+- [x] Keyboard shortcut conflict detection
+- [x] Enhanced history view with filtering and charts
+- [x] Comprehensive test suite (460+ tests)
+- [x] Code refactoring with centralized utilities
+- [x] Architecture documentation and diagrams
 
 ## Documentation
 
