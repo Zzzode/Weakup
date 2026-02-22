@@ -4,13 +4,15 @@ import SwiftUI
 // Icon Style
 
 public enum IconStyle: String, CaseIterable, Identifiable, Sendable {
-    case power = "power"
-    case bolt = "bolt"
-    case cup = "cup"
-    case moon = "moon"
-    case eye = "eye"
+    case power
+    case bolt
+    case cup
+    case moon
+    case eye
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 
     public var localizationKey: String {
         "icon_\(rawValue)"
@@ -19,22 +21,22 @@ public enum IconStyle: String, CaseIterable, Identifiable, Sendable {
     /// SF Symbol name for inactive state
     public var inactiveSymbol: String {
         switch self {
-        case .power: return "power.circle"
-        case .bolt: return "bolt.circle"
-        case .cup: return "cup.and.saucer"
-        case .moon: return "moon.zzz"
-        case .eye: return "eye"
+        case .power: "power.circle"
+        case .bolt: "bolt.circle"
+        case .cup: "cup.and.saucer"
+        case .moon: "moon.zzz"
+        case .eye: "eye"
         }
     }
 
     /// SF Symbol name for active state
     public var activeSymbol: String {
         switch self {
-        case .power: return "power.circle.fill"
-        case .bolt: return "bolt.circle.fill"
-        case .cup: return "cup.and.saucer.fill"
-        case .moon: return "moon.zzz.fill"
-        case .eye: return "eye.fill"
+        case .power: "power.circle.fill"
+        case .bolt: "bolt.circle.fill"
+        case .cup: "cup.and.saucer.fill"
+        case .moon: "moon.zzz.fill"
+        case .eye: "eye.fill"
         }
     }
 }
@@ -47,21 +49,20 @@ public final class IconManager: ObservableObject {
 
     @Published public var currentStyle: IconStyle {
         didSet {
-            UserDefaults.standard.set(currentStyle.rawValue, forKey: userDefaultsKey)
+            UserDefaults.standard.set(currentStyle.rawValue, forKey: UserDefaultsKeys.iconStyle)
+            Logger.preferenceChanged(key: UserDefaultsKeys.iconStyle, value: currentStyle.rawValue)
             onIconChanged?()
         }
     }
 
     public var onIconChanged: (() -> Void)?
 
-    private let userDefaultsKey = "WeakupIconStyle"
-
     private init() {
-        if let savedStyle = UserDefaults.standard.string(forKey: userDefaultsKey),
-           let style = IconStyle(rawValue: savedStyle) {
-            currentStyle = style
+        let savedStyle = UserDefaults.standard.string(forKey: UserDefaultsKeys.iconStyle)
+        if let savedStyle, let style = IconStyle(rawValue: savedStyle) {
+            self.currentStyle = style
         } else {
-            currentStyle = .power
+            self.currentStyle = .power
         }
     }
 

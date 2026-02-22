@@ -1,28 +1,30 @@
-import SwiftUI
 import AppKit
+import SwiftUI
 
 // Theme Options
 
 public enum AppTheme: String, CaseIterable, Identifiable, Sendable {
-    case system = "system"
-    case light = "light"
-    case dark = "dark"
+    case system
+    case light
+    case dark
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 
     public var localizationKey: String {
         switch self {
-        case .system: return "theme_system"
-        case .light: return "theme_light"
-        case .dark: return "theme_dark"
+        case .system: "theme_system"
+        case .light: "theme_light"
+        case .dark: "theme_dark"
         }
     }
 
     public var colorScheme: ColorScheme? {
         switch self {
-        case .system: return nil
-        case .light: return .light
-        case .dark: return .dark
+        case .system: nil
+        case .light: .light
+        case .dark: .dark
         }
     }
 }
@@ -35,19 +37,18 @@ public final class ThemeManager: ObservableObject {
 
     @Published public var currentTheme: AppTheme {
         didSet {
-            UserDefaults.standard.set(currentTheme.rawValue, forKey: userDefaultsKey)
+            UserDefaults.standard.set(currentTheme.rawValue, forKey: UserDefaultsKeys.theme)
+            Logger.preferenceChanged(key: UserDefaultsKeys.theme, value: currentTheme.rawValue)
             applyTheme()
         }
     }
 
-    private let userDefaultsKey = "WeakupTheme"
-
     private init() {
-        if let savedTheme = UserDefaults.standard.string(forKey: userDefaultsKey),
-           let theme = AppTheme(rawValue: savedTheme) {
-            currentTheme = theme
+        let savedTheme = UserDefaults.standard.string(forKey: UserDefaultsKeys.theme)
+        if let savedTheme, let theme = AppTheme(rawValue: savedTheme) {
+            self.currentTheme = theme
         } else {
-            currentTheme = .system
+            self.currentTheme = .system
         }
     }
 
