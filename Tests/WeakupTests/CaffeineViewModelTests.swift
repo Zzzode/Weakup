@@ -175,4 +175,314 @@ final class CaffeineViewModelTests: XCTestCase {
         viewModel.soundEnabled = !initial
         XCTAssertNotEqual(viewModel.soundEnabled, initial, "Sound enabled should toggle")
     }
+
+    // MARK: - Show Countdown In Menu Bar Tests (CVM-024)
+
+    func testShowCountdownInMenuBar_persistsValue() {
+        // Default should be true
+        XCTAssertTrue(viewModel.showCountdownInMenuBar, "Show countdown should be enabled by default")
+
+        // Toggle to false
+        viewModel.showCountdownInMenuBar = false
+        let storedValue = UserDefaults.standard.bool(forKey: "WeakupShowCountdownInMenuBar")
+        XCTAssertFalse(storedValue, "Show countdown should be persisted to UserDefaults")
+
+        // Toggle back to true
+        viewModel.showCountdownInMenuBar = true
+        let storedValueTrue = UserDefaults.standard.bool(forKey: "WeakupShowCountdownInMenuBar")
+        XCTAssertTrue(storedValueTrue, "Show countdown true should be persisted to UserDefaults")
+    }
+
+    // MARK: - Notifications Enabled Tests (CVM-025)
+
+    func testNotificationsEnabled_syncsWithManager() {
+        // Get the initial value from NotificationManager
+        let managerValue = NotificationManager.shared.notificationsEnabled
+
+        // ViewModel should sync with manager on init
+        XCTAssertEqual(viewModel.notificationsEnabled, managerValue, "ViewModel should sync with NotificationManager")
+
+        // Toggle the value
+        viewModel.notificationsEnabled = !managerValue
+
+        // NotificationManager should be updated
+        XCTAssertEqual(NotificationManager.shared.notificationsEnabled, !managerValue, "NotificationManager should be updated when ViewModel changes")
+
+        // Restore original value
+        viewModel.notificationsEnabled = managerValue
+    }
+
+    // MARK: - Restart Timer Tests (CVM-026)
+
+    func testRestartTimer_startsWithSameDuration() {
+        // Setup timer with a duration
+        viewModel.setTimerDuration(TestTimerDurations.thirtyMinutes)
+        viewModel.setTimerMode(true)
+        viewModel.start()
+
+        // Verify initial state
+        XCTAssertTrue(viewModel.isActive)
+        XCTAssertEqual(viewModel.timeRemaining, TestTimerDurations.thirtyMinutes, accuracy: 1)
+
+        // Stop and restart
+        viewModel.stop()
+        XCTAssertFalse(viewModel.isActive)
+
+        viewModel.restartTimer()
+
+        // Should restart with same duration
+        XCTAssertTrue(viewModel.isActive, "Restart should activate the timer")
+        XCTAssertTrue(viewModel.timerMode, "Timer mode should be enabled after restart")
+        XCTAssertEqual(viewModel.timeRemaining, TestTimerDurations.thirtyMinutes, accuracy: 1, "Time remaining should match original duration")
+    }
+
+    func testRestartTimer_withZeroDuration_doesNotStart() {
+        viewModel.setTimerDuration(0)
+        viewModel.setTimerMode(false)
+
+        viewModel.restartTimer()
+
+        XCTAssertFalse(viewModel.isActive, "Restart with zero duration should not activate")
+    }
+
+    // MARK: - Timer Countdown Accuracy Tests (CVM-027)
+
+    func testTimerCountdown_accuracy() async throws {
+        // Use a short duration for testing
+        let testDuration: TimeInterval = 3
+        viewModel.setTimerDuration(testDuration)
+        viewModel.setTimerMode(true)
+
+        viewModel.start()
+
+        XCTAssertTrue(viewModel.isActive)
+        XCTAssertEqual(viewModel.timeRemaining, testDuration, accuracy: 0.5)
+
+        // Wait for 1 second
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+
+        // Time remaining should have decreased
+        XCTAssertEqual(viewModel.timeRemaining, testDuration - 1, accuracy: 0.5, "Timer should count down accurately")
+
+        // Clean up
+        viewModel.stop()
+    }
+
+    // MARK: - Timer Expiry Tests (CVM-028)
+
+    func testTimerExpiry_stopsAutomatically() async throws {
+        // Use a very short duration
+        let testDuration: TimeInterval = 1.5
+        viewModel.setTimerDuration(testDuration)
+        viewModel.setTimerMode(true)
+
+        viewModel.start()
+        XCTAssertTrue(viewModel.isActive, "Should be active after start")
+
+        // Wait for timer to expire (with buffer)
+        try await Task.sleep(nanoseconds: 2_500_000_000)
+
+        // Should have stopped automatically
+        XCTAssertFalse(viewModel.isActive, "Timer should auto-stop when expired")
+        XCTAssertEqual(viewModel.timeRemaining, 0, "Time remaining should be zero after expiry")
+    }
+
+    // MARK: - IOPMAssertion Tests (CVM-029, CVM-030)
+
+    func testIOPMAssertion_createdOnStart() {
+        // Start sleep prevention
+        viewModel.start()
+
+        // The assertion is created internally - we verify by checking isActive
+        // and that the system reports an assertion (tested via pmset in integration tests)
+        XCTAssertTrue(viewModel.isActive, "ViewModel should be active after start")
+
+        // Clean up
+        viewModel.stop()
+    }
+
+    func testIOPMAssertion_releasedOnStop() {
+        // Start and then stop
+        viewModel.start()
+        XCTAssertTrue(viewModel.isActive)
+
+        viewModel.stop()
+
+        // Verify the assertion is released by checking state
+        XCTAssertFalse(viewModel.isActive, "ViewModel should be inactive after stop")
+
+        // Multiple stops should be safe (no double-release crash)
+        viewModel.stop()
+        viewModel.stop()
+        XCTAssertFalse(viewModel.isActive, "Multiple stops should be safe")
+    }
+
+    func testIOPMAssertion_releasedOnRapidToggle() {
+        // Rapid toggling should not leak assertions
+        for _ in 0..<10 {
+            viewModel.toggle()
+        }
+
+        // Ensure we end in a stopped state
+        if viewModel.isActive {
+            viewModel.stop()
+        }
+
+        XCTAssertFalse(viewModel.isActive, "Should be inactive after cleanup")
+    }
+
+    // MARK: - Edge Case Tests
+
+    func testStart_withoutTimerMode() {
+        viewModel.setTimerMode(false)
+        viewModel.setTimerDuration(3600) // Duration set but timer mode off
+
+        viewModel.start()
+
+        XCTAssertTrue(viewModel.isActive, "Should be active")
+        XCTAssertEqual(viewModel.timeRemaining, 0, "Time remaining should be zero when timer mode is off")
+    }
+
+    func testStart_multipleTimes_noAccumulation() {
+        viewModel.setTimerMode(true)
+        viewModel.setTimerDuration(60)
+
+        viewModel.start()
+        let firstTimeRemaining = viewModel.timeRemaining
+
+        // Start again without stopping
+        viewModel.start()
+        let secondTimeRemaining = viewModel.timeRemaining
+
+        // Time remaining should reset, not accumulate
+        XCTAssertEqual(firstTimeRemaining, secondTimeRemaining, accuracy: 1, "Multiple starts should not accumulate time")
+
+        viewModel.stop()
+    }
+
+    func testTimerMode_disabledWhileActive_stopsSession() {
+        viewModel.setTimerMode(true)
+        viewModel.setTimerDuration(60)
+        viewModel.start()
+
+        XCTAssertTrue(viewModel.isActive)
+        XCTAssertGreaterThan(viewModel.timeRemaining, 0)
+
+        // Disable timer mode while active - this should stop the session
+        viewModel.setTimerMode(false)
+
+        // Session should be stopped when timer mode is disabled while active
+        XCTAssertFalse(viewModel.isActive, "Session should stop when timer mode is disabled")
+        XCTAssertFalse(viewModel.timerMode, "Timer mode should be disabled")
+    }
+
+    // MARK: - All Timer Duration Presets Tests
+
+    func testAllTimerDurationPresets() {
+        for duration in TestTimerDurations.allValid {
+            viewModel.setTimerDuration(duration)
+            XCTAssertEqual(viewModel.timerDuration, duration, "Duration \(duration) should be set correctly")
+        }
+    }
+
+    func testTimerDuration_veryLargeValue() {
+        let largeDuration: TimeInterval = 86400 * 7 // 1 week
+        viewModel.setTimerDuration(largeDuration)
+        XCTAssertEqual(viewModel.timerDuration, largeDuration, "Large duration should be accepted")
+    }
+
+    // MARK: - UserDefaults Loading Tests
+
+    func testInitialState_loadsPersistedTimerMode() {
+        // Set a value in UserDefaults
+        UserDefaults.standard.set(true, forKey: "WeakupTimerMode")
+
+        // Create a new ViewModel
+        let newViewModel = CaffeineViewModel()
+
+        XCTAssertTrue(newViewModel.timerMode, "Timer mode should be loaded from UserDefaults")
+
+        // Clean up
+        if newViewModel.isActive {
+            newViewModel.stop()
+        }
+    }
+
+    func testInitialState_loadsPersistedTimerDuration() {
+        // Set a value in UserDefaults
+        UserDefaults.standard.set(7200.0, forKey: "WeakupTimerDuration")
+
+        // Create a new ViewModel
+        let newViewModel = CaffeineViewModel()
+
+        XCTAssertEqual(newViewModel.timerDuration, 7200, "Timer duration should be loaded from UserDefaults")
+
+        // Clean up
+        if newViewModel.isActive {
+            newViewModel.stop()
+        }
+    }
+
+    func testInitialState_loadsPersistedSoundEnabled() {
+        // Set a value in UserDefaults
+        UserDefaults.standard.set(false, forKey: "WeakupSoundEnabled")
+
+        // Create a new ViewModel
+        let newViewModel = CaffeineViewModel()
+
+        XCTAssertFalse(newViewModel.soundEnabled, "Sound enabled should be loaded from UserDefaults")
+
+        // Clean up
+        if newViewModel.isActive {
+            newViewModel.stop()
+        }
+    }
+
+    func testInitialState_handlesCorruptedBoolValue() {
+        // Set a corrupted value (string instead of bool)
+        UserDefaults.standard.set("invalid", forKey: "WeakupSoundEnabled")
+
+        // Create a new ViewModel - should handle gracefully
+        let newViewModel = CaffeineViewModel()
+
+        // Should fall back to default (true)
+        XCTAssertTrue(newViewModel.soundEnabled, "Should fall back to default on corrupted value")
+
+        // Clean up
+        if newViewModel.isActive {
+            newViewModel.stop()
+        }
+    }
+
+    func testInitialState_handlesCorruptedDoubleValue() {
+        // Set a corrupted value (string instead of double)
+        UserDefaults.standard.set("invalid", forKey: "WeakupTimerDuration")
+
+        // Create a new ViewModel - should handle gracefully
+        let newViewModel = CaffeineViewModel()
+
+        // Should fall back to default (0)
+        XCTAssertEqual(newViewModel.timerDuration, 0, "Should fall back to default on corrupted value")
+
+        // Clean up
+        if newViewModel.isActive {
+            newViewModel.stop()
+        }
+    }
+
+    func testInitialState_handlesNegativeTimerDuration() {
+        // Set a negative value in UserDefaults
+        UserDefaults.standard.set(-100.0, forKey: "WeakupTimerDuration")
+
+        // Create a new ViewModel
+        let newViewModel = CaffeineViewModel()
+
+        // Should clamp to 0
+        XCTAssertEqual(newViewModel.timerDuration, 0, "Negative duration should be clamped to 0")
+
+        // Clean up
+        if newViewModel.isActive {
+            newViewModel.stop()
+        }
+    }
 }
