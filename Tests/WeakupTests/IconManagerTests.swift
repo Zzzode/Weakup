@@ -6,7 +6,7 @@ import Combine
 @Suite("IconStyle Tests")
 struct IconStyleTests {
 
-    // MARK: - Enum Cases Tests (IM-001)
+    // Enum Cases Tests (IM-001)
 
     @Test("All cases contains expected styles")
     func allCasesContainsExpectedStyles() {
@@ -19,7 +19,7 @@ struct IconStyleTests {
         #expect(allCases.contains(.eye), "Should contain eye")
     }
 
-    // MARK: - Raw Value Tests (IM-002)
+    // Raw Value Tests (IM-002)
 
     @Test("Raw values")
     func rawValues() {
@@ -30,7 +30,7 @@ struct IconStyleTests {
         #expect(IconStyle.eye.rawValue == "eye")
     }
 
-    // MARK: - Identifiable Tests (IM-003)
+    // Identifiable Tests (IM-003)
 
     @Test("ID matches raw value")
     func idMatchesRawValue() {
@@ -39,7 +39,7 @@ struct IconStyleTests {
         }
     }
 
-    // MARK: - Localization Key Tests (IM-004)
+    // Localization Key Tests (IM-004)
 
     @Test("Localization key format")
     func localizationKeyFormat() {
@@ -73,7 +73,7 @@ struct IconStyleTests {
         #expect(IconStyle.eye.localizationKey == "icon_eye")
     }
 
-    // MARK: - Inactive Symbol Tests (IM-005)
+    // Inactive Symbol Tests (IM-005)
 
     @Test("Inactive symbol for power")
     func inactiveSymbolPower() {
@@ -100,7 +100,7 @@ struct IconStyleTests {
         #expect(IconStyle.eye.inactiveSymbol == "eye")
     }
 
-    // MARK: - Active Symbol Tests (IM-006)
+    // Active Symbol Tests (IM-006)
 
     @Test("Active symbol for power")
     func activeSymbolPower() {
@@ -135,7 +135,7 @@ struct IconStyleTests {
         }
     }
 
-    // MARK: - Symbol Differentiation Tests
+    // Symbol Differentiation Tests
 
     @Test("Active and inactive symbols are different")
     func activeAndInactiveSymbolsAreDifferent() {
@@ -157,7 +157,7 @@ struct IconStyleTests {
         }
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     @Test("Init from valid raw value")
     func initFromValidRawValue() {
@@ -186,7 +186,7 @@ struct IconStyleTests {
         #expect(IconStyle(rawValue: "BOLT") == nil, "Raw value should be case sensitive")
     }
 
-    // MARK: - Sendable Conformance
+    // Sendable Conformance
 
     @Test("IconStyle is Sendable")
     func iconStyleIsSendable() async {
@@ -196,7 +196,7 @@ struct IconStyleTests {
         }.value
     }
 
-    // MARK: - CaseIterable Tests
+    // CaseIterable Tests
 
     @Test("CaseIterable order is consistent")
     func caseIterableOrderIsConsistent() {
@@ -218,7 +218,7 @@ struct IconManagerTests {
         IconManager.shared.onIconChanged = nil
     }
 
-    // MARK: - Singleton Tests (IM-007)
+    // Singleton Tests (IM-007)
 
     @Test("Shared returns same instance")
     func sharedReturnsSameInstance() {
@@ -232,7 +232,7 @@ struct IconManagerTests {
         #expect(IconManager.shared != nil, "Shared instance should not be nil")
     }
 
-    // MARK: - Style Persistence Tests (IM-008)
+    // Style Persistence Tests (IM-008)
 
     @Test("Set style persists value")
     func setStylePersistsValue() {
@@ -261,7 +261,7 @@ struct IconManagerTests {
         }
     }
 
-    // MARK: - Image Generation Tests (IM-009)
+    // Image Generation Tests (IM-009)
 
     @Test("Image returns image")
     func imageReturnsImage() {
@@ -357,7 +357,7 @@ struct IconManagerTests {
         }
     }
 
-    // MARK: - Current Image Tests (IM-010)
+    // Current Image Tests (IM-010)
 
     @Test("Current image uses current style")
     func currentImageUsesCurrentStyle() {
@@ -394,7 +394,7 @@ struct IconManagerTests {
         }
     }
 
-    // MARK: - Callback Tests (IM-011)
+    // Callback Tests (IM-011)
 
     @Test("onIconChanged called when style changes")
     func onIconChangedCalledWhenStyleChanges() {
@@ -466,7 +466,7 @@ struct IconManagerTests {
         #expect(secondCallbackCalled)
     }
 
-    // MARK: - Style Cycling Tests
+    // Style Cycling Tests
 
     @Test("Style cycling through all styles")
     func styleCyclingThroughAllStyles() {
@@ -497,7 +497,7 @@ struct IconManagerTests {
         #expect(callCount == 50, "Callback should be called for each rapid style change")
     }
 
-    // MARK: - ObservableObject Tests
+    // ObservableObject Tests
 
     @Test("IconManager is ObservableObject")
     func iconManagerIsObservableObject() {

@@ -5,7 +5,7 @@ import Testing
 @Suite("ActivitySession Tests")
 struct ActivitySessionTests {
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     @Test("Init sets default values")
     func initSetsDefaultValues() {
@@ -33,7 +33,7 @@ struct ActivitySessionTests {
         #expect(session1.id != session2.id)
     }
 
-    // MARK: - isActive Tests
+    // isActive Tests
 
     @Test("isActive is true when no end time")
     func isActiveTrueWhenNoEndTime() {
@@ -48,7 +48,7 @@ struct ActivitySessionTests {
         #expect(!session.isActive)
     }
 
-    // MARK: - Duration Tests
+    // Duration Tests
 
     @Test("Duration calculates from start to end")
     func durationCalculatesFromStartToEnd() {
@@ -67,7 +67,7 @@ struct ActivitySessionTests {
         #expect(abs(session.duration - 30) < 2)
     }
 
-    // MARK: - End Tests
+    // End Tests
 
     @Test("End sets end time")
     func endSetsEndTime() {
@@ -89,7 +89,7 @@ struct ActivitySessionTests {
         #expect(session.endTime! <= afterEnd)
     }
 
-    // MARK: - Codable Tests
+    // Codable Tests
 
     @Test("Codable encodes and decodes")
     func codableEncodesAndDecodes() throws {
@@ -107,7 +107,7 @@ struct ActivitySessionTests {
     }
 }
 
-// MARK: - Activity Statistics Tests
+// Activity Statistics Tests
 
 @Suite("ActivityStatistics Tests")
 struct ActivityStatisticsTests {

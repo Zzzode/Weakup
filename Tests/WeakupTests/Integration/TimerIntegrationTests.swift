@@ -20,7 +20,7 @@ struct TimerIntegrationTests {
         viewModel.soundEnabled = false
     }
 
-    // MARK: - Timer Accuracy Tests
+    // Timer Accuracy Tests
 
     @Test("Timer accuracy for short duration")
     func timerAccuracy_shortDuration() async throws {
@@ -55,7 +55,7 @@ struct TimerIntegrationTests {
         viewModel.stop()
     }
 
-    // MARK: - Auto-Stop Tests
+    // Auto-Stop Tests
 
     @Test("Timer auto-stops at zero")
     func timerAutoStop_stopsAtZero() async throws {
@@ -92,7 +92,7 @@ struct TimerIntegrationTests {
         viewModel.stop()
     }
 
-    // MARK: - Manual Stop Tests
+    // Manual Stop Tests
 
     @Test("Manual stop cancels timer")
     func manualStop_cancelsTimer() async throws {
@@ -134,7 +134,7 @@ struct TimerIntegrationTests {
         #expect(viewModel.timeRemaining == 0)
     }
 
-    // MARK: - Timer Mode Toggle Tests
+    // Timer Mode Toggle Tests
 
     @Test("Timer mode toggle while active")
     func timerModeToggle_whileActive() async throws {
@@ -169,7 +169,7 @@ struct TimerIntegrationTests {
         #expect(viewModel.timerDuration == 1800, "Duration should be preserved across mode toggles")
     }
 
-    // MARK: - Duration Change Tests
+    // Duration Change Tests
 
     @Test("Duration change while active stops")
     func durationChange_whileActive_stops() {
@@ -197,7 +197,7 @@ struct TimerIntegrationTests {
         #expect(!viewModel.isActive)
     }
 
-    // MARK: - Timer Without Timer Mode
+    // Timer Without Timer Mode
 
     @Test("Start without timer mode has no countdown")
     func start_withoutTimerMode_noCountdown() {
@@ -225,7 +225,7 @@ struct TimerIntegrationTests {
         viewModel.stop()
     }
 
-    // MARK: - Restart Timer Tests
+    // Restart Timer Tests
 
     @Test("Restart timer uses same duration")
     func restartTimer_usesSameDuration() async throws {
@@ -248,7 +248,7 @@ struct TimerIntegrationTests {
         viewModel.stop()
     }
 
-    // MARK: - Edge Cases
+    // Edge Cases
 
     @Test("Very short timer")
     func veryShortTimer() async throws {

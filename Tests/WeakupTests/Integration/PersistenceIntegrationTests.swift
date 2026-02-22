@@ -15,7 +15,7 @@ struct PersistenceIntegrationTests {
         }
     }
 
-    // MARK: - Language Persistence Tests
+    // Language Persistence Tests
 
     @Test("Language preference persists across launches")
     func languagePreference_persistsAcrossLaunches() {
@@ -42,7 +42,7 @@ struct PersistenceIntegrationTests {
         }
     }
 
-    // MARK: - Timer Settings Persistence Tests
+    // Timer Settings Persistence Tests
 
     @Test("Timer duration persists across launches")
     func timerDuration_persistsAcrossLaunches() {
@@ -84,7 +84,7 @@ struct PersistenceIntegrationTests {
         #expect(newViewModel.timerDuration == 3600)
     }
 
-    // MARK: - Sound Settings Persistence Tests
+    // Sound Settings Persistence Tests
 
     @Test("Sound enabled persists across launches")
     func soundEnabled_persistsAcrossLaunches() {
@@ -115,7 +115,7 @@ struct PersistenceIntegrationTests {
         #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.soundEnabled) == true)
     }
 
-    // MARK: - Icon Style Persistence Tests
+    // Icon Style Persistence Tests
 
     @Test("Icon style persists across launches")
     func iconStyle_persistsAcrossLaunches() {
@@ -140,7 +140,7 @@ struct PersistenceIntegrationTests {
         }
     }
 
-    // MARK: - Theme Persistence Tests
+    // Theme Persistence Tests
 
     @Test("Theme persists across launches")
     func theme_persistsAcrossLaunches() {
@@ -165,7 +165,7 @@ struct PersistenceIntegrationTests {
         }
     }
 
-    // MARK: - Hotkey Persistence Tests
+    // Hotkey Persistence Tests
 
     @Test("Hotkey config persists across launches")
     func hotkeyConfig_persistsAcrossLaunches() {
@@ -196,7 +196,7 @@ struct PersistenceIntegrationTests {
         #expect(HotkeyManager.shared.currentConfig.modifiers == defaultConfig.modifiers)
     }
 
-    // MARK: - Notifications Persistence Tests
+    // Notifications Persistence Tests
 
     @Test("Notifications enabled persists across launches")
     func notificationsEnabled_persistsAcrossLaunches() {
@@ -210,7 +210,7 @@ struct PersistenceIntegrationTests {
         #expect(!NotificationManager.shared.notificationsEnabled)
     }
 
-    // MARK: - Menu Bar Countdown Persistence Tests
+    // Menu Bar Countdown Persistence Tests
 
     @Test("Show countdown in menu bar persists across launches")
     func showCountdownInMenuBar_persistsAcrossLaunches() {
@@ -226,7 +226,7 @@ struct PersistenceIntegrationTests {
         #expect(newViewModel.showCountdownInMenuBar, "Menu bar countdown setting should persist")
     }
 
-    // MARK: - Combined Settings Tests
+    // Combined Settings Tests
 
     @Test("All settings persist together")
     func allSettings_persistTogether() {
@@ -253,7 +253,7 @@ struct PersistenceIntegrationTests {
         #expect(UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.notificationsEnabled) == true)
     }
 
-    // MARK: - Default Values Tests
+    // Default Values Tests
 
     @Test("Default values when no stored data")
     func defaultValues_whenNoStoredData() {
@@ -274,7 +274,7 @@ struct PersistenceIntegrationTests {
         #expect(viewModel.soundEnabled)
     }
 
-    // MARK: - Data Migration Tests
+    // Data Migration Tests
 
     @Test("Invalid stored data handled gracefully")
     func invalidStoredData_handledGracefully() {

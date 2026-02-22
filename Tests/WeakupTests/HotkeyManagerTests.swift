@@ -2,12 +2,12 @@ import Testing
 import Carbon
 @testable import WeakupCore
 
-// MARK: - HotkeyConfig Tests
+// HotkeyConfig Tests
 
 @Suite("HotkeyConfig Tests")
 struct HotkeyConfigTests {
 
-    // MARK: - Default Config Tests
+    // Default Config Tests
 
     @Test("Default config has expected key code")
     func defaultConfigHasExpectedKeyCode() {
@@ -22,7 +22,7 @@ struct HotkeyConfigTests {
         #expect(config.modifiers == expectedModifiers)
     }
 
-    // MARK: - Equatable Tests
+    // Equatable Tests
 
     @Test("Equatable same configs are equal")
     func equatableSameConfigsAreEqual() {
@@ -45,7 +45,7 @@ struct HotkeyConfigTests {
         #expect(config1 != config2)
     }
 
-    // MARK: - Display String Tests
+    // Display String Tests
 
     @Test("Display string for default config")
     func displayStringDefaultConfig() {
@@ -87,7 +87,7 @@ struct HotkeyConfigTests {
         #expect(escConfig.displayString.contains("Esc"))
     }
 
-    // MARK: - Codable Tests
+    // Codable Tests
 
     @Test("Codable encodes and decodes")
     func codableEncodesAndDecodes() throws {
@@ -102,7 +102,7 @@ struct HotkeyConfigTests {
         #expect(decoded == original)
     }
 
-    // MARK: - Numbers 0-9 Tests
+    // Numbers 0-9 Tests
 
     @Test("Display string for numbers 0 to 9")
     func displayStringNumbersZeroToNine() {
@@ -219,7 +219,7 @@ struct HotkeyConfigTests {
     }
 }
 
-// MARK: - HotkeyManager Tests
+// HotkeyManager Tests
 
 @Suite("HotkeyManager Tests")
 @MainActor
@@ -229,7 +229,7 @@ struct HotkeyManagerTests {
         UserDefaultsStore.shared.removeObject(forKey: "WeakupHotkeyConfig")
     }
 
-    // MARK: - Singleton Tests
+    // Singleton Tests
 
     @Test("Shared returns same instance")
     func sharedReturnsSameInstance() {
@@ -238,7 +238,7 @@ struct HotkeyManagerTests {
         #expect(instance1 === instance2)
     }
 
-    // MARK: - Recording State Tests
+    // Recording State Tests
 
     @Test("Start recording sets isRecording true")
     func startRecordingSetsIsRecordingTrue() {
@@ -262,7 +262,7 @@ struct HotkeyManagerTests {
         #expect(!manager.isRecording)
     }
 
-    // MARK: - Reset Tests
+    // Reset Tests
 
     @Test("Reset to default restores default config")
     func resetToDefaultRestoresDefaultConfig() {
@@ -276,7 +276,7 @@ struct HotkeyManagerTests {
         #expect(manager.currentConfig == HotkeyConfig.defaultConfig)
     }
 
-    // MARK: - Conflict Detection Tests
+    // Conflict Detection Tests
 
     @Test("Has conflict initially false")
     func hasConflictInitiallyFalse() {
@@ -287,7 +287,7 @@ struct HotkeyManagerTests {
         _ = manager.conflictMessage
     }
 
-    // MARK: - Callback Tests
+    // Callback Tests
 
     @Test("onHotkeyPressed can be set")
     func onHotkeyPressedCanBeSet() {
@@ -306,7 +306,7 @@ struct HotkeyManagerTests {
         manager.onHotkeyPressed = nil
     }
 
-    // MARK: - Record Key Tests
+    // Record Key Tests
 
     @Test("Record key updates config when recording")
     func recordKeyUpdatesConfigWhenRecording() {
@@ -433,7 +433,7 @@ struct HotkeyManagerTests {
         manager.currentConfig = originalConfig
     }
 
-    // MARK: - Persistence Tests
+    // Persistence Tests
 
     @Test("Config persists to UserDefaults")
     func configPersistsToUserDefaults() throws {
@@ -459,7 +459,7 @@ struct HotkeyManagerTests {
         manager.currentConfig = originalConfig
     }
 
-    // MARK: - Register/Unregister Tests
+    // Register/Unregister Tests
 
     @Test("Register hotkey can be called")
     func registerHotkeyCanBeCalled() {
@@ -494,7 +494,7 @@ struct HotkeyManagerTests {
         }
     }
 
-    // MARK: - Config Change Triggers Reregistration
+    // Config Change Triggers Reregistration
 
     @Test("Config change triggers reregistration")
     func configChangeTriggersReregistration() {
@@ -512,7 +512,7 @@ struct HotkeyManagerTests {
         manager.unregisterHotkey()
     }
 
-    // MARK: - Conflict State Tests
+    // Conflict State Tests
 
     @Test("Conflict message is nil initially")
     func conflictMessageIsNilInitially() {
@@ -525,7 +525,7 @@ struct HotkeyManagerTests {
         _ = manager.conflictMessage
     }
 
-    // MARK: - Conflict Detection Tests
+    // Conflict Detection Tests
 
     @Test("Check conflicts detects Spotlight conflict")
     func checkConflictsDetectsSpotlightConflict() {
@@ -712,7 +712,7 @@ struct HotkeyManagerTests {
     }
 }
 
-// MARK: - HotkeyConflict Tests
+// HotkeyConflict Tests
 
 @Suite("HotkeyConflict Tests")
 struct HotkeyConflictTests {

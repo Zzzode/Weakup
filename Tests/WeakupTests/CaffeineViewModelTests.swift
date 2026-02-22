@@ -16,7 +16,7 @@ struct CaffeineViewModelTests {
         viewModel = CaffeineViewModel()
     }
 
-    // MARK: - Initial State Tests
+    // Initial State Tests
 
     @Test("Initial state is inactive")
     func initialStateIsInactive() {
@@ -43,7 +43,7 @@ struct CaffeineViewModelTests {
         #expect(viewModel.soundEnabled, "Sound should be enabled by default")
     }
 
-    // MARK: - Toggle Tests
+    // Toggle Tests
 
     @Test("Toggle starts when inactive")
     func toggleStartsWhenInactive() {
@@ -74,7 +74,7 @@ struct CaffeineViewModelTests {
         }
     }
 
-    // MARK: - Start/Stop Tests
+    // Start/Stop Tests
 
     @Test("Start activates ViewModel")
     func startActivatesViewModel() {
@@ -107,7 +107,7 @@ struct CaffeineViewModelTests {
         #expect(!viewModel.isActive)
     }
 
-    // MARK: - Timer Duration Tests
+    // Timer Duration Tests
 
     @Test("Set timer duration updates value")
     func setTimerDurationUpdatesValue() {
@@ -136,7 +136,7 @@ struct CaffeineViewModelTests {
         #expect(storedValue == 7200, "Duration should be persisted to UserDefaults")
     }
 
-    // MARK: - Timer Mode Tests
+    // Timer Mode Tests
 
     @Test("Set timer mode updates value")
     func setTimerModeUpdatesValue() {
@@ -180,7 +180,7 @@ struct CaffeineViewModelTests {
         viewModel.stop()
     }
 
-    // MARK: - Sound Enabled Tests
+    // Sound Enabled Tests
 
     @Test("Sound enabled persists value")
     func soundEnabledPersistsValue() {
@@ -196,7 +196,7 @@ struct CaffeineViewModelTests {
         #expect(viewModel.soundEnabled != initial, "Sound enabled should toggle")
     }
 
-    // MARK: - Show Countdown In Menu Bar Tests (CVM-024)
+    // Show Countdown In Menu Bar Tests (CVM-024)
 
     @Test("Show countdown in menu bar persists value")
     func showCountdownInMenuBarPersistsValue() {
@@ -214,7 +214,7 @@ struct CaffeineViewModelTests {
         #expect(storedValueTrue, "Show countdown true should be persisted to UserDefaults")
     }
 
-    // MARK: - Notifications Enabled Tests (CVM-025)
+    // Notifications Enabled Tests (CVM-025)
 
     @Test("Notifications enabled syncs with manager")
     func notificationsEnabledSyncsWithManager() {
@@ -234,7 +234,7 @@ struct CaffeineViewModelTests {
         viewModel.notificationsEnabled = managerValue
     }
 
-    // MARK: - Restart Timer Tests (CVM-026)
+    // Restart Timer Tests (CVM-026)
 
     @Test("Restart timer starts with same duration")
     func restartTimerStartsWithSameDuration() {
@@ -271,7 +271,7 @@ struct CaffeineViewModelTests {
         #expect(!viewModel.isActive, "Restart with zero duration should not activate")
     }
 
-    // MARK: - Timer Countdown Accuracy Tests (CVM-027)
+    // Timer Countdown Accuracy Tests (CVM-027)
 
     @Test("Timer countdown accuracy")
     func timerCountdownAccuracy() async throws {
@@ -295,7 +295,7 @@ struct CaffeineViewModelTests {
         viewModel.stop()
     }
 
-    // MARK: - Timer Expiry Tests (CVM-028)
+    // Timer Expiry Tests (CVM-028)
 
     @Test("Timer expiry stops automatically")
     func timerExpiryStopsAutomatically() async throws {
@@ -315,7 +315,7 @@ struct CaffeineViewModelTests {
         #expect(viewModel.timeRemaining == 0, "Time remaining should be zero after expiry")
     }
 
-    // MARK: - IOPMAssertion Tests (CVM-029, CVM-030)
+    // IOPMAssertion Tests (CVM-029, CVM-030)
 
     @Test("IOPMAssertion created on start")
     func iopmAssertionCreatedOnStart() {
@@ -362,7 +362,7 @@ struct CaffeineViewModelTests {
         #expect(!viewModel.isActive, "Should be inactive after cleanup")
     }
 
-    // MARK: - Edge Case Tests
+    // Edge Case Tests
 
     @Test("Start without timer mode")
     func startWithoutTimerMode() {
@@ -412,7 +412,7 @@ struct CaffeineViewModelTests {
         #expect(!viewModel.timerMode, "Timer mode should be disabled")
     }
 
-    // MARK: - All Timer Duration Presets Tests
+    // All Timer Duration Presets Tests
 
     @Test("All timer duration presets")
     func allTimerDurationPresets() {
@@ -429,7 +429,7 @@ struct CaffeineViewModelTests {
         #expect(viewModel.timerDuration == largeDuration, "Large duration should be accepted")
     }
 
-    // MARK: - UserDefaults Loading Tests
+    // UserDefaults Loading Tests
 
     @Test("Initial state loads persisted timer mode")
     func initialStateLoadsPersistedTimerMode() {

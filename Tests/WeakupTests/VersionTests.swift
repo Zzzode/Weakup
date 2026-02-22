@@ -5,7 +5,7 @@ import Testing
 @Suite("AppVersion Tests")
 struct AppVersionTests {
 
-    // MARK: - String Tests
+    // String Tests
 
     @Test("Version string is not empty")
     func stringReturnsValidVersion() {
@@ -24,7 +24,7 @@ struct AppVersionTests {
         #expect(match != nil, "Version '\(version)' should match semantic version format")
     }
 
-    // MARK: - Build Tests
+    // Build Tests
 
     @Test("Build string is not empty")
     func buildReturnsValidBuild() {
@@ -32,7 +32,7 @@ struct AppVersionTests {
         #expect(!build.isEmpty, "Build string should not be empty")
     }
 
-    // MARK: - Full String Tests
+    // Full String Tests
 
     @Test("Full string contains version and build")
     func fullStringContainsVersionAndBuild() {
@@ -50,7 +50,7 @@ struct AppVersionTests {
         #expect(fullString == expected, "Full string should match expected format")
     }
 
-    // MARK: - Components Tests
+    // Components Tests
 
     @Test("Components returns valid tuple")
     func componentsReturnsTuple() {

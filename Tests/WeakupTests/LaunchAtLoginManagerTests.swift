@@ -2,7 +2,7 @@ import Testing
 import ServiceManagement
 @testable import WeakupCore
 
-// MARK: - Mock Launch At Login Service
+// Mock Launch At Login Service
 
 final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol, @unchecked Sendable {
     var mockStatus: SMAppService.Status = .notRegistered
@@ -40,7 +40,7 @@ final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol, @unchecked S
     }
 }
 
-// MARK: - Mock Error for Testing
+// Mock Error for Testing
 
 enum MockLaunchError: Error {
     case permissionDenied
@@ -56,12 +56,12 @@ enum MockLaunchError: Error {
     }
 }
 
-// MARK: - LaunchAtLoginError Tests
+// LaunchAtLoginError Tests
 
 @Suite("LaunchAtLoginError Tests")
 struct LaunchAtLoginErrorTests {
 
-    // MARK: - Equatable Tests
+    // Equatable Tests
 
     @Test("Equatable same registration failed")
     func equatableSameRegistrationFailed() {
@@ -105,7 +105,7 @@ struct LaunchAtLoginErrorTests {
         #expect(error1 != error2)
     }
 
-    // MARK: - Localized Description Tests
+    // Localized Description Tests
 
     @Test("Localized description registration failed")
     func localizedDescriptionRegistrationFailed() {
@@ -141,7 +141,7 @@ struct LaunchAtLoginErrorTests {
     }
 }
 
-// MARK: - LaunchAtLoginManager Tests
+// LaunchAtLoginManager Tests
 
 @Suite("LaunchAtLoginManager Tests")
 @MainActor
@@ -155,7 +155,7 @@ struct LaunchAtLoginManagerTests {
         manager = LaunchAtLoginManager(service: mockService)
     }
 
-    // MARK: - Initialization Tests
+    // Initialization Tests
 
     @Test("Init with not registered status isEnabled false")
     func initWithNotRegisteredStatusIsEnabledFalse() {
@@ -177,7 +177,7 @@ struct LaunchAtLoginManagerTests {
         #expect(!manager.showError)
     }
 
-    // MARK: - Enable Tests
+    // Enable Tests
 
     @Test("Enable success")
     func enableSuccess() {
@@ -230,7 +230,7 @@ struct LaunchAtLoginManagerTests {
         #expect(manager.lastError == .notSupported, "Error should be notSupported for code 4")
     }
 
-    // MARK: - Disable Tests
+    // Disable Tests
 
     @Test("Disable success")
     func disableSuccess() {
@@ -261,7 +261,7 @@ struct LaunchAtLoginManagerTests {
         #expect(newManager.showError)
     }
 
-    // MARK: - No-op Tests (setting same value)
+    // No-op Tests (setting same value)
 
     @Test("Set same value does not call service")
     func setSameValueDoesNotCallService() {
@@ -275,7 +275,7 @@ struct LaunchAtLoginManagerTests {
         #expect(mockService.unregisterCallCount == 0)
     }
 
-    // MARK: - Refresh Status Tests
+    // Refresh Status Tests
 
     @Test("Refresh status updates isEnabled")
     func refreshStatusUpdatesIsEnabled() {
@@ -307,7 +307,7 @@ struct LaunchAtLoginManagerTests {
         #expect(!manager.showError)
     }
 
-    // MARK: - Clear Error Tests
+    // Clear Error Tests
 
     @Test("Clear error clears last error")
     func clearErrorClearsLastError() async {
@@ -325,7 +325,7 @@ struct LaunchAtLoginManagerTests {
         #expect(!manager.showError)
     }
 
-    // MARK: - Availability Tests
+    // Availability Tests
 
     @Test("isAvailable returns true")
     func isAvailableReturnsTrue() {
@@ -333,7 +333,7 @@ struct LaunchAtLoginManagerTests {
         #expect(manager.isAvailable)
     }
 
-    // MARK: - Current Status Tests
+    // Current Status Tests
 
     @Test("Current status returns service status")
     func currentStatusReturnsServiceStatus() {
@@ -347,7 +347,7 @@ struct LaunchAtLoginManagerTests {
         #expect(manager.currentStatus == .requiresApproval)
     }
 
-    // MARK: - Rapid Toggle Tests
+    // Rapid Toggle Tests
 
     @Test("Rapid toggle handles correctly")
     func rapidToggleHandlesCorrectly() async {
@@ -364,7 +364,7 @@ struct LaunchAtLoginManagerTests {
     }
 }
 
-// MARK: - SMAppServiceWrapper Tests
+// SMAppServiceWrapper Tests
 
 @Suite("SMAppServiceWrapper Tests")
 struct SMAppServiceWrapperTests {

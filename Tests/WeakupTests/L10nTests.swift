@@ -11,7 +11,7 @@ struct L10nTests {
         L10n.shared.setLanguage(.english)
     }
 
-    // MARK: - Singleton Tests (L10N-001)
+    // Singleton Tests (L10N-001)
 
     @Test("Shared returns same instance")
     func sharedReturnsSameInstance() {
@@ -25,7 +25,7 @@ struct L10nTests {
         #expect(L10n.shared != nil)
     }
 
-    // MARK: - Language Setting Tests (L10N-003, L10N-004)
+    // Language Setting Tests (L10N-003, L10N-004)
 
     @Test("Set language updates current language")
     func setLanguageUpdatesCurrentLanguage() {
@@ -74,7 +74,7 @@ struct L10nTests {
         #expect(L10n.shared.currentLanguage == .japanese)
     }
 
-    // MARK: - String Retrieval Tests (L10N-005, L10N-006, L10N-007)
+    // String Retrieval Tests (L10N-005, L10N-006, L10N-007)
 
     @Test("String for key returns localized string")
     func stringForKeyReturnsLocalizedString() {
@@ -120,7 +120,7 @@ struct L10nTests {
         #expect(!result.isEmpty)
     }
 
-    // MARK: - All String Properties Tests (L10N-008)
+    // All String Properties Tests (L10N-008)
 
     @Test("All string properties return non-empty")
     func allStringPropertiesReturnNonEmpty() {
@@ -207,7 +207,7 @@ struct L10nTests {
         #expect(!L10n.shared.shortcutHint.isEmpty, "shortcutHint should not be empty")
     }
 
-    // MARK: - Language Switch Tests (L10N-009)
+    // Language Switch Tests (L10N-009)
 
     @Test("Language switch updates strings")
     func languageSwitchUpdatesStrings() {
@@ -249,7 +249,7 @@ struct L10nTests {
         #expect(L10n.shared.currentLanguage == .japanese)
     }
 
-    // MARK: - Chinese Detection Tests (L10N-010, L10N-011)
+    // Chinese Detection Tests (L10N-010, L10N-011)
 
     @Test("Chinese Simplified has correct strings")
     func chineseSimplifiedHasCorrectStrings() {
@@ -283,7 +283,7 @@ struct L10nTests {
         #expect(AppLanguage.chinese.rawValue != AppLanguage.chineseTraditional.rawValue)
     }
 
-    // MARK: - Japanese Detection Tests (L10N-012)
+    // Japanese Detection Tests (L10N-012)
 
     @Test("Japanese has correct strings")
     func japaneseHasCorrectStrings() {
@@ -294,7 +294,7 @@ struct L10nTests {
         #expect(!L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - Korean Detection Tests (L10N-013)
+    // Korean Detection Tests (L10N-013)
 
     @Test("Korean has correct strings")
     func koreanHasCorrectStrings() {
@@ -305,7 +305,7 @@ struct L10nTests {
         #expect(!L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - French Detection Tests (L10N-014)
+    // French Detection Tests (L10N-014)
 
     @Test("French has correct strings")
     func frenchHasCorrectStrings() {
@@ -316,7 +316,7 @@ struct L10nTests {
         #expect(!L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - German Detection Tests (L10N-015)
+    // German Detection Tests (L10N-015)
 
     @Test("German has correct strings")
     func germanHasCorrectStrings() {
@@ -327,7 +327,7 @@ struct L10nTests {
         #expect(!L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - Spanish Detection Tests (L10N-016)
+    // Spanish Detection Tests (L10N-016)
 
     @Test("Spanish has correct strings")
     func spanishHasCorrectStrings() {
@@ -338,7 +338,7 @@ struct L10nTests {
         #expect(!L10n.shared.turnOff.isEmpty)
     }
 
-    // MARK: - Observable Tests
+    // Observable Tests
 
     @Test("L10n is ObservableObject")
     func l10nIsObservableObject() {
@@ -376,7 +376,7 @@ struct L10nTests {
         cancellable.cancel()
     }
 
-    // MARK: - Required Keys Tests
+    // Required Keys Tests
 
     @Test("English has all required keys")
     func englishHasAllRequiredKeys() {
@@ -435,7 +435,7 @@ struct L10nTests {
         }
     }
 
-    // MARK: - All Languages Have Core Keys Tests
+    // All Languages Have Core Keys Tests
 
     @Test("All languages have core keys")
     func allLanguagesHaveCoreKeys() {
@@ -458,7 +458,7 @@ struct L10nTests {
         }
     }
 
-    // MARK: - Specific String Value Tests
+    // Specific String Value Tests
 
     @Test("appName returns non-empty")
     func appNameReturnsNonEmpty() {
@@ -544,7 +544,7 @@ struct L10nTests {
         #expect(!L10n.shared.hotkeyReset.isEmpty)
     }
 
-    // MARK: - English Specific Value Tests
+    // English Specific Value Tests
 
     @Test("English appName")
     func englishAppName() {
@@ -588,7 +588,7 @@ struct L10nTests {
                "Should return localized or fallback value")
     }
 
-    // MARK: - Edge Cases
+    // Edge Cases
 
     @Test("Empty key returns formatted empty")
     func emptyKeyReturnsFormattedEmpty() {
@@ -610,7 +610,7 @@ struct L10nTests {
         #expect(!result.isEmpty)
     }
 
-    // MARK: - Thread Safety Tests
+    // Thread Safety Tests
 
     @Test("Concurrent language access")
     func concurrentLanguageAccess() async {
