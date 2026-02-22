@@ -1,7 +1,7 @@
-import SwiftUI
 import AppKit
-import Combine
 import Carbon
+import Combine
+import SwiftUI
 import WeakupCore
 
 // App Delegate
@@ -10,11 +10,13 @@ import WeakupCore
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var settingsWindow: NSWindow?
+    private var onboardingWindow: NSWindow?
     private var viewModel = CaffeineViewModel()
     @StateObject private var l10n = L10n.shared
     private let iconManager = IconManager.shared
     private let hotkeyManager = HotkeyManager.shared
     private let historyManager = ActivityHistoryManager.shared
+    private let onboardingManager = OnboardingManager.shared
     private var viewModelObserver: Any?
     private var lastIsActive = false
 
@@ -23,9 +25,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupHotkeys()
         setupIconChangeCallback()
         setupViewModelObserver()
-        
+
         // Initialize lastIsActive state
         lastIsActive = viewModel.isActive
+
+        // Show onboarding for first-time users
+        if onboardingManager.shouldShowOnboarding {
+            showOnboarding()
+        }
     }
 
     private func setupStatusBar() {
@@ -51,16 +58,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showContextMenu() {
-        guard let statusItem = statusItem else { return }
+        guard let statusItem else { return }
 
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: L10n.shared.menuSettings, action: #selector(showSettings), keyEquivalent: ","))
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: L10n.shared.menuQuit, action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(
+            title: L10n.shared.menuQuit,
+            action: #selector(NSApplication.terminate(_:)),
+            keyEquivalent: "q"
+        ))
 
         statusItem.menu = menu
         statusItem.button?.performClick(nil)
-        statusItem.menu = nil  // Clear menu so left-click works again
+        statusItem.menu = nil // Clear menu so left-click works again
     }
 
     private func setupHotkeys() {
@@ -74,16 +85,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Also keep local monitor for when app is focused (more reliable)
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard let self = self else { return event }
+            guard let self else { return event }
 
             // Check if HotkeyManager is recording
-            if self.hotkeyManager.isRecording {
-                self.hotkeyManager.recordKey(keyCode: event.keyCode, modifiers: event.modifierFlags)
+            if hotkeyManager.isRecording {
+                hotkeyManager.recordKey(keyCode: event.keyCode, modifiers: event.modifierFlags)
                 return nil
             }
 
             // Check if this matches the current hotkey config
-            let config = self.hotkeyManager.currentConfig
+            let config = hotkeyManager.currentConfig
             let modifiers = event.modifierFlags
             var carbonModifiers: UInt32 = 0
             if modifiers.contains(.command) { carbonModifiers |= UInt32(cmdKey) }
@@ -91,7 +102,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if modifiers.contains(.option) { carbonModifiers |= UInt32(optionKey) }
             if modifiers.contains(.shift) { carbonModifiers |= UInt32(shiftKey) }
 
-            if UInt32(event.keyCode) == config.keyCode && carbonModifiers == config.modifiers {
+            if UInt32(event.keyCode) == config.keyCode, carbonModifiers == config.modifiers {
                 Task { @MainActor [weak self] in
                     self?.toggleCaffeine()
                 }
@@ -110,14 +121,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if settingsWindow == nil {
             let rootView = SettingsView(viewModel: viewModel)
             let hostingController = NSHostingController(rootView: rootView)
-            
+
             let window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 340, height: 480),
                 styleMask: [.titled, .closable, .miniaturizable, .fullSizeContentView],
                 backing: .buffered,
                 defer: false
             )
-            
+
             window.center()
             window.setFrameAutosaveName("SettingsWindow")
             window.title = L10n.shared.menuSettings
@@ -125,13 +136,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             window.isReleasedWhenClosed = false
             window.titlebarAppearsTransparent = true
             window.titleVisibility = .hidden
-            
+
             // Allow window to be moved by dragging background
             window.isMovableByWindowBackground = true
-            
+
             settingsWindow = window
         }
-        
+
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow?.makeKeyAndOrderFront(nil)
     }
@@ -148,9 +159,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Observe viewModel changes
         viewModelObserver = viewModel.objectWillChange.sink { [weak self] _ in
             Task { @MainActor [weak self] in
-                guard let self = self else { return }
-                self.updateStatusIcon()
-                self.handleStateChange()
+                guard let self else { return }
+                updateStatusIcon()
+                handleStateChange()
             }
         }
     }
@@ -177,7 +188,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         button.toolTip = viewModel.isActive ? L10n.shared.statusOn : L10n.shared.statusOff
 
         // Show countdown in menu bar if enabled and timer is active
-        if viewModel.showCountdownInMenuBar && viewModel.isActive && viewModel.timerMode && viewModel.timeRemaining > 0 {
+        if viewModel.showCountdownInMenuBar, viewModel.isActive, viewModel.timerMode, viewModel.timeRemaining > 0 {
             button.title = " " + formatMenuBarTime(viewModel.timeRemaining)
         } else {
             button.title = ""
@@ -185,15 +196,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func formatMenuBarTime(_ time: TimeInterval) -> String {
-        let totalSeconds = Int(time)
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        let seconds = totalSeconds % 60
-
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        }
-        return String(format: "%02d:%02d", minutes, seconds)
+        TimeFormatter.countdown(time)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -205,8 +208,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if viewModel.isActive {
             viewModel.stop()
         }
-        // Close settings window if open
+        // Close windows if open
         settingsWindow?.close()
         settingsWindow = nil
+        onboardingWindow?.close()
+        onboardingWindow = nil
+    }
+
+    private func showOnboarding() {
+        if onboardingWindow == nil {
+            let rootView = OnboardingView(isPresented: Binding(
+                get: { [weak self] in self?.onboardingWindow != nil },
+                set: { [weak self] show in
+                    if !show {
+                        self?.onboardingWindow?.close()
+                        self?.onboardingWindow = nil
+                    }
+                }
+            ))
+            let hostingController = NSHostingController(rootView: rootView)
+
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 320, height: 400),
+                styleMask: [.titled, .closable, .fullSizeContentView],
+                backing: .buffered,
+                defer: false
+            )
+
+            window.center()
+            window.title = "Welcome"
+            window.contentViewController = hostingController
+            window.isReleasedWhenClosed = false
+            window.titlebarAppearsTransparent = true
+            window.titleVisibility = .hidden
+
+            onboardingWindow = window
+        }
+
+        NSApp.activate(ignoringOtherApps: true)
+        onboardingWindow?.makeKeyAndOrderFront(nil)
     }
 }

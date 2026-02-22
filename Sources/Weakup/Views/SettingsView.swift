@@ -15,15 +15,10 @@ struct SettingsView: View {
     @State private var customHours = 0
     @State private var customMinutes = 30
 
-    // Preset durations: (seconds, localization key)
-    private let presetDurations = [
-        (0, "duration_off"),
-        (900, "duration_15m"),
-        (1800, "duration_30m"),
-        (3600, "duration_1h"),
-        (7200, "duration_2h"),
-        (10800, "duration_3h")
-    ]
+    /// Use centralized preset durations
+    private var presetDurations: [(duration: TimeInterval, key: String)] {
+        AppConstants.TimerPresets.withKeys
+    }
 
     private let customDurationIndex = 6
 
@@ -84,7 +79,7 @@ struct SettingsView: View {
 
     @ViewBuilder
     private var timerDisplaySection: some View {
-        if viewModel.isActive && viewModel.timerMode && viewModel.timeRemaining > 0 {
+        if viewModel.isActive, viewModel.timerMode, viewModel.timeRemaining > 0 {
             Text(formatTime(viewModel.timeRemaining))
                 .font(.system(.title2, design: .monospaced).weight(.bold))
         }
@@ -95,14 +90,17 @@ struct SettingsView: View {
             Text(l10n.timerMode)
                 .font(.subheadline)
             Spacer()
-            Toggle("", isOn: Binding(
-                get: { viewModel.timerMode },
-                set: { newValue in
-                    viewModel.timerMode = newValue
-                    if viewModel.isActive { viewModel.stop() }
-                }
-            ))
-                .toggleStyle(.switch)
+            Toggle(
+                "",
+                isOn: Binding(
+                    get: { viewModel.timerMode },
+                    set: { newValue in
+                        viewModel.timerMode = newValue
+                        if viewModel.isActive { viewModel.stop() }
+                    }
+                )
+            )
+            .toggleStyle(.switch)
         }
     }
 
@@ -171,12 +169,36 @@ struct SettingsView: View {
     }
 
     private var launchAtLoginSection: some View {
-        HStack {
-            Text(l10n.launchAtLogin)
-                .font(.subheadline)
-            Spacer()
-            Toggle("", isOn: $launchAtLoginManager.isEnabled)
-                .toggleStyle(.switch)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(l10n.launchAtLogin)
+                    .font(.subheadline)
+                Spacer()
+                Toggle("", isOn: $launchAtLoginManager.isEnabled)
+                    .toggleStyle(.switch)
+                    .disabled(!launchAtLoginManager.isAvailable)
+            }
+
+            if let error = launchAtLoginManager.lastError {
+                Text(localizedErrorMessage(for: error))
+                    .font(.caption2)
+                    .foregroundColor(.red)
+            }
+        }
+    }
+
+    private func localizedErrorMessage(for error: LaunchAtLoginError) -> String {
+        switch error {
+        case .permissionDenied:
+            l10n.launchAtLoginPermissionDenied
+        case .notSupported:
+            l10n.launchAtLoginNotSupported
+        case .registrationFailed:
+            l10n.launchAtLoginEnableFailed
+        case .unregistrationFailed:
+            l10n.launchAtLoginDisableFailed
+        case .unknown:
+            error.localizedDescription
         }
     }
 
@@ -216,11 +238,69 @@ struct SettingsView: View {
                 .disabled(hotkeyManager.currentConfig == .defaultConfig)
             }
 
-            if hotkeyManager.hasConflict, let message = hotkeyManager.conflictMessage {
+            // Conflict detection UI
+            if hotkeyManager.hasConflict {
+                hotkeyConflictView
+            }
+        }
+    }
+
+    private var hotkeyConflictView: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            // Show conflict message with severity-based color
+            if let conflict = hotkeyManager.highestSeverityConflict {
+                HStack(spacing: 4) {
+                    Image(systemName: conflictIcon(for: conflict.severity))
+                        .foregroundColor(conflictColor(for: conflict.severity))
+                    Text(hotkeyManager.conflictMessage ?? l10n.hotkeyConflictMessage)
+                        .font(.caption2)
+                        .foregroundColor(conflictColor(for: conflict.severity))
+                }
+
+                // Show suggestion
+                if let suggestion = conflict.suggestion {
+                    Text(suggestion)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 16)
+                }
+
+                // Override option for non-high severity conflicts
+                if conflict.severity != .high {
+                    HStack {
+                        Toggle(
+                            l10n.hotkeyOverrideConflict,
+                            isOn: Binding(
+                                get: { hotkeyManager.overrideConflicts },
+                                set: { hotkeyManager.setOverrideConflicts($0) }
+                            )
+                        )
+                        .font(.caption2)
+                        .toggleStyle(.checkbox)
+                    }
+                    .padding(.top, 2)
+                }
+            } else if let message = hotkeyManager.conflictMessage {
                 Text(message)
                     .font(.caption2)
                     .foregroundColor(.orange)
             }
+        }
+    }
+
+    private func conflictColor(for severity: HotkeyConflict.ConflictSeverity) -> Color {
+        switch severity {
+        case .high: .red
+        case .medium: .orange
+        case .low: .yellow
+        }
+    }
+
+    private func conflictIcon(for severity: HotkeyConflict.ConflictSeverity) -> String {
+        switch severity {
+        case .high: "exclamationmark.triangle.fill"
+        case .medium: "exclamationmark.circle.fill"
+        case .low: "info.circle.fill"
         }
     }
 
@@ -232,19 +312,22 @@ struct SettingsView: View {
                     Text(l10n.duration)
                         .font(.subheadline)
                     Spacer()
-                    Picker(l10n.duration, selection: Binding(
-                        get: { selectedDuration },
-                        set: { newValue in
-                            if newValue == customDurationIndex {
-                                showCustomDuration = true
-                            } else {
-                                selectedDuration = newValue
-                                viewModel.setTimerDuration(TimeInterval(presetDurations[newValue].0))
+                    Picker(
+                        l10n.duration,
+                        selection: Binding(
+                            get: { selectedDuration },
+                            set: { newValue in
+                                if newValue == customDurationIndex {
+                                    showCustomDuration = true
+                                } else {
+                                    selectedDuration = newValue
+                                    viewModel.setTimerDuration(presetDurations[newValue].duration)
+                                }
                             }
-                        }
-                    )) {
+                        )
+                    ) {
                         ForEach(0..<presetDurations.count, id: \.self) { index in
-                            Text(l10n.string(forKey: presetDurations[index].1)).tag(index)
+                            Text(l10n.string(forKey: presetDurations[index].key)).tag(index)
                         }
                         Text(l10n.durationCustom).tag(customDurationIndex)
                     }
@@ -252,16 +335,19 @@ struct SettingsView: View {
                 }
 
                 // Show custom duration display if selected
-                if selectedDuration == customDurationIndex && viewModel.timerDuration > 0 {
+                if selectedDuration == customDurationIndex, viewModel.timerDuration > 0 {
                     HStack {
                         Spacer()
                         Text(formatDurationDisplay(viewModel.timerDuration))
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Button(action: { showCustomDuration = true }) {
-                            Image(systemName: "pencil.circle")
-                                .foregroundColor(.accentColor)
-                        }
+                        Button(
+                            action: { showCustomDuration = true },
+                            label: {
+                                Image(systemName: "pencil.circle")
+                                    .foregroundColor(.accentColor)
+                            }
+                        )
                         .buttonStyle(.plain)
                     }
                 }
@@ -321,17 +407,20 @@ struct SettingsView: View {
     }
 
     private var mainButtonSection: some View {
-        Button(action: { viewModel.toggle() }) {
-            HStack {
-                Image(systemName: viewModel.isActive ? "stop.circle.fill" : "play.circle.fill")
-                Text(viewModel.isActive ? l10n.turnOff : l10n.turnOn)
-                    .fontWeight(.semibold)
+        Button(
+            action: { viewModel.toggle() },
+            label: {
+                HStack {
+                    Image(systemName: viewModel.isActive ? "stop.circle.fill" : "play.circle.fill")
+                    Text(viewModel.isActive ? l10n.turnOff : l10n.turnOn)
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(viewModel.isActive ? Color.red.opacity(0.2) : Color.green.opacity(0.2))
+                .cornerRadius(6)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(viewModel.isActive ? Color.red.opacity(0.2) : Color.green.opacity(0.2))
-            .cornerRadius(6)
-        }
+        )
         .buttonStyle(.plain)
         .foregroundColor(viewModel.isActive ? .red : .green)
     }
@@ -350,36 +439,18 @@ struct SettingsView: View {
     // Helper Methods
 
     private func formatTime(_ time: TimeInterval) -> String {
-        let totalSeconds = Int(time)
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        let seconds = totalSeconds % 60
-
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        }
-        return String(format: "%02d:%02d", minutes, seconds)
+        TimeFormatter.countdown(time)
     }
 
     private func formatDurationDisplay(_ seconds: TimeInterval) -> String {
-        let totalSeconds = Int(seconds)
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-
-        if hours > 0 && minutes > 0 {
-            return "\(hours)h \(minutes)m"
-        } else if hours > 0 {
-            return "\(hours)h"
-        } else {
-            return "\(minutes)m"
-        }
+        TimeFormatter.duration(seconds)
     }
 
     private func applyCustomDuration() {
-        let totalSeconds = (customHours * 3600) + (customMinutes * 60)
-        // Enforce max 24 hours
-        let clampedSeconds = min(totalSeconds, 24 * 3600)
-        viewModel.setTimerDuration(TimeInterval(clampedSeconds))
+        let totalSeconds = TimeFormatter.interval(hours: customHours, minutes: customMinutes)
+        // Enforce max duration
+        let clampedSeconds = min(totalSeconds, AppConstants.TimerPresets.maximum)
+        viewModel.setTimerDuration(clampedSeconds)
         selectedDuration = customDurationIndex
         showCustomDuration = false
     }
