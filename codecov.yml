@@ -32,11 +32,16 @@ component_management:
       paths:
         - Sources/WeakupCore/**
 
-# Ignore test files and build artifacts
+# Ignore test files, build artifacts, and UI code
+# Note: UI code (Sources/Weakup/**) is excluded because:
+# 1. It's not compiled into the test binary (Package.swift only includes WeakupCore in test dependencies)
+# 2. UI code is tested separately via XCUITest (not included in SPM coverage)
+# 3. Coverage statistics focus on testable business logic (WeakupCore)
 ignore:
   - "Tests/**"
   - ".build/**"
   - "**/*.generated.swift"
+  - "Sources/Weakup/**"
 
 # Comment configuration for PRs
 comment:
