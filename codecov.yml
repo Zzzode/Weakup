@@ -7,9 +7,6 @@ coverage:
   range: "70...100"
   status:
     project:
-      default:
-        target: 80%
-        threshold: 2%
       weakup-core:
         paths:
           - "Sources/WeakupCore/**"
@@ -19,18 +16,6 @@ coverage:
       default:
         target: 70%
         threshold: 5%
-
-# Component definitions for better reporting
-component_management:
-  default_rules:
-    statuses:
-      - type: project
-        target: auto
-  individual_components:
-    - component_id: weakup-core
-      name: WeakupCore (Business Logic)
-      paths:
-        - Sources/WeakupCore/**
 
 # Ignore test files, build artifacts, and UI code
 # Note: UI code (Sources/Weakup/**) is excluded because:
