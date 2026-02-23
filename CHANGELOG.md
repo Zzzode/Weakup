@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Fixed
+- **Coverage Reporting** - Fixed Codecov showing incorrect 47% coverage by excluding UI code from statistics
+  - Updated `codecov.yml` to ignore `Sources/Weakup/**` (UI code tested via XCUITest)
+  - Updated CI workflow to filter coverage reports to WeakupCore only
+  - Added coverage generation script (`scripts/generate_coverage.sh`)
+  - Updated documentation to explain coverage scope (WeakupCore: ~88%, UI: tested separately)
+  - Actual business logic coverage is 87.73%, not 47%
 
 ## [1.0.2] - 2026-02-23
 
