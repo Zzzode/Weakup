@@ -655,6 +655,100 @@ jobs:
             -format lcov > coverage.lcov
 ```
 
+## Coverage Reports
+
+### Understanding Coverage Statistics
+
+The project uses a **split architecture** approach for coverage reporting:
+
+| Component | Coverage Scope | Testing Method | Included in Codecov |
+|-----------|----------------|----------------|---------------------|
+| **WeakupCore** | Business logic, managers, utilities | Swift Testing (unit + integration) | ✅ Yes |
+| **Weakup** | UI code, views, app delegate | XCUITest (UI tests) | ❌ No |
+
+**Why UI code is excluded from coverage statistics:**
+
+1. **Architecture Design**: `Package.swift` test target only depends on `WeakupCore`:
+   ```swift
+   .testTarget(
+       name: "WeakupTests",
+       dependencies: ["WeakupCore"],  // UI code not included
+       path: "Tests/WeakupTests"
+   )
+   ```
+
+2. **Testing Framework Limitation**: UI code requires XCUITest which:
+   - Cannot be run via Swift Package Manager
+   - Requires Xcode project configuration
+   - Needs accessibility permissions
+   - Uses different coverage collection mechanism
+
+3. **Separation of Concerns**: Business logic (WeakupCore) is fully unit-testable, while UI code is tested through end-to-end UI tests.
+
+### Generating Coverage Reports
+
+Use the provided script to generate coverage reports locally:
+
+```bash
+# Generate coverage report for WeakupCore
+./scripts/generate_coverage.sh
+
+# Generate with HTML report (opens in browser)
+./scripts/generate_coverage.sh --html
+```
+
+The script will:
+- Run all tests with coverage enabled
+- Generate LCOV report (WeakupCore only)
+- Display per-file coverage summary
+- Verify no UI files are included in the report
+- Optionally generate HTML report
+
+### Coverage Targets
+
+| Component | Target | Current | Status |
+|-----------|--------|---------|--------|
+| **WeakupCore Overall** | 80% | ~88% | ✅ Exceeds target |
+| **Critical Managers** | 90% | 94%+ | ✅ Excellent |
+| **NotificationManager** | 80% | 20% | ⚠️ Needs improvement |
+
+**Note**: NotificationManager has low coverage due to test environment detection. See [Issue #XX] for refactoring plan.
+
+### CI Coverage Workflow
+
+The CI pipeline (`.github/workflows/ci.yml`) generates coverage reports:
+
+```yaml
+# Generate LCOV for WeakupCore only
+xcrun llvm-cov export \
+  -format=lcov \
+  -ignore-filename-regex='\.build/|Tests/|Sources/Weakup/' \
+  > coverage.lcov
+```
+
+Key filters:
+- `\.build/` - Excludes build artifacts
+- `Tests/` - Excludes test code itself
+- `Sources/Weakup/` - Excludes UI code (tested separately)
+
+### Codecov Configuration
+
+The `codecov.yml` configuration ensures accurate reporting:
+
+```yaml
+ignore:
+  - "Tests/**"
+  - ".build/**"
+  - "Sources/Weakup/**"  # UI code excluded
+
+flags:
+  unit-tests:
+    paths:
+      - Sources/WeakupCore/
+```
+
+This prevents Codecov from counting untested UI files as 0% coverage.
+
 ## Test Data
 
 ### Localization Test Strings
