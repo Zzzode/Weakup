@@ -9,6 +9,8 @@
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 
+> **关于代码覆盖率**：覆盖率徽章仅反映 WeakupCore（业务逻辑层）的测试覆盖率。Weakup 目标中的 UI 代码通过 XCUITest 单独测试，不包含在覆盖率统计中。
+
 一个高性能、轻量级的 macOS 防休眠实用工具。
 
 </div>
