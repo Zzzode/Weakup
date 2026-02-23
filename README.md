@@ -9,6 +9,8 @@
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 
+> **Note on Code Coverage**: The coverage badge reflects WeakupCore (business logic layer) only. UI code in the Weakup target is tested separately via XCUITest and not included in coverage statistics.
+
 A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
 
 </div>
