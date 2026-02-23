@@ -13,6 +13,9 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.removeObject(forKey: "WeakupSoundEnabled")
         UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerMode")
         UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerDuration")
+        UserDefaultsStore.shared.removeObject(forKey: "WeakupNotificationsEnabled")
+        // Reset NotificationManager's notificationsEnabled to default (true)
+        NotificationManager.shared.notificationsEnabled = true
         viewModel = CaffeineViewModel()
     }
 
