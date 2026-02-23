@@ -88,9 +88,14 @@ Weakup/
 │   │   └── ... 其他 .lproj 目录
 │   └── WeakupCore/            # Core 目标（逻辑 + 管理器）
 │       ├── ViewModels/
+│       │   └── CaffeineViewModel.swift
 │       ├── Utilities/
+│       │   ├── 管理器 (L10n, HotkeyManager 等)
+│       │   └── 工具类 (Logger, Constants 等)
 │       ├── Models/
+│       │   └── ActivitySession.swift
 │       └── Protocols/
+│           └── NotificationManaging.swift
 ├── docs/                      # 文档
 │   ├── ARCHITECTURE.md        # 系统架构
 │   ├── DEVELOPMENT.md         # 开发指南
@@ -98,6 +103,8 @@ Weakup/
 │   ├── TRANSLATIONS.md        # 翻译指南
 │   └── PRIVACY.md             # 隐私政策
 ├── Tests/                     # 单元、集成、UI 测试
+│   ├── WeakupTests/           # Swift Testing
+│   └── WeakupUITests/         # XCTest（仅 UI）
 └── Weakup.app/                # 构建的应用程序
 ```
 
@@ -155,6 +162,29 @@ func toggleCaffeine(){viewModel.toggle();updateStatusIcon()}
 ## 测试
 
 有关详细的测试指南，请参阅 [docs/TESTING.md](docs/TESTING.md)。
+
+### 代码组织
+
+**关键工具类：**
+- `Logger` - 用于所有日志记录，而不是 `print()` 语句
+- `UserDefaultsKeys` - 使用集中管理的 UserDefaults 键
+- `Constants` - 用于计时器预设、UI 尺寸、标识符
+- `TimeFormatter` - 用于时长格式化
+
+**示例：**
+```swift
+// 推荐 - 使用 Logger
+Logger.info("Timer started", category: .timer)
+
+// 避免 - 不要使用 print
+print("Timer started")
+
+// 推荐 - 使用集中管理的键
+UserDefaultsStore.shared.set(value, forKey: UserDefaultsKeys.timerMode)
+
+// 避免 - 不要使用字符串字面量
+UserDefaults.standard.set(value, forKey: "TimerMode")
+```
 
 ### 手动测试清单
 

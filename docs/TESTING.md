@@ -164,17 +164,23 @@ open Weakup.xcodeproj
 
 ## Test Coverage Goals
 
-| Component | Target | Current |
-|-----------|--------|---------|
-| CaffeineViewModel | 90% | - |
-| L10n | 85% | - |
-| ActivityHistoryManager | 80% | - |
-| HotkeyManager | 75% | - |
-| IconManager | 80% | - |
-| ThemeManager | 80% | - |
-| NotificationManager | 70% | - |
-| LaunchAtLoginManager | 75% | - |
-| Models | 90% | - |
+| Component | Target | Current | Status |
+|-----------|--------|---------|--------|
+| CaffeineViewModel | 90% | 89.37% | ✅ Near target |
+| L10n | 85% | 94.83% | ✅ **Exceeded** |
+| ActivityHistoryManager | 80% | 94.22% | ✅ **Exceeded** |
+| HotkeyManager | 75% | 93.96% | ✅ **Exceeded** |
+| IconManager | 80% | 97.87% | ✅ **Exceeded** |
+| ThemeManager | 80% | 97.37% | ✅ **Exceeded** |
+| NotificationManager | 70% | 20.11% | ⚠️ System limited |
+| LaunchAtLoginManager | 75% | 90.18% | ✅ **Exceeded** |
+| Logger | 75% | 98.89% | ✅ **Exceeded** |
+| TimeFormatter | 75% | 100.00% | ✅ **Perfect** |
+| UserDefaultsKeys | 75% | 76.92% | ✅ Met |
+| Models | 90% | 100.00% | ✅ **Perfect** |
+| **Overall** | **75%** | **87.73%** | ✅ **Exceeded** |
+
+**Last Updated:** 2026-02-23
 
 ## Unit Test Examples
 

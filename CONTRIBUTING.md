@@ -88,9 +88,14 @@ Weakup/
 │   │   └── ... other .lproj folders
 │   └── WeakupCore/            # Core target (logic + managers)
 │       ├── ViewModels/
+│       │   └── CaffeineViewModel.swift
 │       ├── Utilities/
+│       │   ├── Managers (L10n, HotkeyManager, etc.)
+│       │   └── Utilities (Logger, Constants, etc.)
 │       ├── Models/
+│       │   └── ActivitySession.swift
 │       └── Protocols/
+│           └── NotificationManaging.swift
 ├── docs/                      # Documentation
 │   ├── ARCHITECTURE.md        # System architecture
 │   ├── DEVELOPMENT.md         # Development guide
@@ -98,6 +103,8 @@ Weakup/
 │   ├── TRANSLATIONS.md        # Translation guide
 │   └── PRIVACY.md             # Privacy policy
 ├── Tests/                     # Unit, integration, and UI tests
+│   ├── WeakupTests/           # Swift Testing
+│   └── WeakupUITests/         # XCTest (UI only)
 └── Weakup.app/                # Built application
 ```
 
@@ -155,6 +162,29 @@ func toggleCaffeine(){viewModel.toggle();updateStatusIcon()}
 ## Testing
 
 See [docs/TESTING.md](docs/TESTING.md) for detailed testing guidelines.
+
+### Code Organization
+
+**Key Utilities:**
+- `Logger` - Use for all logging instead of `print()` statements
+- `UserDefaultsKeys` - Use centralized keys for UserDefaults
+- `Constants` - Use for timer presets, UI dimensions, identifiers
+- `TimeFormatter` - Use for duration formatting
+
+**Example:**
+```swift
+// Good - Use Logger
+Logger.info("Timer started", category: .timer)
+
+// Avoid - Don't use print
+print("Timer started")
+
+// Good - Use centralized keys
+UserDefaultsStore.shared.set(value, forKey: UserDefaultsKeys.timerMode)
+
+// Avoid - Don't use string literals
+UserDefaults.standard.set(value, forKey: "TimerMode")
+```
 
 ### Testing Frameworks
 

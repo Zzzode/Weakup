@@ -82,13 +82,20 @@ Weakup/
 │       │   ├── ThemeManager.swift
 │       │   ├── NotificationManager.swift
 │       │   ├── ActivityHistoryManager.swift
-│       │   └── LaunchAtLoginManager.swift
+│       │   ├── LaunchAtLoginManager.swift
+│       │   ├── Logger.swift
+│       │   ├── UserDefaultsKeys.swift
+│       │   ├── Constants.swift
+│       │   ├── TimeFormatter.swift
+│       │   └── Version.swift
 │       ├── Models/
 │       │   └── ActivitySession.swift
 │       └── Protocols/
 │           └── NotificationManaging.swift
 ├── Tests/                     # Unit, integration, and UI tests
 │   ├── WeakupTests/           # Swift Testing (unit + integration)
+│   │   ├── Integration/       # Integration tests
+│   │   └── Mocks/             # Test mocks and fixtures
 │   └── WeakupUITests/         # XCTest (UI tests only)
 ├── docs/                      # Documentation
 ├── Weakup.app/                # Built application (generated)
@@ -161,7 +168,9 @@ See [TESTING.md](TESTING.md) for detailed testing guidelines.
 ### Core Logic
 
 - `Sources/WeakupCore/ViewModels/CaffeineViewModel.swift` owns sleep prevention state, timer logic, and preferences.
-- `Sources/WeakupCore/Utilities/` contains managers like `L10n`, `HotkeyManager`, `IconManager`, `ThemeManager`, `NotificationManager`, `ActivityHistoryManager`, and `LaunchAtLoginManager`.
+- `Sources/WeakupCore/Utilities/` contains:
+  - **Managers**: `L10n`, `HotkeyManager`, `IconManager`, `ThemeManager`, `NotificationManager`, `ActivityHistoryManager`, `LaunchAtLoginManager`
+  - **Utilities**: `Logger`, `UserDefaultsKeys`, `Constants`, `TimeFormatter`, `Version`
 
 ### UI Views
 

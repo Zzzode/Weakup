@@ -259,17 +259,19 @@ Sources/
     │   └── ActivitySession.swift    # Session data model
     ├── ViewModels/
     │   └── CaffeineViewModel.swift  # Core business logic
-    └── Utilities/
-        ├── L10n.swift               # Localization manager
-        ├── IconManager.swift        # Menu bar icon styles
-        ├── ThemeManager.swift       # Light/dark theme
-        ├── HotkeyManager.swift      # Keyboard shortcuts
-        ├── NotificationManager.swift # System notifications
-        ├── ActivityHistoryManager.swift # Session history
-        ├── LaunchAtLoginManager.swift   # Login item
-        ├── Version.swift            # App version info
-        ├── TimeFormatter.swift      # Countdown formatting
-        └── Constants.swift          # App constants
+    ├── Utilities/
+    │   ├── L10n.swift               # Localization manager
+    │   ├── IconManager.swift        # Menu bar icon styles
+    │   ├── ThemeManager.swift       # Light/dark theme
+    │   ├── HotkeyManager.swift      # Keyboard shortcuts
+    │   ├── NotificationManager.swift # System notifications
+    │   ├── ActivityHistoryManager.swift # Session history
+    │   ├── LaunchAtLoginManager.swift   # Login item
+    │   ├── Logger.swift             # Centralized logging
+    │   ├── UserDefaultsKeys.swift   # UserDefaults key management
+    │   ├── Constants.swift          # App constants
+    │   ├── TimeFormatter.swift      # Duration formatting
+    │   └── Version.swift            # App version info
     └── Protocols/
         └── NotificationManaging.swift # Notification abstraction
 ```
@@ -336,6 +338,10 @@ Responsibilities:
 | `ActivityHistoryManager` | Session history | `sessions`, `statistics`, `exportHistory()` |
 | `LaunchAtLoginManager` | Login item | `isEnabled` |
 | `OnboardingManager` | First-launch flow | `shouldShowOnboarding` |
+| `Logger` | Centralized logging | Static methods with categories |
+| `UserDefaultsKeys` | Key management | Static constants for all keys |
+| `Constants` | App constants | Timer presets, UI dimensions, identifiers |
+| `TimeFormatter` | Duration formatting | Static formatting methods |
 
 ### 4. Models
 
@@ -377,6 +383,74 @@ public struct ActivityStatistics: Sendable {
 | Carbon | Keyboard event handling |
 | UserNotifications | Timer expiry notifications |
 | ServiceManagement | Launch at login |
+
+## Utility Components
+
+### Logger
+
+Centralized logging framework using Apple's unified logging system (os.log):
+
+**Features:**
+- Category-based logging (general, power, timer, notifications, hotkey, history, preferences)
+- Multiple log levels (debug, info, warning, error, fault)
+- Privacy-aware logging
+- Convenience methods for common events
+
+**Usage:**
+```swift
+Logger.info("Sleep prevention started", category: .power)
+Logger.powerAssertionCreated(id: assertionID)
+Logger.timerStarted(duration: 3600)
+```
+
+### UserDefaultsKeys
+
+Centralized UserDefaults key management:
+
+**Features:**
+- Namespace isolation with "Weakup" prefix
+- All keys defined as static constants
+- Utility methods for cleanup
+- Test isolation support via `UserDefaultsStore`
+
+**Keys:**
+- `soundEnabled`, `timerMode`, `timerDuration`
+- `notificationsEnabled`, `showCountdownInMenuBar`
+- `language`, `theme`, `iconStyle`
+- `hotkeyConfig`, `activityHistory`
+
+### Constants (AppConstants)
+
+Application-wide constants and configuration:
+
+**Timer Presets:**
+- `fifteenMinutes` (900s), `thirtyMinutes` (1800s)
+- `oneHour` (3600s), `twoHours` (7200s), `threeHours` (10800s)
+- `maximum` (86400s / 24 hours)
+
+**UI Configuration:**
+- Settings window dimensions (300x480)
+- History view dimensions (280x400)
+
+**Identifiers:**
+- Notification identifiers and categories
+- Hotkey signature and ID
+- Power assertion reason string
+
+### TimeFormatter
+
+Duration formatting utilities:
+
+**Features:**
+- Human-readable duration strings
+- Localized formatting
+- Handles hours, minutes, seconds
+
+**Usage:**
+```swift
+TimeFormatter.duration(3665)  // "1h 1m 5s"
+TimeFormatter.duration(90)    // "1m 30s"
+```
 
 ## Design Decisions
 
