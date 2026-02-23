@@ -118,21 +118,22 @@ jobs:
           : > coverage.lcov
 
           if [ -n "$TEST_BINARY" ] && [ -f ".build/debug/codecov/default.profdata" ]; then
-            # Export coverage data filtered to project sources only
-            # This excludes system headers and dependencies for accurate reporting
+            # Export coverage data for WeakupCore only
+            # Note: Only WeakupCore is compiled into the test binary (see Package.swift)
+            # UI code (Sources/Weakup/**) is excluded as it's tested via XCUITest separately
             xcrun llvm-cov export \
               "$TEST_BINARY/Contents/MacOS/WeakupPackageTests" \
               -instr-profile=.build/debug/codecov/default.profdata \
               -format=lcov \
-              -ignore-filename-regex='\.build/|Tests/' \
+              -ignore-filename-regex='\.build/|Tests/|Sources/Weakup/' \
               > coverage.lcov 2>/dev/null
 
-            # Calculate coverage percentage for WeakupCore (testable code)
-            echo "=== WeakupCore Coverage ==="
+            # Calculate coverage percentage for WeakupCore (testable business logic)
+            echo "=== WeakupCore Coverage (Business Logic) ==="
             COVERAGE=$(xcrun llvm-cov report \
               "$TEST_BINARY/Contents/MacOS/WeakupPackageTests" \
               -instr-profile=.build/debug/codecov/default.profdata \
-              -ignore-filename-regex='\.build/|Tests/' \
+              -ignore-filename-regex='\.build/|Tests/|Sources/Weakup/' \
               2>/dev/null | grep "TOTAL" | awk '{print $4}' | tr -d '%' || echo "0")
 
             # Generate per-file coverage summary
@@ -140,11 +141,17 @@ jobs:
             xcrun llvm-cov report \
               "$TEST_BINARY/Contents/MacOS/WeakupPackageTests" \
               -instr-profile=.build/debug/codecov/default.profdata \
-              -ignore-filename-regex='\.build/|Tests/' \
+              -ignore-filename-regex='\.build/|Tests/|Sources/Weakup/' \
               2>/dev/null | head -50 || true
 
             echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
             echo "Coverage: $COVERAGE%"
+
+            # Verify LCOV contains only WeakupCore files
+            echo ""
+            echo "=== Files in Coverage Report ==="
+            grep "^SF:" coverage.lcov | wc -l | xargs echo "Total files:"
+            grep "^SF:" coverage.lcov | grep "WeakupCore" | wc -l | xargs echo "WeakupCore files:"
           else
             echo "Coverage report generation skipped (no test data)"
             echo "coverage=0" >> $GITHUB_OUTPUT
@@ -156,13 +163,13 @@ jobs:
 
           if [ -n "$TEST_BINARY" ] && [ -f ".build/debug/codecov/default.profdata" ]; then
             mkdir -p coverage_report
-            # Generate HTML report filtered to project sources
+            # Generate HTML report for WeakupCore only
             xcrun llvm-cov show \
               "$TEST_BINARY/Contents/MacOS/WeakupPackageTests" \
               -instr-profile=.build/debug/codecov/default.profdata \
               -format=html \
               -output-dir=coverage_report \
-              -ignore-filename-regex='\.build/|Tests/' \
+              -ignore-filename-regex='\.build/|Tests/|Sources/Weakup/' \
               2>/dev/null || true
           fi
 
@@ -184,9 +191,11 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: Zzzode/Weakup
           flags: unit-tests
-          name: weakup-coverage
+          name: weakup-core-coverage
           fail_ci_if_error: false
           verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
