@@ -34,6 +34,7 @@ The project is split into two targets:
 | `AppDelegate` | `Sources/Weakup/App/AppDelegate.swift` | Menu bar, system integration |
 | `SettingsView` | `Sources/Weakup/Views/SettingsView.swift` | Settings UI |
 | `HistoryView` | `Sources/Weakup/Views/HistoryView.swift` | Activity history UI |
+| `OnboardingView` | `Sources/Weakup/Views/OnboardingView.swift` | First-launch onboarding UI |
 | `CaffeineViewModel` | `Sources/WeakupCore/ViewModels/CaffeineViewModel.swift` | Sleep prevention logic |
 | `L10n` | `Sources/WeakupCore/Utilities/L10n.swift` | Localization system |
 | `HotkeyManager` | `Sources/WeakupCore/Utilities/HotkeyManager.swift` | Keyboard shortcuts |
@@ -42,6 +43,10 @@ The project is split into two targets:
 | `NotificationManager` | `Sources/WeakupCore/Utilities/NotificationManager.swift` | System notifications |
 | `ActivityHistoryManager` | `Sources/WeakupCore/Utilities/ActivityHistoryManager.swift` | Session tracking |
 | `LaunchAtLoginManager` | `Sources/WeakupCore/Utilities/LaunchAtLoginManager.swift` | Login item |
+| `Logger` | `Sources/WeakupCore/Utilities/Logger.swift` | Centralized logging |
+| `UserDefaultsKeys` | `Sources/WeakupCore/Utilities/UserDefaultsKeys.swift` | UserDefaults key management |
+| `Constants` | `Sources/WeakupCore/Utilities/Constants.swift` | App-wide constants |
+| `TimeFormatter` | `Sources/WeakupCore/Utilities/TimeFormatter.swift` | Time formatting utilities |
 | `ActivitySession` | `Sources/WeakupCore/Models/ActivitySession.swift` | Session data model |
 
 ### Manager Singletons
@@ -113,12 +118,15 @@ Sources/
 │   │   └── AppDelegate.swift
 │   ├── Views/
 │   │   ├── SettingsView.swift
-│   │   └── HistoryView.swift
+│   │   ├── HistoryView.swift
+│   │   └── OnboardingView.swift
 │   ├── main.swift          # Entry point
 │   └── *.lproj/            # Localization strings (8 languages)
 └── WeakupCore/             # Business Logic Library
     ├── Models/
     │   └── ActivitySession.swift
+    ├── Protocols/
+    │   └── NotificationManaging.swift
     ├── Utilities/
     │   ├── L10n.swift
     │   ├── HotkeyManager.swift
@@ -127,14 +135,23 @@ Sources/
     │   ├── NotificationManager.swift
     │   ├── ActivityHistoryManager.swift
     │   ├── LaunchAtLoginManager.swift
+    │   ├── Logger.swift
+    │   ├── UserDefaultsKeys.swift
+    │   ├── Constants.swift
+    │   ├── TimeFormatter.swift
     │   └── Version.swift
     └── ViewModels/
         └── CaffeineViewModel.swift
 
-Tests/WeakupTests/          # Unit and integration tests
+Tests/
+├── WeakupTests/            # Unit and integration tests (Swift Testing)
+│   ├── Integration/
+│   └── Mocks/
+└── WeakupUITests/          # UI tests (XCTest)
 docs/                       # Documentation
     ├── ARCHITECTURE.md     # Architecture diagrams
-    └── TESTING.md          # Testing guide
+    ├── TESTING.md          # Testing guide
+    └── DEVELOPMENT.md      # Development guide
 build.sh                    # Build script
 Package.swift               # SPM configuration
 ```
@@ -253,13 +270,18 @@ Text(L10n.shared.menuSettings)
 
 ### UserDefaults Pattern
 
+Use centralized keys from `UserDefaultsKeys`:
+
 ```swift
 @Published public var setting: Bool {
     didSet {
-        UserDefaults.standard.set(setting, forKey: "KeyName")
+        UserDefaultsStore.shared.set(setting, forKey: UserDefaultsKeys.settingKey)
+        Logger.preferenceChanged(key: UserDefaultsKeys.settingKey, value: setting)
     }
 }
 ```
+
+**Note**: Use `UserDefaultsStore.shared` instead of `UserDefaults.standard` for automatic test isolation.
 
 ## Testing Guidelines
 
@@ -363,8 +385,77 @@ All public interfaces have documentation comments. Key classes:
 - `HotkeyManager`: Keyboard shortcut management with conflict detection
 - `ActivityHistoryManager`: Session tracking with export/import
 - `NotificationManager`: System notification handling
+- `Logger`: Centralized logging with Apple's unified logging system
+- `UserDefaultsKeys`: Centralized UserDefaults key management
+- `Constants`: Application-wide constants and configuration values
+- `TimeFormatter`: Duration formatting utilities
 
 See source files for detailed API documentation.
+
+## Utilities
+
+### Logger
+
+Centralized logging framework using Apple's unified logging system (os.log):
+
+```swift
+// Log categories
+Logger.info("Message", category: .general)
+Logger.debug("Debug info", category: .power)
+Logger.warning("Warning", category: .timer)
+Logger.error("Error occurred", category: .notifications)
+
+// Convenience methods
+Logger.powerAssertionCreated(id: assertionID)
+Logger.timerStarted(duration: 3600)
+Logger.sessionStarted(timerMode: true)
+```
+
+**Categories**: general, power, timer, notifications, hotkey, history, preferences
+
+### UserDefaultsKeys
+
+Centralized UserDefaults key management with namespace isolation:
+
+```swift
+// All keys use "Weakup" prefix
+UserDefaultsKeys.soundEnabled        // "WeakupSoundEnabled"
+UserDefaultsKeys.timerMode           // "WeakupTimerMode"
+UserDefaultsKeys.language            // "WeakupLanguage"
+
+// Utility methods
+UserDefaultsKeys.all                 // Array of all keys
+UserDefaultsKeys.removeAll()         // Clean up all keys (for testing)
+```
+
+### Constants
+
+Application-wide constants and configuration:
+
+```swift
+// Timer presets
+AppConstants.TimerPresets.fifteenMinutes  // 900 seconds
+AppConstants.TimerPresets.oneHour         // 3600 seconds
+AppConstants.TimerPresets.maximum         // 86400 seconds (24 hours)
+
+// UI configuration
+AppConstants.SettingsWindow.width         // 300
+AppConstants.HistingsView.height         // 400
+
+// Notification identifiers
+AppConstants.Notifications.timerExpiredIdentifier
+AppConstants.Notifications.restartAction
+```
+
+### TimeFormatter
+
+Duration formatting utilities:
+
+```swift
+// Format duration for display
+TimeFormatter.duration(3665)  // "1h 1m 5s"
+TimeFormatter.duration(90)    // "1m 30s"
+```
 
 ## Resources
 
