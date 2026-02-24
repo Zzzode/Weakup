@@ -69,9 +69,11 @@ public final class IconManager: ObservableObject {
 
     public func image(for style: IconStyle, isActive: Bool) -> NSImage? {
         let symbolName = isActive ? style.activeSymbol : style.inactiveSymbol
-        let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-        return NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
+        let config = NSImage.SymbolConfiguration(pointSize: 17, weight: .medium)
+        let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
             .withSymbolConfiguration(config)
+        image?.isTemplate = true
+        return image
     }
 
     public func currentImage(isActive: Bool) -> NSImage? {
