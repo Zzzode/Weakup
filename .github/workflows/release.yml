@@ -66,6 +66,19 @@ jobs:
             echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Validate Release Version
+        run: |
+          RELEASE_VERSION="${{ steps.version.outputs.version }}"
+          REPOSITORY_VERSION=$(tr -d '[:space:]' < VERSION)
+          if [ "$RELEASE_VERSION" != "$REPOSITORY_VERSION" ]; then
+            echo "Release version $RELEASE_VERSION does not match VERSION ($REPOSITORY_VERSION)"
+            exit 1
+          fi
+          if ! grep -Fq "## [$RELEASE_VERSION]" CHANGELOG.md; then
+            echo "CHANGELOG.md has no entry for $RELEASE_VERSION"
+            exit 1
+          fi
+
       - name: Build App Bundle
         run: ./build.sh
 
@@ -185,10 +198,20 @@ jobs:
         run: |
           ditto -c -k --sequesterRsrc --keepParent Weakup.app Weakup-${{ steps.version.outputs.version }}.zip
 
+      - name: Package Source Code
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git archive \
+            --format=tar.gz \
+            --prefix="Weakup-${VERSION}/" \
+            --output="Weakup-${VERSION}-source.tar.gz" \
+            "$GITHUB_SHA"
+
       - name: Generate Checksums
         run: |
           shasum -a 256 Weakup-${{ steps.version.outputs.version }}.dmg > checksums.txt
           shasum -a 256 Weakup-${{ steps.version.outputs.version }}.zip >> checksums.txt
+          shasum -a 256 Weakup-${{ steps.version.outputs.version }}-source.tar.gz >> checksums.txt
           cat checksums.txt
 
       - name: Extract Release Notes from CHANGELOG
@@ -209,13 +232,9 @@ jobs:
             found { print }
           ' CHANGELOG.md)
 
-          # If no version-specific notes found, try Unreleased section
           if [ -z "$NOTES" ]; then
-            NOTES=$(awk '
-              /^## \[Unreleased\]/ { found = 1; next }
-              /^## \[/ { if (found) exit }
-              found { print }
-            ' CHANGELOG.md)
+            echo "No release notes found for $VERSION"
+            exit 1
           fi
 
           # Write to file for use in release body
@@ -230,6 +249,15 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           DMG_SHA=$(shasum -a 256 Weakup-${VERSION}.dmg | cut -d' ' -f1)
           ZIP_SHA=$(shasum -a 256 Weakup-${VERSION}.zip | cut -d' ' -f1)
+          SOURCE_SHA=$(shasum -a 256 Weakup-${VERSION}-source.tar.gz | cut -d' ' -f1)
+          ARCHITECTURES=$(lipo -archs Weakup.app/Contents/MacOS/weakup)
+
+          if codesign -dv --verbose=4 Weakup.app 2>&1 | grep -q "Authority=Developer ID Application" && \
+             xcrun stapler validate Weakup.app >/dev/null 2>&1; then
+            DISTRIBUTION_NOTICE="This build is signed with Apple Developer ID and notarized by Apple."
+          else
+            DISTRIBUTION_NOTICE="**Important:** This build is not signed and notarized with Apple Developer ID. macOS may block the first launch; Control-click Weakup in Applications, choose **Open**, and confirm."
+          fi
 
           cat > release_body.md << EOF
           ## Weakup v${VERSION}
@@ -240,6 +268,10 @@ jobs:
 
           ### Installation
 
+          ${DISTRIBUTION_NOTICE}
+
+          **Architecture:** `${ARCHITECTURES}`
+
           **Option 1: DMG (Recommended)**
           1. Download \`Weakup-${VERSION}.dmg\`
           2. Open the DMG and drag Weakup to Applications
@@ -248,14 +280,22 @@ jobs:
           1. Download \`Weakup-${VERSION}.zip\`
           2. Extract and move Weakup.app to Applications
 
+          **Option 3: Source Code**
+          1. Download \`Weakup-${VERSION}-source.tar.gz\`
+          2. Extract it and follow the source build instructions in README.md
+
           ### Requirements
-          - macOS 13.0 or later
+          - Prebuilt DMG/ZIP: macOS 13.0 or later and hardware compatible with the architecture shown above
+          - Source build: macOS 13.0 or later, Xcode, and the Swift version specified in \`.swift-version\`
+
+          Weakup is not currently available from the official Homebrew Cask repository.
 
           ### Checksums (SHA-256)
           | File | SHA-256 |
           |------|---------|
           | Weakup-${VERSION}.dmg | \`${DMG_SHA}\` |
           | Weakup-${VERSION}.zip | \`${ZIP_SHA}\` |
+          | Weakup-${VERSION}-source.tar.gz | \`${SOURCE_SHA}\` |
           EOF
 
           cat release_body.md
@@ -268,6 +308,7 @@ jobs:
           files: |
             Weakup-${{ steps.version.outputs.version }}.dmg
             Weakup-${{ steps.version.outputs.version }}.zip
+            Weakup-${{ steps.version.outputs.version }}-source.tar.gz
             checksums.txt
           draft: false
           prerelease: false
