@@ -31,11 +31,12 @@ This directory contains all technical documentation for the Weakup project.
 
 Release-specific documentation for each version:
 
-### v1.1.0 (Current)
+### Current Public Release: v1.0.2
 
-- **[RELEASE_NOTES_v1.1.0.md](releases/RELEASE_NOTES_v1.1.0.md)** - User-facing release notes
-- **[RELEASE_READINESS_REPORT.md](releases/RELEASE_READINESS_REPORT.md)** - Internal release approval
-- **[TEST_REPORT.md](releases/TEST_REPORT.md)** - Final QA test results (462/462 tests passing)
+- **[CHANGELOG.md](../CHANGELOG.md)** - Published version history
+- **[GitHub Releases](https://github.com/Zzzode/Weakup/releases)** - Public release artifacts
+
+The documents under `releases/` that reference v1.1.0 are historical planning and readiness artifacts. They do not represent a published v1.1.0 release.
 
 ---
 
@@ -80,7 +81,7 @@ Historical documents that have been superseded:
 
 1. [CODE_SIGNING.md](CODE_SIGNING.md) - Signing and notarization
 2. [HOMEBREW.md](HOMEBREW.md) - Homebrew distribution
-3. [RELEASE_NOTES_v1.1.0.md](releases/RELEASE_NOTES_v1.1.0.md) - Release notes template
+3. [CHANGELOG.md](../CHANGELOG.md) - Published release notes
 
 ### For Contributors
 
@@ -124,5 +125,5 @@ Historical documents that have been superseded:
 
 ---
 
-**Last Updated**: 2026-02-22
-**Project Version**: 1.1.0
+**Last Updated**: 2026-07-18
+**Project Version**: 1.0.2

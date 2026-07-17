@@ -20,7 +20,7 @@ coverage:
 # Ignore test files, build artifacts, and UI code
 # Note: UI code (Sources/Weakup/**) is excluded because:
 # 1. It's not compiled into the test binary (Package.swift only includes WeakupCore in test dependencies)
-# 2. UI code is tested separately via XCUITest (not included in SPM coverage)
+# 2. XCUITest sources exist, but UI code is not executed by the current SPM CI job
 # 3. Coverage statistics focus on testable business logic (WeakupCore)
 ignore:
   - "Tests/**"

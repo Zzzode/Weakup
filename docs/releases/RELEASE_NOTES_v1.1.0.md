@@ -1,5 +1,7 @@
 # Weakup v1.1.0 Release Notes
 
+> Historical planning artifact: v1.1.0 was not published. The current public release is v1.0.2; see the root `CHANGELOG.md` for released changes.
+
 **Release Date:** February 22, 2026
 
 We're excited to announce Weakup v1.1.0! This release focuses on quality, testing, and new features to make Weakup even more reliable and useful.

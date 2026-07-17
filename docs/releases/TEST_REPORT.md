@@ -1,5 +1,7 @@
 # Weakup v1.1.0 - Comprehensive Test Report
 
+> Historical planning artifact: v1.1.0 was not published. Test counts and readiness statements below describe the planned release state, not a public release.
+
 ## Document Information
 
 | Field | Value |

@@ -1,82 +1,34 @@
 # Changelog
 
+All notable changes to Weakup are documented here. The project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
 
+### Added
+- Versioned source archive attached to each GitHub Release with its SHA-256 checksum
+
 ### Fixed
-- **Coverage Reporting** - Fixed Codecov showing incorrect 47% coverage by excluding UI code from statistics
-  - Updated `codecov.yml` to ignore `Sources/Weakup/**` (UI code tested via XCUITest)
+- **Coverage Reporting** - Fixed Codecov showing incorrect 47% coverage by excluding UI code from Swift Package coverage statistics
+  - Updated `codecov.yml` to ignore `Sources/Weakup/**` because the UI target is not exercised by the current SPM test job
   - Updated CI workflow to filter coverage reports to WeakupCore only
   - Added coverage generation script (`scripts/generate_coverage.sh`)
-  - Updated documentation to explain coverage scope (WeakupCore: ~88%, UI: tested separately)
+  - Updated documentation to explain coverage scope (`WeakupCore`: ~88%; UI test sources are not part of SPM coverage)
   - Actual business logic coverage is 87.73%, not 47%
 
 ## [1.0.2] - 2026-02-23
 
+### Added
+- Display-sleep prevention alongside idle-system-sleep prevention
+- Swift 6.2.3 toolchain pinning for reproducible builds
 
-All notable changes to Weakup will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### Changed
+- Migrated unit and integration tests from XCTest to Swift Testing
+- Improved preference isolation and test infrastructure
+- Updated architecture, development, and testing documentation
 
 ## [1.0.1] - 2026-02-23
 
-No unreleased changes.
-
----
-
-## [1.1.0] - 2026-02-22
-
-### Added
-
-#### New Features
-- **Keyboard Shortcut Conflict Detection** - Warns when shortcuts conflict with system or app shortcuts, with severity levels (high/medium/low) and suggestions
-- **Launch at Login** - Option to automatically start Weakup when you log in to your Mac
-- **Activity History Export** - Export your session history to CSV or JSON format
-- **Activity History Import** - Import previously exported history data
-- **Enhanced History View** - Filter sessions by date range, timer mode, and search; sort by date or duration
-- **Daily Statistics Chart** - Visual chart showing activity over the past 7 days
-- **Onboarding Flow** - Welcome screen for new users
-
-#### Testing and Quality
-- **462 Unit Tests** - Comprehensive test coverage across all components, **100% pass rate**
-- **90% Coverage** on CaffeineViewModel (core business logic)
-- **85% Coverage** on L10n (localization system)
-- **Integration Tests** - End-to-end tests for sleep prevention and timer flows
-- **CI/CD Improvements** - Automated testing and coverage reports on every PR
-
-### Changed
-
-#### Code Improvements
-- **Centralized Constants** - All UserDefaults keys, app constants, and identifiers in dedicated files
-- **Logger Utility** - Consistent logging across the application
-- **TimeFormatter** - Shared time formatting utilities
-- **Refactored Managers** - Cleaner dependency injection for NotificationManager
-
-#### Documentation
-- **Architecture Diagrams** - Component, sequence, and data flow diagrams
-- **API Documentation** - Comprehensive doc comments on all public interfaces
-- **Testing Guide** - Updated with examples and best practices
-- **CLAUDE.md** - AI development guide updated for current architecture
-
-### Fixed
-- Timer accuracy improvements when system is under load
-- Hotkey registration reliability improvements
-- Memory leak fixes in timer callbacks
-
-### Technical
-
-#### New Utilities
-- `UserDefaultsKeys` - Centralized preference keys
-- `AppConstants` - Application-wide constants
-- `Logger` - Structured logging
-- `TimeFormatter` - Duration formatting
-
-#### Test Infrastructure
-- `MockUserDefaults` - For isolated preference testing
-- `MockSleepPreventionService` - For testing without system calls
-- `TestFixtures` - Shared test data
-
----
+Maintenance release with versioning and release-workflow corrections.
 
 ## [1.0.0] - 2026-02-21
 
@@ -179,7 +131,8 @@ No unreleased changes.
 
 | Version | Date | Highlights |
 |---------|------|------------|
-| 1.1.0 | 2026-02-22 | Testing suite, history export, shortcut conflict detection |
+| 1.0.2 | 2026-02-23 | Display sleep prevention and Swift Testing migration |
+| 1.0.1 | 2026-02-23 | Release metadata maintenance |
 | 1.0.0 | 2026-02-21 | Initial release with full feature set |
 
 ## Upgrade Notes
@@ -202,6 +155,6 @@ None at this time.
 
 ## Links
 
-- [GitHub Repository](https://github.com/user/weakup)
-- [Issue Tracker](https://github.com/user/weakup/issues)
+- [GitHub Repository](https://github.com/Zzzode/Weakup)
+- [Issue Tracker](https://github.com/Zzzode/Weakup/issues)
 - [Documentation](./docs/)

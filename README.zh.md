@@ -7,9 +7,9 @@
 [![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
 ![macOS](https://img.shields.io/badge/macOS-13%2B-blue)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Swift](https://img.shields.io/badge/Swift-6.0-orange)
+![Swift](https://img.shields.io/badge/Swift-6.2.3-orange)
 
-> **关于代码覆盖率**：覆盖率徽章仅反映 WeakupCore（业务逻辑层）的测试覆盖率。Weakup 目标中的 UI 代码通过 XCUITest 单独测试，不包含在覆盖率统计中。
+> **测试范围**：覆盖率徽章仅反映 `WeakupCore` 的单元测试和集成测试。仓库包含 XCUITest 源文件，但当前 Swift Package Manager CI 并未执行 UI 测试。
 
 一个高性能、轻量级的 macOS 防休眠实用工具。
 
@@ -24,7 +24,7 @@
 - **视觉状态** - 清晰的状态指示（填充/空心的图标），支持多种图标样式
 - **全局快捷键** - `Cmd + Ctrl + 0` 随时切换
 - **快捷键冲突检测** - 提示常见冲突并建议替代组合
-- **原生性能** - 使用 IOPMAssertion API，零开销
+- **原生系统集成** - 使用 macOS IOPMAssertion API 阻止空闲休眠和显示器休眠
 - **深色/浅色主题** - 支持系统主题、浅色模式和深色模式
 - **声音反馈** - 切换时可选的声音反馈
 - **图标自定义** - 从电源、闪电、咖啡、月亮或眼睛图标中选择
@@ -43,27 +43,27 @@
 | Chinese (Traditional) | 繁體中文 |
 | Japanese | 日本語 |
 | Korean | 한국어 |
-| French | Francais |
+| French | Français |
 | German | Deutsch |
-| Spanish | Espanol |
+| Spanish | Español |
 
 ## 安装
 
-### Homebrew (推荐)
+### 预编译发布版
 
-```bash
-brew install --cask weakup
-```
+当前最新公开版本为 **v1.0.2**。预编译应用仅支持 **Apple Silicon（arm64）**，并且目前**没有经过 Apple Developer ID 签名或公证**，因此 macOS 可能阻止首次启动。
 
-### 下载发布版
-
-从 [GitHub Releases](https://github.com/Zzzode/weakup/releases) 下载最新版本：
-
-1. 下载 `Weakup-x.x.x.dmg`
+1. 从 [GitHub Releases](https://github.com/Zzzode/weakup/releases/latest) 下载 `Weakup-1.0.2.dmg`
 2. 打开 DMG 并将 Weakup 拖入应用程序文件夹
-3. 从应用程序文件夹启动
+3. 在应用程序文件夹中按住 Control 点击 Weakup，选择“打开”，然后再次确认
+
+每个 Release 都附带 SHA-256 校验值。例如可运行 `shasum -a 256 Weakup-1.0.2.dmg` 验证下载文件。
+
+> Weakup 尚未进入 Homebrew 官方 Cask 仓库，`brew install --cask weakup` 当前不可用。本地 cask 测试方法请参阅 [Homebrew 安装说明](docs/HOMEBREW.md)。
 
 ### 源码编译
+
+从下一版本开始，发布流程会提供从对应提交生成的 `Weakup-x.y.z-source.tar.gz` 源码包。也可以直接克隆仓库：
 
 ```bash
 # 克隆仓库
@@ -81,8 +81,8 @@ open Weakup.app
 
 ### 系统要求
 
-- macOS 13.0 或更高版本
-- Xcode 命令行工具
+- 预编译版本：Apple Silicon Mac，macOS 13 或更高版本
+- 源码构建：macOS 13 或更高版本、Xcode 工具链，以及 `.swift-version` 指定的 Swift 6.2.3
 
 ## 使用方法
 
@@ -112,28 +112,13 @@ open Weakup.app
 
 ## 路线图
 
-### 已完成
-
-- [x] 深色/浅色主题支持
-- [x] 自定义定时时长
-- [x] 切换动作的声音反馈
-- [x] 菜单栏图标自定义
-- [x] 多语言支持（8 种语言）
-- [x] 菜单栏倒计时显示
-- [x] 计时结束通知
-- [x] 开机自启偏好
-- [x] 快捷键冲突检测
-- [x] 新手引导流程
-- [x] 活动历史管理与视图
-- [x] MVVM 架构重构
-- [x] CI/CD 流水线
-- [x] SwiftLint 和 SwiftFormat 集成
-
 ### 计划中
 
 - [ ] 定时规则（按时间段自动启停）
 - [ ] 菜单栏小组件
 - [ ] 与快捷指令集成
+
+当前稳定版本为 **v1.0.2**。已发布变更请参阅 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 文档
 
