@@ -4,6 +4,8 @@ All notable changes to Weakup are documented here. The project follows [Keep a C
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-07-18
+
 ### Added
 - Versioned source archive attached to each GitHub Release with its SHA-256 checksum
 - New calm, professional app icon combining a soft power symbol with a sunrise
@@ -11,6 +13,7 @@ All notable changes to Weakup are documented here. The project follows [Keep a C
 ### Fixed
 - Installation guidance now treats source builds as the only supported option until signed, notarized binaries are available
 - Release automation no longer publishes unsigned DMG or ZIP artifacts
+- Local build and formatting scripts now accept Swift 6.2.3 or later
 - **Coverage Reporting** - Fixed Codecov showing incorrect 47% coverage by excluding UI code from Swift Package coverage statistics
   - Updated `codecov.yml` to ignore `Sources/Weakup/**` because the UI target is not exercised by the current SPM test job
   - Updated CI workflow to filter coverage reports to WeakupCore only

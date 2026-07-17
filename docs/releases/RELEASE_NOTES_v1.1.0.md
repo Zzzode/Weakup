@@ -1,6 +1,6 @@
 # Weakup v1.1.0 Release Notes
 
-> Historical planning artifact: v1.1.0 was not published. The current public release is v1.0.2; see the root `CHANGELOG.md` for released changes.
+> Historical planning artifact: v1.1.0 was not published. The current public release is v1.0.3; see the root `CHANGELOG.md` for released changes.
 
 **Release Date:** February 22, 2026
 
