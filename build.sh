@@ -46,7 +46,7 @@ rm -rf "$APP_PATH"
 
 # Create app bundle structure
 mkdir -p "$APP_PATH/Contents/MacOS"
-mkdir -p "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset"
+mkdir -p "$APP_PATH/Contents/Resources"
 
 # Copy localization files
 LANGUAGES=("en" "zh-Hans" "zh-Hant" "ja" "ko" "fr" "de" "es")
@@ -59,49 +59,28 @@ done
 cp "$BINARY_PATH" "$APP_PATH/Contents/MacOS/weakup"
 chmod +x "$APP_PATH/Contents/MacOS/weakup"
 
-# Generate icons
-echo "Generating icons..."
-cat > /tmp/weakup_icon.svg << 'EOF'
-<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1024" height="1024" fill="#1E1E1E" rx="200"/>
-  <circle cx="512" cy="512" r="350" fill="#4CAF50" stroke="#3C3C3C" stroke-width="20"/>
-  <text x="512" y="580" font-family="Arial" font-size="400" font-weight="bold" fill="#1E1E1E" text-anchor="middle">W</text>
-</svg>
-EOF
-
-qlmanage -t -s 1024 -o "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset" /tmp/weakup_icon.svg >/dev/null 2>&1 || true
-ICON_SOURCE="$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/weakup_icon.svg.png"
-if [ -f "$ICON_SOURCE" ]; then
-    mv "$ICON_SOURCE" \
-       "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024.png" 2>/dev/null || true
-
-    SIZES=(16 32 64 128 256 512 1024)
-    for size in "${SIZES[@]}"; do
-        sips -z $size $size "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_1024.png" \
-            --out "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/icon_${size}.png" >/dev/null 2>&1 || true
-    done
-
-    cat > "$APP_PATH/Contents/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json" << 'EOF'
-{
-  "images" : [
-    {"idiom" : "mac", "scale" : "1x", "size" : "16x16", "filename" : "icon_16.png"},
-    {"idiom" : "mac", "scale" : "2x", "size" : "16x16", "filename" : "icon_32.png"},
-    {"idiom" : "mac", "scale" : "1x", "size" : "32x32", "filename" : "icon_32.png"},
-    {"idiom" : "mac", "scale" : "2x", "size" : "32x32", "filename" : "icon_64.png"},
-    {"idiom" : "mac", "scale" : "1x", "size" : "128x128", "filename" : "icon_128.png"},
-    {"idiom" : "mac", "scale" : "2x", "size" : "128x128", "filename" : "icon_256.png"},
-    {"idiom" : "mac", "scale" : "1x", "size" : "256x256", "filename" : "icon_256.png"},
-    {"idiom" : "mac", "scale" : "2x", "size" : "256x256", "filename" : "icon_512.png"},
-    {"idiom" : "mac", "scale" : "1x", "size" : "512x512", "filename" : "icon_512.png"},
-    {"idiom" : "mac", "scale" : "2x", "size" : "512x512", "filename" : "icon_1024.png"}
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
-}
-EOF
+# Generate the native macOS icon from the tracked 1024 px source asset.
+echo "Generating app icon..."
+ICON_SOURCE="$(pwd)/Assets/AppIcon.png"
+ICONSET_PATH="$APP_PATH/Contents/Resources/AppIcon.iconset"
+if [ ! -f "$ICON_SOURCE" ]; then
+    echo "Error: App icon source not found at $ICON_SOURCE"
+    exit 1
 fi
+
+mkdir -p "$ICONSET_PATH"
+sips -z 16 16 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_16x16.png" >/dev/null
+sips -z 32 32 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_16x16@2x.png" >/dev/null
+sips -z 32 32 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_32x32.png" >/dev/null
+sips -z 64 64 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_32x32@2x.png" >/dev/null
+sips -z 128 128 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_128x128.png" >/dev/null
+sips -z 256 256 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_128x128@2x.png" >/dev/null
+sips -z 256 256 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_256x256.png" >/dev/null
+sips -z 512 512 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_256x256@2x.png" >/dev/null
+sips -z 512 512 "$ICON_SOURCE" --out "$ICONSET_PATH/icon_512x512.png" >/dev/null
+cp "$ICON_SOURCE" "$ICONSET_PATH/icon_512x512@2x.png"
+iconutil -c icns "$ICONSET_PATH" -o "$APP_PATH/Contents/Resources/AppIcon.icns"
+rm -rf "$ICONSET_PATH"
 
 # Create Info.plist
 cat > "$APP_PATH/Contents/Info.plist" << EOF
@@ -145,9 +124,6 @@ cat > "$APP_PATH/Contents/Info.plist" << EOF
 </dict>
 </plist>
 EOF
-
-# Clean up temp file
-rm -f /tmp/weakup_icon.svg
 
 # Code signing (optional)
 # Set CODESIGN_IDENTITY to sign the app, e.g.:
