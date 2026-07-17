@@ -1,5 +1,8 @@
+# typed: strict
+# frozen_string_literal: true
+
 # Homebrew Cask formula for Weakup
-# To install: brew install --cask weakup
+# To install locally: brew install --cask ./homebrew/weakup.rb
 #
 # For development/testing:
 #   brew install --cask ./homebrew/weakup.rb
@@ -10,12 +13,12 @@
 #   3. Submit a pull request
 
 cask "weakup" do
-  version "1.0.0"
-  sha256 "PLACEHOLDER_SHA256"  # Update with actual SHA256 of the ZIP file
+  version "1.0.2"
+  sha256 "0c951b7405fdc560c15950252a4ea44e321c9b60d1513644da0195c70fd5df4d"
 
   url "https://github.com/Zzzode/weakup/releases/download/v#{version}/Weakup-#{version}.zip"
   name "Weakup"
-  desc "Lightweight macOS utility to prevent your Mac from sleeping"
+  desc "Lightweight utility that prevents idle and display sleep"
   homepage "https://github.com/Zzzode/weakup"
 
   livecheck do
@@ -28,7 +31,7 @@ cask "weakup" do
   app "Weakup.app"
 
   zap trash: [
-    "~/Library/Preferences/com.weakup.app.plist",
     "~/Library/Caches/com.weakup.app",
+    "~/Library/Preferences/com.weakup.app.plist",
   ]
 end
