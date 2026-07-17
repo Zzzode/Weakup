@@ -207,11 +207,26 @@ jobs:
             --output="Weakup-${VERSION}-source.tar.gz" \
             "$GITHUB_SHA"
 
+      - name: Check Prebuilt Distribution Readiness
+        id: distribution
+        run: |
+          if codesign -dv --verbose=4 Weakup.app 2>&1 | grep -q "Authority=Developer ID Application" && \
+             xcrun stapler validate Weakup.app >/dev/null 2>&1 && \
+             xcrun stapler validate "Weakup-${{ steps.version.outputs.version }}.dmg" >/dev/null 2>&1; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "Signed and notarized prebuilt artifacts will be published."
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Prebuilt artifacts are not distribution-ready; only source code will be published."
+          fi
+
       - name: Generate Checksums
         run: |
-          shasum -a 256 Weakup-${{ steps.version.outputs.version }}.dmg > checksums.txt
-          shasum -a 256 Weakup-${{ steps.version.outputs.version }}.zip >> checksums.txt
-          shasum -a 256 Weakup-${{ steps.version.outputs.version }}-source.tar.gz >> checksums.txt
+          shasum -a 256 Weakup-${{ steps.version.outputs.version }}-source.tar.gz > checksums.txt
+          if [ "${{ steps.distribution.outputs.ready }}" = "true" ]; then
+            shasum -a 256 Weakup-${{ steps.version.outputs.version }}.dmg >> checksums.txt
+            shasum -a 256 Weakup-${{ steps.version.outputs.version }}.zip >> checksums.txt
+          fi
           cat checksums.txt
 
       - name: Extract Release Notes from CHANGELOG
@@ -247,16 +262,25 @@ jobs:
       - name: Generate Release Body
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          DMG_SHA=$(shasum -a 256 Weakup-${VERSION}.dmg | cut -d' ' -f1)
-          ZIP_SHA=$(shasum -a 256 Weakup-${VERSION}.zip | cut -d' ' -f1)
-          SOURCE_SHA=$(shasum -a 256 Weakup-${VERSION}-source.tar.gz | cut -d' ' -f1)
-          ARCHITECTURES=$(lipo -archs Weakup.app/Contents/MacOS/weakup)
 
-          if codesign -dv --verbose=4 Weakup.app 2>&1 | grep -q "Authority=Developer ID Application" && \
-             xcrun stapler validate Weakup.app >/dev/null 2>&1; then
-            DISTRIBUTION_NOTICE="This build is signed with Apple Developer ID and notarized by Apple."
+          if [ "${{ steps.distribution.outputs.ready }}" = "true" ]; then
+            ARCHITECTURES=$(lipo -archs Weakup.app/Contents/MacOS/weakup)
+            cat > prebuilt_status.md << EOF
+          ### Signed Prebuilt Downloads
+
+          This release is signed with Apple Developer ID and notarized by Apple.
+
+          **Architecture:** \`${ARCHITECTURES}\`
+
+          - DMG: download \`Weakup-${VERSION}.dmg\`, then drag Weakup to Applications.
+          - ZIP: download \`Weakup-${VERSION}.zip\`, extract it, then move Weakup.app to Applications.
+          EOF
           else
-            DISTRIBUTION_NOTICE="**Important:** This build is not signed and notarized with Apple Developer ID. macOS may block the first launch; Control-click Weakup in Applications, choose **Open**, and confirm."
+            cat > prebuilt_status.md << EOF
+          ### Prebuilt Downloads
+
+          No supported prebuilt download is available for this release. Unsigned DMG and ZIP build artifacts are not published because they cannot pass normal macOS distribution checks.
+          EOF
           fi
 
           cat > release_body.md << EOF
@@ -268,34 +292,21 @@ jobs:
 
           ### Installation
 
-          ${DISTRIBUTION_NOTICE}
-
-          **Architecture:** `${ARCHITECTURES}`
-
-          **Option 1: DMG (Recommended)**
-          1. Download \`Weakup-${VERSION}.dmg\`
-          2. Open the DMG and drag Weakup to Applications
-
-          **Option 2: ZIP**
-          1. Download \`Weakup-${VERSION}.zip\`
-          2. Extract and move Weakup.app to Applications
-
-          **Option 3: Source Code**
+          **Source Code (Supported)**
           1. Download \`Weakup-${VERSION}-source.tar.gz\`
           2. Extract it and follow the source build instructions in README.md
 
+          $(cat prebuilt_status.md)
+
           ### Requirements
-          - Prebuilt DMG/ZIP: macOS 13.0 or later and hardware compatible with the architecture shown above
           - Source build: macOS 13.0 or later, Xcode, and the Swift version specified in \`.swift-version\`
 
           Weakup is not currently available from the official Homebrew Cask repository.
 
           ### Checksums (SHA-256)
-          | File | SHA-256 |
-          |------|---------|
-          | Weakup-${VERSION}.dmg | \`${DMG_SHA}\` |
-          | Weakup-${VERSION}.zip | \`${ZIP_SHA}\` |
-          | Weakup-${VERSION}-source.tar.gz | \`${SOURCE_SHA}\` |
+          \`\`\`text
+          $(cat checksums.txt)
+          \`\`\`
           EOF
 
           cat release_body.md
@@ -306,11 +317,19 @@ jobs:
           name: Weakup v${{ steps.version.outputs.version }}
           body_path: release_body.md
           files: |
-            Weakup-${{ steps.version.outputs.version }}.dmg
-            Weakup-${{ steps.version.outputs.version }}.zip
             Weakup-${{ steps.version.outputs.version }}-source.tar.gz
             checksums.txt
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Signed Prebuilt Artifacts
+        if: ${{ steps.distribution.outputs.ready == 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Weakup-${{ steps.version.outputs.version }}.dmg
+            Weakup-${{ steps.version.outputs.version }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
