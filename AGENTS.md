@@ -15,7 +15,7 @@ Weakup is a Swift 6 macOS 13+ menu-bar application managed with Swift Package Ma
 - `swift test --enable-code-coverage` collects WeakupCore coverage; CI expects an 80% project threshold.
 - `./scripts/format.sh` applies SwiftFormat and runs SwiftLint.
 
-Use the Swift version recorded in `.swift-version`. Some app behavior requires a proper bundle, so validate UI or localization changes with `./build.sh`.
+Use the Swift version recorded in `.swift-version` or a later compatible version. Some app behavior requires a proper bundle, so validate UI or localization changes with `./build.sh`.
 
 ## Coding Style & Naming Conventions
 

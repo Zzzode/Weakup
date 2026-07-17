@@ -9,7 +9,7 @@
 [![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
 ![macOS](https://img.shields.io/badge/macOS-13%2B-blue)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Swift](https://img.shields.io/badge/Swift-6.2.3-orange)
+![Swift](https://img.shields.io/badge/Swift-6.2.3%2B-orange)
 
 > **测试范围**：覆盖率徽章仅反映 `WeakupCore` 的单元测试和集成测试。仓库包含 XCUITest 源文件，但当前 Swift Package Manager CI 并未执行 UI 测试。
 
@@ -76,7 +76,7 @@ v1.0.2 Release 中的 DMG 和 ZIP 是早期未签名产物，**不支持作为�
 ### 系统要求
 
 - macOS 13 或更高版本
-- Xcode 工具链，以及 `.swift-version` 指定的 Swift 6.2.3
+- Xcode 工具链，以及 Swift 6.2.3 或更高版本（`.swift-version` 记录最低版本）
 
 ## 使用方法
 

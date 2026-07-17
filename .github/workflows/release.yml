@@ -299,7 +299,7 @@ jobs:
           $(cat prebuilt_status.md)
 
           ### Requirements
-          - Source build: macOS 13.0 or later, Xcode, and the Swift version specified in \`.swift-version\`
+          - Source build: macOS 13.0 or later, Xcode, and the minimum Swift version specified in \`.swift-version\` (or later)
 
           Weakup is not currently available from the official Homebrew Cask repository.
 

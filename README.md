@@ -9,7 +9,7 @@
 [![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
 ![macOS](https://img.shields.io/badge/macOS-13%2B-blue)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
-![Swift](https://img.shields.io/badge/Swift-6.2.3-orange)
+![Swift](https://img.shields.io/badge/Swift-6.2.3%2B-orange)
 
 > **Testing scope:** The coverage badge reflects `WeakupCore` unit and integration tests. XCUITest source files are present, but UI tests are not currently executed by the Swift Package Manager CI workflow.
 
@@ -76,7 +76,7 @@ The DMG and ZIP attached to v1.0.2 are legacy unsigned artifacts and are **not s
 ### Requirements
 
 - macOS 13 or later
-- Xcode toolchain and Swift 6.2.3 as pinned in `.swift-version`
+- Xcode toolchain and Swift 6.2.3 or later (`.swift-version` records the minimum)
 
 ## Usage
 

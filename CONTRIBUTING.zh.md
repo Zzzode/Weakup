@@ -28,7 +28,7 @@
 
 - macOS 13.0 (Ventura) 或更高版本
 - Xcode 命令行工具 (`xcode-select --install`)
-- Swift 6.2.3（以 `.swift-version` 为准）
+- Swift 6.2.3 或更高版本（`.swift-version` 记录最低版本）
 - Git
 
 ### 快速上手
