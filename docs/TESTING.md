@@ -729,7 +729,7 @@ xcrun llvm-cov export \
 Key filters:
 - `\.build/` - Excludes build artifacts
 - `Tests/` - Excludes test code itself
-- `Sources/Weakup/` - Excludes UI code (tested separately)
+- `Sources/Weakup/` - Excludes UI code, which is not compiled into the current SPM test target
 
 ### Codecov Configuration
 

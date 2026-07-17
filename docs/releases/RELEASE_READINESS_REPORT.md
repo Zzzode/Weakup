@@ -1,5 +1,7 @@
 # Release Readiness Report
 
+> Historical planning artifact: v1.1.0 was not published. The current public release is v1.0.2.
+
 **Project:** Weakup
 **Version:** 1.1.0
 **Date:** 2026-02-22

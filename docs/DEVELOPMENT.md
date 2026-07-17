@@ -6,7 +6,7 @@ This guide covers setting up and developing Weakup.
 
 - macOS 13.0 (Ventura) or later
 - Xcode Command Line Tools
-- Swift 6.0+
+- Swift 6.2.3 (see `.swift-version`)
 
 ### Installing Prerequisites
 
@@ -16,7 +16,7 @@ xcode-select --install
 
 # Verify Swift version
 swift --version
-# Should show Swift 6.0 or later
+# Should show Swift 6.2.3
 ```
 
 ## Getting Started
