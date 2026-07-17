@@ -1,8 +1,8 @@
 # Homebrew Installation
 
-Weakup includes a cask for local testing, but it has not been accepted into the official Homebrew Cask repository.
+Weakup is not currently available through Homebrew. The repository cask is retained for future packaging work, but it is not a supported installation method.
 
-> The v1.0.2 binary is Apple Silicon-only and is not signed or notarized with Apple Developer ID. Homebrew does not remove macOS Gatekeeper protections.
+> The v1.0.2 binary is unsigned, not notarized, and fails strict signature validation. Installing it through Homebrew does not make it usable.
 
 ## Installation
 
@@ -14,26 +14,21 @@ The following command is reserved for a future official submission and does **no
 brew install --cask weakup
 ```
 
-### From GitHub Release
+### Supported Alternative
 
-Download `Weakup-1.0.2.dmg` or `Weakup-1.0.2.zip` from the [latest GitHub release](https://github.com/Zzzode/weakup/releases/latest). After copying the app to Applications, Control-click it and choose **Open** for the first launch.
-
-### From Local Formula
-
-For development or testing:
+Build Weakup locally from the stable source tag:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Zzzode/weakup.git
+git clone --branch v1.0.2 --depth 1 https://github.com/Zzzode/weakup.git
 cd weakup
-
-# Install v1.0.2 from the repository's versioned cask
-brew install --cask ./homebrew/weakup.rb
+./build.sh
+open Weakup.app
 ```
 
 ## Updating
 
-The official `brew upgrade --cask weakup` flow is unavailable until the cask is accepted upstream. For the local cask, pull repository updates and reinstall the versioned cask file.
+Homebrew update support will become available only after Weakup has a signed, notarized release and its cask is accepted upstream.
 
 ## Uninstalling
 

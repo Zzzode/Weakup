@@ -2,6 +2,8 @@
 
 <div align="center">
 
+<img src="Assets/AppIcon.png" width="128" alt="Weakup 应用图标">
+
 [![CI](https://github.com/Zzzode/weakup/actions/workflows/ci.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/ci.yml)
 [![Release](https://github.com/Zzzode/weakup/actions/workflows/release.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
@@ -49,25 +51,13 @@
 
 ## 安装
 
-### 预编译发布版
+### 从源码构建
 
-当前最新公开版本为 **v1.0.2**。预编译应用仅支持 **Apple Silicon（arm64）**，并且目前**没有经过 Apple Developer ID 签名或公证**，因此 macOS 可能阻止首次启动。
-
-1. 从 [GitHub Releases](https://github.com/Zzzode/weakup/releases/latest) 下载 `Weakup-1.0.2.dmg`
-2. 打开 DMG 并将 Weakup 拖入应用程序文件夹
-3. 在应用程序文件夹中按住 Control 点击 Weakup，选择“打开”，然后再次确认
-
-每个 Release 都附带 SHA-256 校验值。例如可运行 `shasum -a 256 Weakup-1.0.2.dmg` 验证下载文件。
-
-> Weakup 尚未进入 Homebrew 官方 Cask 仓库，`brew install --cask weakup` 当前不可用。本地 cask 测试方法请参阅 [Homebrew 安装说明](docs/HOMEBREW.md)。
-
-### 源码编译
-
-从下一版本开始，发布流程会提供从对应提交生成的 `Weakup-x.y.z-source.tar.gz` 源码包。也可以直接克隆仓库：
+本地构建是当前**唯一受支持的安装方式**。构建最新稳定版本：
 
 ```bash
-# 克隆仓库
-git clone https://github.com/Zzzode/weakup.git
+# 克隆当前稳定版本标签
+git clone --branch v1.0.2 --depth 1 https://github.com/Zzzode/weakup.git
 cd weakup
 
 # 构建应用
@@ -75,14 +65,18 @@ cd weakup
 
 # 运行
 open Weakup.app
-
-# 或者将 Weakup.app 拖入你的应用程序文件夹
 ```
+
+从下一版本开始，GitHub Releases 也会提供从对应发布提交生成的 `Weakup-x.y.z-source.tar.gz` 源码包。
+
+### 预编译版本与 Homebrew 状态
+
+v1.0.2 Release 中的 DMG 和 ZIP 是早期未签名产物，**不支持作为正式安装方式**。Weakup 尚无 Developer ID 签名和 Apple 公证，这些文件可能无法通过 Gatekeeper 和签名校验。Weakup 目前也没有进入 Homebrew 官方 Cask 仓库。
 
 ### 系统要求
 
-- 预编译版本：Apple Silicon Mac，macOS 13 或更高版本
-- 源码构建：macOS 13 或更高版本、Xcode 工具链，以及 `.swift-version` 指定的 Swift 6.2.3
+- macOS 13 或更高版本
+- Xcode 工具链，以及 `.swift-version` 指定的 Swift 6.2.3
 
 ## 使用方法
 
