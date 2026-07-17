@@ -2,6 +2,8 @@
 
 <div align="center">
 
+<img src="Assets/AppIcon.png" width="128" alt="Weakup app icon">
+
 [![CI](https://github.com/Zzzode/weakup/actions/workflows/ci.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/ci.yml)
 [![Release](https://github.com/Zzzode/weakup/actions/workflows/release.yml/badge.svg)](https://github.com/Zzzode/weakup/actions/workflows/release.yml)
 [![codecov](https://codecov.io/gh/Zzzode/weakup/branch/main/graph/badge.svg)](https://codecov.io/gh/Zzzode/weakup)
@@ -49,25 +51,13 @@ A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
 
 ## Installation
 
-### Prebuilt Release
+### Build from Source
 
-The latest published version is **v1.0.2**. Its prebuilt application supports **Apple Silicon (arm64) only** and is currently **not signed or notarized with Apple Developer ID**. macOS may therefore block the first launch.
-
-1. Download `Weakup-1.0.2.dmg` from [GitHub Releases](https://github.com/Zzzode/weakup/releases/latest).
-2. Open the DMG and drag Weakup to Applications
-3. In Applications, Control-click Weakup, choose **Open**, then confirm **Open**
-
-SHA-256 checksums are attached to each release. Verify a download with, for example, `shasum -a 256 Weakup-1.0.2.dmg`.
-
-> Weakup is not yet published in the official Homebrew Cask repository. `brew install --cask weakup` does not currently work. See [Homebrew installation notes](docs/HOMEBREW.md) for local cask testing.
-
-### From Source
-
-Starting with the next release, the workflow publishes a versioned `Weakup-x.y.z-source.tar.gz` archive built from the exact release commit. You can also clone the repository:
+Building locally is currently the **only supported installation method**. To build the latest stable version:
 
 ```bash
-# Clone the repository
-git clone https://github.com/Zzzode/weakup.git
+# Clone the current stable tag
+git clone --branch v1.0.2 --depth 1 https://github.com/Zzzode/weakup.git
 cd weakup
 
 # Build the app
@@ -75,14 +65,18 @@ cd weakup
 
 # Run
 open Weakup.app
-
-# Or drag Weakup.app to your Applications folder
 ```
+
+Starting with the next release, GitHub Releases will also include a versioned `Weakup-x.y.z-source.tar.gz` archive built from the exact release commit.
+
+### Prebuilt and Homebrew Status
+
+The DMG and ZIP attached to v1.0.2 are legacy unsigned artifacts and are **not supported for installation**. Weakup has no Developer ID signature or Apple notarization, so those downloads may fail Gatekeeper and signature validation. Weakup is also not available from the official Homebrew Cask repository.
 
 ### Requirements
 
-- Prebuilt release: macOS 13 or later on Apple Silicon
-- Source build: macOS 13 or later, Xcode toolchain, and Swift 6.2.3 as pinned in `.swift-version`
+- macOS 13 or later
+- Xcode toolchain and Swift 6.2.3 as pinned in `.swift-version`
 
 ## Usage
 
