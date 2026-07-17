@@ -3,12 +3,27 @@ set -e
 
 SWIFT_CMD=${SWIFT_CMD:-"xcrun swift"}
 SWIFT_VERSION_FILE="$(pwd)/.swift-version"
+
+version_at_least() {
+    local current="$1"
+    local required="$2"
+    local current_major current_minor current_patch
+    local required_major required_minor required_patch
+
+    IFS=. read -r current_major current_minor current_patch <<< "$current"
+    IFS=. read -r required_major required_minor required_patch <<< "$required"
+
+    (( current_major > required_major )) ||
+        (( current_major == required_major && current_minor > required_minor )) ||
+        (( current_major == required_major && current_minor == required_minor && current_patch >= required_patch ))
+}
+
 if [ -f "$SWIFT_VERSION_FILE" ]; then
-    REQUIRED_SWIFT_VERSION=$(cat "$SWIFT_VERSION_FILE" | tr -d '[:space:]')
+    MINIMUM_SWIFT_VERSION=$(tr -d '[:space:]' < "$SWIFT_VERSION_FILE")
     CURRENT_SWIFT_VERSION=$($SWIFT_CMD --version | awk '/Apple Swift version/ {print $4}')
-    if [[ "$CURRENT_SWIFT_VERSION" != "$REQUIRED_SWIFT_VERSION"* ]]; then
-        echo "Swift version mismatch. Required: $REQUIRED_SWIFT_VERSION, Current: $CURRENT_SWIFT_VERSION"
-        echo "Set SWIFT_CMD to point to the correct Swift toolchain"
+    if ! version_at_least "$CURRENT_SWIFT_VERSION" "$MINIMUM_SWIFT_VERSION"; then
+        echo "Swift version too old. Minimum: $MINIMUM_SWIFT_VERSION, Current: $CURRENT_SWIFT_VERSION"
+        echo "Set SWIFT_CMD to a Swift $MINIMUM_SWIFT_VERSION or later toolchain"
         exit 1
     fi
 fi

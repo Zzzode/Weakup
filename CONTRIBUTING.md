@@ -28,7 +28,7 @@ Thank you for your interest in contributing to Weakup! This document provides gu
 
 - macOS 13.0 (Ventura) or later
 - Xcode Command Line Tools (`xcode-select --install`)
-- Swift 6.2.3 (see `.swift-version`)
+- Swift 6.2.3 or later (`.swift-version` records the minimum)
 - Git
 
 ### Quick Start
