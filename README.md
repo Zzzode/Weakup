@@ -57,7 +57,7 @@ Building locally is currently the **only supported installation method**. To bui
 
 ```bash
 # Clone the current stable tag
-git clone --branch v1.0.2 --depth 1 https://github.com/Zzzode/weakup.git
+git clone --branch v1.0.3 --depth 1 https://github.com/Zzzode/weakup.git
 cd weakup
 
 # Build the app
@@ -67,7 +67,7 @@ cd weakup
 open Weakup.app
 ```
 
-Starting with the next release, GitHub Releases will also include a versioned `Weakup-x.y.z-source.tar.gz` archive built from the exact release commit.
+GitHub Releases include a versioned `Weakup-x.y.z-source.tar.gz` archive built from the exact release commit.
 
 ### Prebuilt and Homebrew Status
 
@@ -112,7 +112,7 @@ The DMG and ZIP attached to v1.0.2 are legacy unsigned artifacts and are **not s
 - [ ] Menu bar widget for quick stats
 - [ ] Shortcuts app integration
 
-The current stable release is **v1.0.2**. See [CHANGELOG.md](CHANGELOG.md) for shipped changes.
+The current stable release is **v1.0.3**. See [CHANGELOG.md](CHANGELOG.md) for shipped changes.
 
 ## Documentation
 
