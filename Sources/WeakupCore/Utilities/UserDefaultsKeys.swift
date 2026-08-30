@@ -31,6 +31,9 @@ public enum UserDefaultsKeys {
     /// Whether to show countdown in the menu bar.
     public static let showCountdownInMenuBar = "WeakupShowCountdownInMenuBar"
 
+    /// Whether the first-use explanation for Turn Off Display has been accepted.
+    public static let hasExplainedDisplayOff = "WeakupHasExplainedDisplayOff"
+
     // Notification Keys
 
     /// Whether notifications are enabled for timer expiry.
@@ -69,6 +72,7 @@ public enum UserDefaultsKeys {
         timerMode,
         timerDuration,
         showCountdownInMenuBar,
+        hasExplainedDisplayOff,
         notificationsEnabled,
         language,
         theme,

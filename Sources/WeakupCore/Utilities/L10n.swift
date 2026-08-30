@@ -203,6 +203,10 @@ extension L10n {
         string(forKey: "menu_quit")
     }
 
+    public var menuTurnOffDisplay: String {
+        string(forKey: "menu_turn_off_display")
+    }
+
     /// Status
     public var statusOn: String {
         string(forKey: "status_on")
@@ -316,6 +320,39 @@ extension L10n {
 
     public var turnOff: String {
         string(forKey: "turn_off")
+    }
+
+    /// Display Off
+    public var displayOffAction: String {
+        string(forKey: "display_off_action")
+    }
+
+    public var displayOffDescription: String {
+        string(forKey: "display_off_description")
+    }
+
+    public var displayOffSecurityNote: String {
+        string(forKey: "display_off_security_note")
+    }
+
+    public var displayOffFirstUseTitle: String {
+        string(forKey: "display_off_first_use_title")
+    }
+
+    public var displayOffFirstUseMessage: String {
+        string(forKey: "display_off_first_use_message")
+    }
+
+    public var displayOffContinue: String {
+        string(forKey: "display_off_continue")
+    }
+
+    public var displayOffFailedTitle: String {
+        string(forKey: "display_off_failed_title")
+    }
+
+    public var displayOffFailedMessage: String {
+        string(forKey: "display_off_failed_message")
     }
 
     /// Startup

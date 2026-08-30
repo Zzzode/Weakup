@@ -6,6 +6,7 @@
 // Menu
 "menu_settings" = "Ajustes";
 "menu_quit" = "Salir de Weakup";
+"menu_turn_off_display" = "Apagar la pantalla";
 
 // Status
 "status_on" = "Weakup: Activado";
@@ -44,6 +45,16 @@
 // Actions
 "turn_on" = "Activar";
 "turn_off" = "Desactivar";
+
+// Apagar la pantalla
+"display_off_action" = "Apagar la pantalla";
+"display_off_description" = "Apaga la pantalla de inmediato mientras el Mac y las tareas en segundo plano siguen funcionando.";
+"display_off_security_note" = "La solicitud de contraseña al reactivar el Mac depende de los ajustes de Pantalla de bloqueo de macOS.";
+"display_off_first_use_title" = "Apagar la pantalla";
+"display_off_first_use_message" = "La pantalla se apagará y Weakup mantendrá el Mac activo hasta que desactives la función para mantenerlo despierto. Si has configurado un temporizador, la función se detendrá automáticamente cuando termine. Mueve el ratón o pulsa una tecla para reactivar la pantalla. La solicitud de contraseña sigue los ajustes de Pantalla de bloqueo de macOS.";
+"display_off_continue" = "Continuar y apagar la pantalla";
+"display_off_failed_title" = "No se puede apagar la pantalla";
+"display_off_failed_message" = "No se pudo apagar la pantalla. Comprueba el estado actual de Weakup e inténtalo de nuevo.";
 
 // Notifications
 "notifications" = "Notificaciones";

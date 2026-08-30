@@ -6,6 +6,7 @@
 // Menu
 "menu_settings" = "Settings";
 "menu_quit" = "Quit Weakup";
+"menu_turn_off_display" = "Turn Off Display";
 
 // Status
 "status_on" = "Weakup: On";
@@ -44,6 +45,16 @@
 // Actions
 "turn_on" = "Turn On";
 "turn_off" = "Turn Off";
+
+// Display Off
+"display_off_action" = "Turn Off Display";
+"display_off_description" = "Turn off the display now while keeping your Mac and background tasks running.";
+"display_off_security_note" = "Whether a password is required when you wake your Mac depends on your macOS Lock Screen settings.";
+"display_off_first_use_title" = "Turn Off Display";
+"display_off_first_use_message" = "The display will turn off and Weakup will keep your Mac running until you turn off Keep Awake. If a timer is set, it will stop automatically when the timer ends. Move the mouse or press a key to wake the display. Password requirements follow your macOS Lock Screen settings.";
+"display_off_continue" = "Continue and Turn Off Display";
+"display_off_failed_title" = "Unable to Turn Off Display";
+"display_off_failed_message" = "The display could not be turned off. Check Weakup’s status and try again.";
 
 // Menu Bar
 "show_countdown_in_menu_bar" = "Show Countdown";

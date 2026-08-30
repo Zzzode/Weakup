@@ -49,13 +49,16 @@ public final class CaffeineViewModel: ObservableObject {
     ///
     /// When enabled along with a valid `timerDuration`, sleep prevention will
     /// automatically stop when the timer expires.
-    @Published public var timerMode = false
+    @Published public private(set) var timerMode = false
 
     /// The remaining time in seconds when timer mode is active.
     ///
     /// This value counts down from `timerDuration` to zero. When it reaches zero,
     /// sleep prevention is automatically disabled and a notification is sent.
     @Published public var timeRemaining: TimeInterval = 0
+
+    /// Indicates that a request to turn off the display is currently running.
+    @Published public private(set) var isDisplaySleepRequestInFlight = false
 
     /// Controls whether sound feedback is played on state changes.
     ///
@@ -99,13 +102,16 @@ public final class CaffeineViewModel: ObservableObject {
     public private(set) var timerDuration: TimeInterval = 0
 
     private var timer: Timer?
-    private var assertionID: IOPMAssertionID = 0
+    private var systemAssertionID: IOPMAssertionID = 0
     private var displayAssertionID: IOPMAssertionID = 0
     private var timerStartDate: Date?
     private var timerExpiredByTimer = false
+    private var displaySleepRequestGeneration: UInt = 0
 
     /// The notification manager used for timer expiry notifications.
     private let notificationManager: NotificationManaging
+    private let powerAssertionManager: PowerAssertionManaging
+    private let displaySleepRequester: DisplaySleepRequesting
 
     // Initialization
 
@@ -114,9 +120,23 @@ public final class CaffeineViewModel: ObservableObject {
     /// - Parameter notificationManager: The notification manager to use. Defaults to
     ///   `NotificationManager.shared` for production use. Pass a mock implementation
     ///   for testing.
-    public init(notificationManager: NotificationManaging? = nil) {
+    public convenience init(notificationManager: NotificationManaging? = nil) {
+        self.init(
+            notificationManager: notificationManager,
+            powerAssertionManager: IOKitPowerAssertionManager(),
+            displaySleepRequester: PMSetDisplaySleepRequester()
+        )
+    }
+
+    init(
+        notificationManager: NotificationManaging? = nil,
+        powerAssertionManager: PowerAssertionManaging,
+        displaySleepRequester: DisplaySleepRequesting
+    ) {
         // Use provided manager or default to shared instance
         self.notificationManager = notificationManager ?? NotificationManager.shared
+        self.powerAssertionManager = powerAssertionManager
+        self.displaySleepRequester = displaySleepRequester
 
         // Safely load preferences with fallbacks
         self.soundEnabled = Self.loadBool(forKey: UserDefaultsKeys.soundEnabled, default: true)
@@ -159,6 +179,7 @@ public final class CaffeineViewModel: ObservableObject {
     ///
     /// If currently inactive, this starts sleep prevention. If active, this stops it.
     public func toggle() {
+        guard !isDisplaySleepRequestInFlight else { return }
         if isActive {
             stop()
         } else {
@@ -174,48 +195,69 @@ public final class CaffeineViewModel: ObservableObject {
     /// - Note: If the assertion creation fails, the method returns silently without
     ///   changing the `isActive` state.
     public func start() {
-        var systemID: IOPMAssertionID = 0
-        let systemResult = IOPMAssertionCreateWithName(
-            kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
-            IOPMAssertionLevel(kIOPMAssertionLevelOn),
-            AppConstants.powerAssertionReason as CFString,
-            &systemID
-        )
+        guard !isActive, !isDisplaySleepRequestInFlight else { return }
 
-        guard systemResult == kIOReturnSuccess else {
-            Logger.error("Failed to create system sleep assertion", category: .power)
-            return
+        do {
+            try createSystemAssertion()
+            do {
+                try createDisplayAssertion()
+            } catch {
+                _ = releaseSystemAssertion()
+                throw error
+            }
+            activateSession()
+        } catch {
+            Logger.error("Failed to start sleep prevention", error: error, category: .power)
+        }
+    }
+
+    /// Immediately turns off the display while keeping the Mac running.
+    ///
+    /// If sleep prevention is already active, its timer and history session continue unchanged.
+    /// The existing display assertion remains active because forced display sleep is independent
+    /// from idle display sleep.
+    ///
+    /// - Throws: An error when the system assertion or display-sleep request fails.
+    public func turnOffDisplayKeepingSystemAwake() async throws {
+        guard !isDisplaySleepRequestInFlight else { return }
+        displaySleepRequestGeneration &+= 1
+        let requestGeneration = displaySleepRequestGeneration
+        isDisplaySleepRequestInFlight = true
+        defer {
+            if displaySleepRequestGeneration == requestGeneration {
+                isDisplaySleepRequestInFlight = false
+            }
         }
 
-        var displayID: IOPMAssertionID = 0
-        let displayResult = IOPMAssertionCreateWithName(
-            kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
-            IOPMAssertionLevel(kIOPMAssertionLevelOn),
-            AppConstants.powerAssertionReason as CFString,
-            &displayID
-        )
+        let startedNewSession = !isActive
 
-        guard displayResult == kIOReturnSuccess else {
-            Logger.error("Failed to create display sleep assertion", category: .power)
-            IOPMAssertionRelease(systemID)
-            return
+        if startedNewSession {
+            do {
+                try createSystemAssertion()
+                try createDisplayAssertion()
+            } catch {
+                let cleanupErrors = releaseAssertions()
+                if !cleanupErrors.isEmpty {
+                    throw DisplaySleepRequestError.rollbackIncomplete
+                }
+                throw error
+            }
         }
 
-        assertionID = systemID
-        displayAssertionID = displayID
-        isActive = true
-        Logger.powerAssertionCreated(id: systemID)
-        Logger.powerAssertionCreated(id: displayID)
-        playSound(enabled: true)
-
-        if timerMode, timerDuration > 0 {
-            timeRemaining = timerDuration
-            timerStartDate = Date()
-            startTimer()
-            Logger.timerStarted(duration: timerDuration)
+        do {
+            try await displaySleepRequester.requestDisplaySleep()
+        } catch {
+            guard displaySleepRequestGeneration == requestGeneration else { return }
+            if startedNewSession, !releaseAssertions().isEmpty {
+                throw DisplaySleepRequestError.rollbackIncomplete
+            }
+            throw error
         }
 
-        notifyChange()
+        guard displaySleepRequestGeneration == requestGeneration else { return }
+        if startedNewSession {
+            activateSession()
+        }
     }
 
     /// Stops sleep prevention and releases the IOPMAssertion.
@@ -223,12 +265,16 @@ public final class CaffeineViewModel: ObservableObject {
     /// Releases any active power assertion, stops the countdown timer,
     /// and resets all timer-related state.
     public func stop() {
-        releaseAssertion()
+        let wasActive = isActive
+        cancelDisplaySleepRequest()
+        releaseAssertions()
         stopTimer()
         isActive = false
         timeRemaining = 0
         timerStartDate = nil
-        playSound(enabled: false)
+        if wasActive {
+            playSound(enabled: false)
+        }
         notifyChange()
     }
 
@@ -239,6 +285,7 @@ public final class CaffeineViewModel: ObservableObject {
     /// - Note: If sleep prevention is currently active, calling this method will stop it.
     ///   The value is persisted to UserDefaults.
     public func setTimerDuration(_ seconds: TimeInterval) {
+        guard !isDisplaySleepRequestInFlight else { return }
         timerDuration = max(0, seconds)
         UserDefaultsStore.shared.set(timerDuration, forKey: UserDefaultsKeys.timerDuration)
         if isActive {
@@ -255,6 +302,7 @@ public final class CaffeineViewModel: ObservableObject {
     ///
     /// - Note: If disabling timer mode while sleep prevention is active, the session will be stopped.
     public func setTimerMode(_ enabled: Bool) {
+        guard !isDisplaySleepRequestInFlight else { return }
         timerMode = enabled
         UserDefaultsStore.shared.set(timerMode, forKey: UserDefaultsKeys.timerMode)
 
@@ -267,21 +315,74 @@ public final class CaffeineViewModel: ObservableObject {
     // Private Methods
 
     private func cleanup() {
-        releaseAssertion()
+        cancelDisplaySleepRequest()
+        releaseAssertions()
         stopTimer()
     }
 
-    private func releaseAssertion() {
-        if displayAssertionID != 0 {
-            Logger.powerAssertionReleased(id: displayAssertionID)
-            IOPMAssertionRelease(displayAssertionID)
-            displayAssertionID = 0
+    @discardableResult
+    private func releaseAssertions() -> [PowerAssertionError] {
+        [releaseDisplayAssertion(), releaseSystemAssertion()].compactMap { $0 }
+    }
+
+    private func createSystemAssertion() throws {
+        guard systemAssertionID == 0 else { return }
+        systemAssertionID = try powerAssertionManager.createAssertion(
+            .systemSleep, reason: AppConstants.powerAssertionReason
+        )
+        Logger.powerAssertionCreated(id: systemAssertionID)
+    }
+
+    private func createDisplayAssertion() throws {
+        guard displayAssertionID == 0 else { return }
+        displayAssertionID = try powerAssertionManager.createAssertion(
+            .displaySleep, reason: AppConstants.powerAssertionReason
+        )
+        Logger.powerAssertionCreated(id: displayAssertionID)
+    }
+
+    private func releaseSystemAssertion() -> PowerAssertionError? {
+        guard systemAssertionID != 0 else { return nil }
+        Logger.powerAssertionReleased(id: systemAssertionID)
+        let result = powerAssertionManager.releaseAssertion(systemAssertionID)
+        if result != kIOReturnSuccess {
+            Logger.error("Failed to release system sleep assertion: \(result)", category: .power)
+            return .releaseFailed(kind: .systemSleep, code: result)
         }
-        if assertionID != 0 {
-            Logger.powerAssertionReleased(id: assertionID)
-            IOPMAssertionRelease(assertionID)
-            assertionID = 0
+        systemAssertionID = 0
+        return nil
+    }
+
+    private func releaseDisplayAssertion() -> PowerAssertionError? {
+        guard displayAssertionID != 0 else { return nil }
+        Logger.powerAssertionReleased(id: displayAssertionID)
+        let result = powerAssertionManager.releaseAssertion(displayAssertionID)
+        if result != kIOReturnSuccess {
+            Logger.error("Failed to release display sleep assertion: \(result)", category: .power)
+            return .releaseFailed(kind: .displaySleep, code: result)
         }
+        displayAssertionID = 0
+        return nil
+    }
+
+    private func cancelDisplaySleepRequest() {
+        guard isDisplaySleepRequestInFlight else { return }
+        displaySleepRequestGeneration &+= 1
+        isDisplaySleepRequestInFlight = false
+    }
+
+    private func activateSession() {
+        isActive = true
+        playSound(enabled: true)
+
+        if timerMode, timerDuration > 0 {
+            timeRemaining = timerDuration
+            timerStartDate = Date()
+            startTimer()
+            Logger.timerStarted(duration: timerDuration)
+        }
+
+        notifyChange()
     }
 
     private func stopTimer() {
@@ -336,7 +437,7 @@ public final class CaffeineViewModel: ObservableObject {
     ///
     /// - Note: Does nothing if `timerDuration` is zero or negative.
     public func restartTimer() {
-        guard timerDuration > 0 else { return }
+        guard timerDuration > 0, !isDisplaySleepRequestInFlight else { return }
         timerMode = true
         start()
     }

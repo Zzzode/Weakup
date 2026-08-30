@@ -13,10 +13,7 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.removeObject(forKey: "WeakupSoundEnabled")
         UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerMode")
         UserDefaultsStore.shared.removeObject(forKey: "WeakupTimerDuration")
-        UserDefaultsStore.shared.removeObject(forKey: "WeakupNotificationsEnabled")
-        // Reset NotificationManager's notificationsEnabled to default (true)
-        NotificationManager.shared.notificationsEnabled = true
-        viewModel = CaffeineViewModel()
+        viewModel = CaffeineViewModel(notificationManager: MockNotificationManager())
     }
 
     // Initial State Tests
@@ -95,7 +92,7 @@ struct CaffeineViewModelTests {
 
     @Test("Stop resets time remaining")
     func stopResetsTimeRemaining() {
-        viewModel.timerMode = true
+        viewModel.setTimerMode(true)
         viewModel.setTimerDuration(60)
         viewModel.start()
         #expect(viewModel.timeRemaining > 0)
@@ -221,20 +218,25 @@ struct CaffeineViewModelTests {
 
     @Test("Notifications enabled syncs with manager")
     func notificationsEnabledSyncsWithManager() {
-        // Get the initial value from NotificationManager
-        let managerValue = NotificationManager.shared.notificationsEnabled
+        let notificationManager = MockNotificationManager(notificationsEnabled: true)
+        let testViewModel = CaffeineViewModel(
+            notificationManager: notificationManager,
+            powerAssertionManager: MockPowerAssertionManager(),
+            displaySleepRequester: MockDisplaySleepRequester()
+        )
+        let managerValue = notificationManager.notificationsEnabled
 
         // ViewModel should sync with manager on init
-        #expect(viewModel.notificationsEnabled == managerValue, "ViewModel should sync with NotificationManager")
+        #expect(testViewModel.notificationsEnabled == managerValue, "ViewModel should sync with NotificationManager")
 
         // Toggle the value
-        viewModel.notificationsEnabled = !managerValue
+        testViewModel.notificationsEnabled = !managerValue
 
         // NotificationManager should be updated
-        #expect(NotificationManager.shared.notificationsEnabled == !managerValue, "NotificationManager should be updated when ViewModel changes")
+        #expect(notificationManager.notificationsEnabled == !managerValue, "NotificationManager should be updated when ViewModel changes")
 
         // Restore original value
-        viewModel.notificationsEnabled = managerValue
+        testViewModel.notificationsEnabled = managerValue
     }
 
     // Restart Timer Tests (CVM-026)
@@ -398,6 +400,238 @@ struct CaffeineViewModelTests {
         viewModel.stop()
     }
 
+    @Test("Start is idempotent and does not leak assertions")
+    func startIsIdempotent() {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+
+        testViewModel.start()
+        testViewModel.start()
+
+        #expect(assertions.createdKinds == [.systemSleep, .displaySleep])
+        testViewModel.stop()
+        #expect(assertions.releasedIDs.count == 2)
+    }
+
+    @Test("Turn off display starts a regular session when inactive")
+    func turnOffDisplayStartsRegularSession() async throws {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+        testViewModel.soundEnabled = false
+
+        try await testViewModel.turnOffDisplayKeepingSystemAwake()
+
+        #expect(testViewModel.isActive)
+        #expect(displaySleep.requestCount == 1)
+        #expect(assertions.createdKinds == [.systemSleep, .displaySleep])
+        testViewModel.stop()
+    }
+
+    @Test("Turn off display starts the configured timer when inactive")
+    func turnOffDisplayStartsConfiguredTimer() async throws {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+        testViewModel.soundEnabled = false
+        testViewModel.setTimerMode(true)
+        testViewModel.setTimerDuration(60)
+
+        try await testViewModel.turnOffDisplayKeepingSystemAwake()
+
+        #expect(testViewModel.isActive)
+        #expect(testViewModel.timeRemaining > 0)
+        #expect(testViewModel.timeRemaining <= 60)
+        testViewModel.stop()
+    }
+
+    @Test("Turn off display rolls back when a provisional assertion fails")
+    func turnOffDisplayRollsBackAssertionFailure() async {
+        let assertions = MockPowerAssertionManager()
+        assertions.creationFailures = [.displaySleep]
+        let displaySleep = MockDisplaySleepRequester()
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+
+        await #expect(throws: PowerAssertionError.self) {
+            try await testViewModel.turnOffDisplayKeepingSystemAwake()
+        }
+        #expect(!testViewModel.isActive)
+        #expect(displaySleep.requestCount == 0)
+        #expect(assertions.releasedIDs.count == 1)
+    }
+
+    @Test("Turn off display preserves an active timer session")
+    func turnOffDisplayPreservesActiveTimer() async throws {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+        testViewModel.soundEnabled = false
+        testViewModel.setTimerMode(true)
+        testViewModel.setTimerDuration(60)
+        testViewModel.start()
+        let remainingBeforeRequest = testViewModel.timeRemaining
+
+        try await testViewModel.turnOffDisplayKeepingSystemAwake()
+
+        #expect(testViewModel.isActive)
+        #expect(testViewModel.timeRemaining <= remainingBeforeRequest)
+        #expect(testViewModel.timeRemaining > 0)
+        #expect(assertions.createdKinds == [.systemSleep, .displaySleep])
+        #expect(assertions.releasedIDs.isEmpty)
+        testViewModel.stop()
+    }
+
+    @Test("Failed display request rolls back a newly started session")
+    func failedDisplayRequestRollsBackNewSession() async {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        displaySleep.error = DisplaySleepRequestError.commandFailed(status: 1)
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+
+        await #expect(throws: DisplaySleepRequestError.self) {
+            try await testViewModel.turnOffDisplayKeepingSystemAwake()
+        }
+        #expect(!testViewModel.isActive)
+        #expect(assertions.createdKinds == [.systemSleep, .displaySleep])
+        #expect(assertions.releasedIDs.count == 2)
+    }
+
+    @Test("Failed display request preserves an existing session")
+    func failedDisplayRequestPreservesExistingSession() async {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+        testViewModel.soundEnabled = false
+        testViewModel.start()
+        displaySleep.error = DisplaySleepRequestError.commandFailed(status: 1)
+
+        await #expect(throws: DisplaySleepRequestError.self) {
+            try await testViewModel.turnOffDisplayKeepingSystemAwake()
+        }
+        #expect(testViewModel.isActive)
+        #expect(assertions.createdKinds == [.systemSleep, .displaySleep])
+        #expect(assertions.releasedIDs.isEmpty)
+        testViewModel.stop()
+    }
+
+    @Test("Repeated display requests are ignored while one is in flight")
+    func repeatedDisplayRequestsAreIgnoredWhileInFlight() async throws {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        displaySleep.shouldSuspend = true
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+        testViewModel.soundEnabled = false
+
+        let firstRequest = Task {
+            try await testViewModel.turnOffDisplayKeepingSystemAwake()
+        }
+        while displaySleep.requestCount == 0 {
+            await Task.yield()
+        }
+
+        #expect(testViewModel.isDisplaySleepRequestInFlight)
+        try await testViewModel.turnOffDisplayKeepingSystemAwake()
+        #expect(displaySleep.requestCount == 1)
+
+        displaySleep.completeRequest()
+        try await firstRequest.value
+        #expect(!testViewModel.isDisplaySleepRequestInFlight)
+        #expect(testViewModel.isActive)
+        testViewModel.stop()
+    }
+
+    @Test("Lifecycle changes cannot commit over an in-flight display request")
+    func lifecycleChangesDoNotRaceDisplayRequest() async throws {
+        let assertions = MockPowerAssertionManager()
+        let displaySleep = MockDisplaySleepRequester()
+        displaySleep.shouldSuspend = true
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+        testViewModel.soundEnabled = false
+        testViewModel.setTimerMode(true)
+        testViewModel.setTimerDuration(60)
+
+        let request = Task {
+            try await testViewModel.turnOffDisplayKeepingSystemAwake()
+        }
+        while displaySleep.requestCount == 0 {
+            await Task.yield()
+        }
+
+        testViewModel.start()
+        testViewModel.restartTimer()
+        testViewModel.setTimerDuration(120)
+        testViewModel.setTimerMode(false)
+        #expect(!testViewModel.isActive)
+        #expect(testViewModel.timerMode)
+        #expect(testViewModel.timerDuration == 60)
+
+        testViewModel.stop()
+        displaySleep.completeRequest()
+        try await request.value
+
+        #expect(!testViewModel.isActive)
+        #expect(assertions.releasedIDs.count == 2)
+    }
+
+    @Test("Failed rollback keeps unreleased assertions available for retry")
+    func failedRollbackKeepsAssertionsForRetry() async {
+        let assertions = MockPowerAssertionManager()
+        assertions.releaseFailuresRemaining = 1
+        let displaySleep = MockDisplaySleepRequester()
+        displaySleep.error = DisplaySleepRequestError.commandFailed(status: 1)
+        let testViewModel = CaffeineViewModel(
+            notificationManager: MockNotificationManager(),
+            powerAssertionManager: assertions,
+            displaySleepRequester: displaySleep
+        )
+
+        await #expect(throws: DisplaySleepRequestError.self) {
+            try await testViewModel.turnOffDisplayKeepingSystemAwake()
+        }
+        #expect(!testViewModel.isActive)
+        #expect(assertions.releasedIDs.count == 1)
+
+        testViewModel.stop()
+        #expect(assertions.releasedIDs.count == 2)
+    }
+
     @Test("Timer mode disabled while active stops session")
     func timerModeDisabledWhileActiveStopsSession() {
         viewModel.setTimerMode(true)
@@ -440,7 +674,7 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.set(true, forKey: "WeakupTimerMode")
 
         // Create a new ViewModel
-        let newViewModel = CaffeineViewModel()
+        let newViewModel = CaffeineViewModel(notificationManager: MockNotificationManager())
 
         #expect(newViewModel.timerMode, "Timer mode should be loaded from UserDefaults")
 
@@ -456,7 +690,7 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.set(7200.0, forKey: "WeakupTimerDuration")
 
         // Create a new ViewModel
-        let newViewModel = CaffeineViewModel()
+        let newViewModel = CaffeineViewModel(notificationManager: MockNotificationManager())
 
         #expect(newViewModel.timerDuration == 7200, "Timer duration should be loaded from UserDefaults")
 
@@ -472,7 +706,7 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.set(false, forKey: "WeakupSoundEnabled")
 
         // Create a new ViewModel
-        let newViewModel = CaffeineViewModel()
+        let newViewModel = CaffeineViewModel(notificationManager: MockNotificationManager())
 
         #expect(!newViewModel.soundEnabled, "Sound enabled should be loaded from UserDefaults")
 
@@ -488,7 +722,7 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.set("invalid", forKey: "WeakupSoundEnabled")
 
         // Create a new ViewModel - should handle gracefully
-        let newViewModel = CaffeineViewModel()
+        let newViewModel = CaffeineViewModel(notificationManager: MockNotificationManager())
 
         // Should fall back to default (true)
         #expect(newViewModel.soundEnabled, "Should fall back to default on corrupted value")
@@ -505,7 +739,7 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.set("invalid", forKey: "WeakupTimerDuration")
 
         // Create a new ViewModel - should handle gracefully
-        let newViewModel = CaffeineViewModel()
+        let newViewModel = CaffeineViewModel(notificationManager: MockNotificationManager())
 
         // Should fall back to default (0)
         #expect(newViewModel.timerDuration == 0, "Should fall back to default on corrupted value")
@@ -522,7 +756,7 @@ struct CaffeineViewModelTests {
         UserDefaultsStore.shared.set(-100.0, forKey: "WeakupTimerDuration")
 
         // Create a new ViewModel
-        let newViewModel = CaffeineViewModel()
+        let newViewModel = CaffeineViewModel(notificationManager: MockNotificationManager())
 
         // Should clamp to 0
         #expect(newViewModel.timerDuration == 0, "Negative duration should be clamped to 0")

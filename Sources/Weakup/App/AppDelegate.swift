@@ -61,6 +61,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard let statusItem else { return }
 
         let menu = NSMenu()
+        let displayOffItem = NSMenuItem(
+            title: L10n.shared.menuTurnOffDisplay,
+            action: #selector(turnOffDisplayKeepingRunning),
+            keyEquivalent: ""
+        )
+        displayOffItem.target = self
+        displayOffItem.isEnabled = !viewModel.isDisplaySleepRequestInFlight
+        menu.addItem(displayOffItem)
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: L10n.shared.menuSettings, action: #selector(showSettings), keyEquivalent: ","))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(
@@ -117,13 +126,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updateStatusIcon()
     }
 
+    @objc private func turnOffDisplayKeepingRunning() {
+        guard confirmDisplayOffIfNeeded() else { return }
+
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await viewModel.turnOffDisplayKeepingSystemAwake()
+                updateStatusIcon()
+            } catch {
+                Logger.error("Failed to turn off display", error: error, category: .power)
+                showDisplayOffFailure()
+            }
+        }
+    }
+
     @objc private func showSettings() {
         if settingsWindow == nil {
-            let rootView = SettingsView(viewModel: viewModel)
+            let rootView = SettingsView(
+                viewModel: viewModel,
+                onTurnOffDisplay: { [weak self] in
+                    self?.turnOffDisplayKeepingRunning()
+                }
+            )
             let hostingController = NSHostingController(rootView: rootView)
 
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 340, height: 480),
+                contentRect: NSRect(x: 0, y: 0, width: 340, height: 580),
                 styleMask: [.titled, .closable, .miniaturizable, .fullSizeContentView],
                 backing: .buffered,
                 defer: false
@@ -153,6 +182,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.updateStatusIcon()
             }
         }
+    }
+
+    private func confirmDisplayOffIfNeeded() -> Bool {
+        if UserDefaultsStore.shared.bool(forKey: UserDefaultsKeys.hasExplainedDisplayOff) {
+            return true
+        }
+
+        let alert = NSAlert()
+        alert.messageText = L10n.shared.displayOffFirstUseTitle
+        alert.informativeText = L10n.shared.displayOffFirstUseMessage
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: L10n.shared.displayOffContinue)
+        alert.addButton(withTitle: L10n.shared.cancel)
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return false }
+        UserDefaultsStore.shared.set(true, forKey: UserDefaultsKeys.hasExplainedDisplayOff)
+        return true
+    }
+
+    private func showDisplayOffFailure() {
+        let alert = NSAlert()
+        alert.messageText = L10n.shared.displayOffFailedTitle
+        alert.informativeText = L10n.shared.displayOffFailedMessage
+        alert.alertStyle = .warning
+        alert.runModal()
     }
 
     private func setupViewModelObserver() {
@@ -205,9 +259,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         // Ensure sleep prevention is released on quit
-        if viewModel.isActive {
-            viewModel.stop()
-        }
+        viewModel.stop()
         // Close windows if open
         settingsWindow?.close()
         settingsWindow = nil

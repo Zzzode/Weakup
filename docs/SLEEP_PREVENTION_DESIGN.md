@@ -26,6 +26,23 @@ Implementation reference: [CaffeineViewModel.swift](../Sources/WeakupCore/ViewMo
 
 This approach avoids extra processes (like `caffeinate`) and provides direct lifecycle control.
 
+## Turn Off Display and Keep Running
+
+“Turn Off Display” is a one-time action. Weakup keeps the system sleep assertion active and
+asks macOS to turn off the display immediately with `/usr/bin/pmset displaysleepnow`. The
+display sleep assertion remains part of the normal active session; the forced display-sleep
+request is independent from idle display sleep.
+
+When the action starts an inactive Weakup session, both normal session assertions are acquired
+before the display is turned off. The visible active state, timer, and history session are committed
+only after the command succeeds. On failure, Weakup releases provisional assertions and retains
+any handle whose release fails so cleanup can be retried. Existing active and timed sessions
+continue without restarting.
+
+Whether waking the display requires a password is controlled by macOS Lock Screen settings or
+device-management policy. Weakup does not change or bypass those security settings. Closing a
+laptop lid, choosing Sleep manually, or critical battery conditions can still put the Mac to sleep.
+
 ## Lifecycle and State Flow
 
 `CaffeineViewModel` holds the core state and is `@MainActor`-isolated to keep UI and logic in sync. Key state includes:
@@ -101,5 +118,6 @@ You should see `PreventUserIdleSystemSleep` with Weakup’s assertion reason.
 ## Risks and Boundaries
 
 - If IOKit assertion creation fails, `isActive` remains false
+- Immediate display sleep relies on Apple's `pmset` system command and is a best-effort capability
 - Timer drift is possible, mitigated with `timerStartDate`
 - Forced termination relies on system cleanup; avoid killing the app during active sessions

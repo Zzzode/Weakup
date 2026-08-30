@@ -132,6 +132,7 @@ struct L10nTests {
         // Menu
         #expect(!L10n.shared.menuSettings.isEmpty, "menuSettings should not be empty")
         #expect(!L10n.shared.menuQuit.isEmpty, "menuQuit should not be empty")
+        #expect(!L10n.shared.menuTurnOffDisplay.isEmpty, "menuTurnOffDisplay should not be empty")
 
         // Status
         #expect(!L10n.shared.statusOn.isEmpty, "statusOn should not be empty")
@@ -168,6 +169,16 @@ struct L10nTests {
         // Actions
         #expect(!L10n.shared.turnOn.isEmpty, "turnOn should not be empty")
         #expect(!L10n.shared.turnOff.isEmpty, "turnOff should not be empty")
+
+        // Display Off
+        #expect(!L10n.shared.displayOffAction.isEmpty, "displayOffAction should not be empty")
+        #expect(!L10n.shared.displayOffDescription.isEmpty, "displayOffDescription should not be empty")
+        #expect(!L10n.shared.displayOffSecurityNote.isEmpty, "displayOffSecurityNote should not be empty")
+        #expect(!L10n.shared.displayOffFirstUseTitle.isEmpty, "displayOffFirstUseTitle should not be empty")
+        #expect(!L10n.shared.displayOffFirstUseMessage.isEmpty, "displayOffFirstUseMessage should not be empty")
+        #expect(!L10n.shared.displayOffContinue.isEmpty, "displayOffContinue should not be empty")
+        #expect(!L10n.shared.displayOffFailedTitle.isEmpty, "displayOffFailedTitle should not be empty")
+        #expect(!L10n.shared.displayOffFailedMessage.isEmpty, "displayOffFailedMessage should not be empty")
 
         // Startup
         #expect(!L10n.shared.launchAtLogin.isEmpty, "launchAtLogin should not be empty")
@@ -391,39 +402,7 @@ struct L10nTests {
     }
 
     private func verifyAllRequiredKeysExist() {
-        let requiredKeys = [
-            "app_name",
-            "menu_settings",
-            "menu_quit",
-            "status_on",
-            "status_off",
-            "status_preventing",
-            "status_sleep_enabled",
-            "timer_mode",
-            "sound_feedback",
-            "theme",
-            "theme_system",
-            "theme_light",
-            "theme_dark",
-            "icon_style",
-            "duration",
-            "duration_off",
-            "duration_15m",
-            "duration_30m",
-            "duration_1h",
-            "duration_2h",
-            "duration_3h",
-            "turn_on",
-            "turn_off",
-            "notifications",
-            "notification_timer_expired_title",
-            "notification_timer_expired_body",
-            "notification_action_restart",
-            "notification_action_dismiss",
-            "shortcut_hint"
-        ]
-
-        for key in requiredKeys {
+        for key in LocalizationTestData.requiredKeys {
             let value = L10n.shared.string(forKey: key)
             #expect(!value.isEmpty, "Key '\(key)' should have a value")
             // Verify it's not just returning the formatted key
@@ -443,8 +422,17 @@ struct L10nTests {
             "app_name",
             "menu_settings",
             "menu_quit",
+            "menu_turn_off_display",
             "turn_on",
             "turn_off",
+            "display_off_action",
+            "display_off_description",
+            "display_off_security_note",
+            "display_off_first_use_title",
+            "display_off_first_use_message",
+            "display_off_continue",
+            "display_off_failed_title",
+            "display_off_failed_message",
             "shortcut_hint"
         ]
 

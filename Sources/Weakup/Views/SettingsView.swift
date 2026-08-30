@@ -5,6 +5,7 @@ import WeakupCore
 
 struct SettingsView: View {
     @ObservedObject var viewModel: CaffeineViewModel
+    let onTurnOffDisplay: () -> Void
     @StateObject private var l10n = L10n.shared
     @StateObject private var themeManager = ThemeManager.shared
     @StateObject private var iconManager = IconManager.shared
@@ -28,6 +29,7 @@ struct SettingsView: View {
             Divider()
             statusSection
             timerDisplaySection
+            displayOffSection
             Divider()
             timerToggleSection
             durationPickerSection
@@ -95,12 +97,31 @@ struct SettingsView: View {
                 isOn: Binding(
                     get: { viewModel.timerMode },
                     set: { newValue in
-                        viewModel.timerMode = newValue
-                        if viewModel.isActive { viewModel.stop() }
+                        viewModel.setTimerMode(newValue)
                     }
                 )
             )
             .toggleStyle(.switch)
+            .disabled(viewModel.isDisplaySleepRequestInFlight)
+        }
+    }
+
+    private var displayOffSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Button(action: onTurnOffDisplay) {
+                Label(l10n.displayOffAction, systemImage: "display")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .disabled(viewModel.isDisplaySleepRequestInFlight)
+
+            Text(l10n.displayOffDescription)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            Text(l10n.displayOffSecurityNote)
+                .font(.caption2)
+                .foregroundColor(.secondary)
         }
     }
 
@@ -332,6 +353,7 @@ struct SettingsView: View {
                         Text(l10n.durationCustom).tag(customDurationIndex)
                     }
                     .pickerStyle(.menu)
+                    .disabled(viewModel.isDisplaySleepRequestInFlight)
                 }
 
                 // Show custom duration display if selected

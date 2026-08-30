@@ -6,6 +6,7 @@
 // Menu
 "menu_settings" = "设置";
 "menu_quit" = "退出 Weakup";
+"menu_turn_off_display" = "关屏运行";
 
 // Status
 "status_on" = "Weakup: 开启";
@@ -44,6 +45,16 @@
 // Actions
 "turn_on" = "开启";
 "turn_off" = "关闭";
+
+// 关屏运行
+"display_off_action" = "关屏运行";
+"display_off_description" = "立即关闭显示器，同时让 Mac 和后台任务继续运行。";
+"display_off_security_note" = "唤醒时是否需要密码，取决于 macOS 的锁定屏幕设置。";
+"display_off_first_use_title" = "关屏运行";
+"display_off_first_use_message" = "显示器将会关闭，Weakup 会让 Mac 持续运行，直到你关闭保持唤醒；如果设置了计时，则会在计时结束时自动关闭。移动鼠标或按任意键可唤醒显示器；是否需要密码遵循 macOS 的锁定屏幕设置。";
+"display_off_continue" = "继续并关闭显示器";
+"display_off_failed_title" = "无法关闭显示器";
+"display_off_failed_message" = "显示器未能关闭。请检查 Weakup 当前状态后重试。";
 
 // Menu Bar
 "show_countdown_in_menu_bar" = "显示倒计时";
