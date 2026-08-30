@@ -158,7 +158,7 @@ struct UserDefaultsKeysTests {
 
     @Test("All array contains expected count")
     func allArrayContainsExpectedCount() {
-        #expect(UserDefaultsKeys.all.count == 11, "Should have 11 keys")
+        #expect(UserDefaultsKeys.all.count == 12, "Should have 12 keys")
     }
 
     @Test("All array contains sound enabled")
@@ -179,6 +179,11 @@ struct UserDefaultsKeysTests {
     @Test("All array contains show countdown in menu bar")
     func allArrayContainsShowCountdownInMenuBar() {
         #expect(UserDefaultsKeys.all.contains(UserDefaultsKeys.showCountdownInMenuBar))
+    }
+
+    @Test("All array contains display-off explanation")
+    func allArrayContainsDisplayOffExplanation() {
+        #expect(UserDefaultsKeys.all.contains(UserDefaultsKeys.hasExplainedDisplayOff))
     }
 
     @Test("All array contains notifications enabled")

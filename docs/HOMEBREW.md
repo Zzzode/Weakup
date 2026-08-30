@@ -20,7 +20,7 @@ Build Weakup locally from the stable source tag:
 
 ```bash
 # Clone the repository
-git clone --branch v1.0.3 --depth 1 https://github.com/Zzzode/weakup.git
+git clone --branch v1.1.0 --depth 1 https://github.com/Zzzode/weakup.git
 cd weakup
 ./build.sh
 open Weakup.app

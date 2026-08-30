@@ -58,7 +58,7 @@
 
 ```bash
 # 克隆当前稳定版本标签
-git clone --branch v1.0.3 --depth 1 https://github.com/Zzzode/weakup.git
+git clone --branch v1.1.0 --depth 1 https://github.com/Zzzode/weakup.git
 cd weakup
 
 # 构建应用
@@ -114,7 +114,7 @@ v1.0.2 Release 中的 DMG 和 ZIP 是早期未签名产物，**不支持作为�
 - [ ] 菜单栏小组件
 - [ ] 与快捷指令集成
 
-当前稳定版本为 **v1.0.3**。已发布变更请参阅 [CHANGELOG.md](CHANGELOG.md)。
+当前稳定版本为 **v1.1.0**。已发布变更请参阅 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 文档
 
