@@ -188,6 +188,7 @@ public class L10n: ObservableObject {
 /// These properties provide type-safe access to localized strings without
 /// needing to remember string keys.
 extension L10n {
+
     // MARK: App
 
     public var appName: String {

@@ -54,10 +54,18 @@ public struct HotkeyConfig: Codable, Equatable, Sendable {
     public var displayString: String {
         var parts: [String] = []
 
-        if modifiers & UInt32(controlKey) != 0 { parts.append("Ctrl") }
-        if modifiers & UInt32(optionKey) != 0 { parts.append("Option") }
-        if modifiers & UInt32(shiftKey) != 0 { parts.append("Shift") }
-        if modifiers & UInt32(cmdKey) != 0 { parts.append("Cmd") }
+        if modifiers & UInt32(controlKey) != 0 {
+            parts.append("Ctrl")
+        }
+        if modifiers & UInt32(optionKey) != 0 {
+            parts.append("Option")
+        }
+        if modifiers & UInt32(shiftKey) != 0 {
+            parts.append("Shift")
+        }
+        if modifiers & UInt32(cmdKey) != 0 {
+            parts.append("Cmd")
+        }
 
         let keyName = keyCodeToString(keyCode)
         parts.append(keyName)
@@ -512,10 +520,18 @@ public final class HotkeyManager: ObservableObject {
         guard isRecording else { return }
 
         var carbonModifiers: UInt32 = 0
-        if modifiers.contains(.command) { carbonModifiers |= UInt32(cmdKey) }
-        if modifiers.contains(.control) { carbonModifiers |= UInt32(controlKey) }
-        if modifiers.contains(.option) { carbonModifiers |= UInt32(optionKey) }
-        if modifiers.contains(.shift) { carbonModifiers |= UInt32(shiftKey) }
+        if modifiers.contains(.command) {
+            carbonModifiers |= UInt32(cmdKey)
+        }
+        if modifiers.contains(.control) {
+            carbonModifiers |= UInt32(controlKey)
+        }
+        if modifiers.contains(.option) {
+            carbonModifiers |= UInt32(optionKey)
+        }
+        if modifiers.contains(.shift) {
+            carbonModifiers |= UInt32(shiftKey)
+        }
 
         // Require at least one modifier
         guard carbonModifiers != 0 else { return }

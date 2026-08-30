@@ -322,7 +322,7 @@ public final class CaffeineViewModel: ObservableObject {
 
     @discardableResult
     private func releaseAssertions() -> [PowerAssertionError] {
-        [releaseDisplayAssertion(), releaseSystemAssertion()].compactMap { $0 }
+        [releaseDisplayAssertion(), releaseSystemAssertion()].compactMap(\.self)
     }
 
     private func createSystemAssertion() throws {

@@ -29,8 +29,10 @@ final class PMSetDisplaySleepRequester: DisplaySleepRequesting {
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             process.terminationHandler = { completedProcess in
-                guard completedProcess.terminationReason == .exit,
-                      completedProcess.terminationStatus == 0 else {
+                guard
+                    completedProcess.terminationReason == .exit,
+                    completedProcess.terminationStatus == 0 else
+                {
                     continuation.resume(throwing: DisplaySleepRequestError.commandFailed(
                         status: completedProcess.terminationStatus
                     ))
