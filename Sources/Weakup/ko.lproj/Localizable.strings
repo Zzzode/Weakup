@@ -6,6 +6,7 @@
 // Menu
 "menu_settings" = "설정";
 "menu_quit" = "Weakup 종료";
+"menu_turn_off_display" = "디스플레이 끄고 계속 실행";
 
 // Status
 "status_on" = "Weakup: 켜짐";
@@ -44,6 +45,16 @@
 // Actions
 "turn_on" = "켜기";
 "turn_off" = "끄기";
+
+// Display Off
+"display_off_action" = "디스플레이 끄고 계속 실행";
+"display_off_description" = "Mac과 백그라운드 작업은 계속 실행하면서 디스플레이를 즉시 끕니다.";
+"display_off_security_note" = "깨울 때 암호가 필요한지는 macOS 잠금 화면 설정에 따라 결정됩니다.";
+"display_off_first_use_title" = "디스플레이 끄고 계속 실행";
+"display_off_first_use_message" = "디스플레이가 꺼지고, 잠자기 방지를 끌 때까지 Weakup이 Mac을 계속 실행 상태로 유지합니다. 타이머를 설정한 경우 시간이 끝나면 잠자기 방지가 자동으로 중지됩니다. 마우스를 움직이거나 키를 누르면 디스플레이가 켜집니다. 암호 요구 여부는 macOS 잠금 화면 설정을 따릅니다.";
+"display_off_continue" = "계속하고 디스플레이 끄기";
+"display_off_failed_title" = "디스플레이를 끌 수 없음";
+"display_off_failed_message" = "디스플레이를 끄지 못했습니다. Weakup의 현재 상태를 확인한 후 다시 시도해 주세요.";
 
 // Notifications
 "notifications" = "알림";

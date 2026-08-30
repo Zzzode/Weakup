@@ -193,7 +193,10 @@ Weakup uses minimal entitlements defined in `Sources/Weakup/Weakup.entitlements`
 </plist>
 ```
 
-**Note**: App Sandbox is disabled because the IOPMAssertion API (used to prevent sleep) requires direct system access.
+**Note**: `IOPMAssertion` itself does not require special privileges. App Sandbox remains disabled
+for the current Developer ID distribution because the optional “Turn Off Display” action invokes
+Apple's `/usr/bin/pmset displaysleepnow` command. This command path must be validated separately
+before adopting App Sandbox or distributing through the Mac App Store.
 
 ## Resources
 

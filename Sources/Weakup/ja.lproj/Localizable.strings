@@ -6,6 +6,7 @@
 // Menu
 "menu_settings" = "設定";
 "menu_quit" = "Weakup を終了";
+"menu_turn_off_display" = "ディスプレイをオフ";
 
 // Status
 "status_on" = "Weakup: オン";
@@ -44,6 +45,16 @@
 // Actions
 "turn_on" = "オンにする";
 "turn_off" = "オフにする";
+
+// Display Off
+"display_off_action" = "ディスプレイをオフ";
+"display_off_description" = "Mac とバックグラウンドタスクを動かしたまま、すぐにディスプレイをオフにします。";
+"display_off_security_note" = "復帰時にパスワードが必要かどうかは、macOS のロック画面設定によって決まります。";
+"display_off_first_use_title" = "ディスプレイをオフ";
+"display_off_first_use_message" = "ディスプレイがオフになり、スリープ防止をオフにするまで Weakup が Mac の動作を維持します。タイマーを設定している場合は、終了時にスリープ防止が自動的に停止します。マウスを動かすかキーを押すとディスプレイが復帰します。パスワードの要否は macOS のロック画面設定に従います。";
+"display_off_continue" = "続けてディスプレイをオフ";
+"display_off_failed_title" = "ディスプレイをオフにできません";
+"display_off_failed_message" = "ディスプレイをオフにできませんでした。Weakup の現在の状態を確認してから、もう一度お試しください。";
 
 // Notifications
 "notifications" = "通知";

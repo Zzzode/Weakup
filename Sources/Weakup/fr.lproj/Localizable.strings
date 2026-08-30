@@ -6,6 +6,7 @@
 // Menu
 "menu_settings" = "Preferences";
 "menu_quit" = "Quitter Weakup";
+"menu_turn_off_display" = "Éteindre l’écran";
 
 // Status
 "status_on" = "Weakup : Active";
@@ -44,6 +45,16 @@
 // Actions
 "turn_on" = "Activer";
 "turn_off" = "Desactiver";
+
+// Extinction de l’écran
+"display_off_action" = "Éteindre l’écran";
+"display_off_description" = "Éteignez immédiatement l’écran tout en laissant le Mac et les tâches en arrière-plan fonctionner.";
+"display_off_security_note" = "La demande d’un mot de passe au réveil dépend des réglages Écran verrouillé de macOS.";
+"display_off_first_use_title" = "Éteindre l’écran";
+"display_off_first_use_message" = "L’écran va s’éteindre et Weakup maintiendra votre Mac actif jusqu’à ce que vous désactiviez le maintien en éveil. Si un minuteur est réglé, le maintien en éveil s’arrêtera automatiquement à son expiration. Bougez la souris ou appuyez sur une touche pour rallumer l’écran. La demande d’un mot de passe suit les réglages Écran verrouillé de macOS.";
+"display_off_continue" = "Continuer et éteindre l’écran";
+"display_off_failed_title" = "Impossible d’éteindre l’écran";
+"display_off_failed_message" = "L’écran n’a pas pu être éteint. Vérifiez l’état actuel de Weakup, puis réessayez.";
 
 // Notifications
 "notifications" = "Notifications";

@@ -6,6 +6,7 @@
 // Menu
 "menu_settings" = "Einstellungen";
 "menu_quit" = "Weakup beenden";
+"menu_turn_off_display" = "Display ausschalten";
 
 // Status
 "status_on" = "Weakup: Ein";
@@ -44,6 +45,16 @@
 // Actions
 "turn_on" = "Einschalten";
 "turn_off" = "Ausschalten";
+
+// Display ausschalten
+"display_off_action" = "Display ausschalten";
+"display_off_description" = "Schaltet das Display sofort aus, während der Mac und Hintergrundaufgaben weiterlaufen.";
+"display_off_security_note" = "Ob beim Aufwecken ein Passwort erforderlich ist, hängt von den macOS-Einstellungen für den Sperrbildschirm ab.";
+"display_off_first_use_title" = "Display ausschalten";
+"display_off_first_use_message" = "Das Display wird ausgeschaltet und Weakup hält deinen Mac aktiv, bis du die Wachhaltefunktion ausschaltest. Wenn ein Timer eingestellt ist, endet die Wachhaltefunktion automatisch, sobald er abläuft. Bewege die Maus oder drücke eine Taste, um das Display aufzuwecken. Die Passwortabfrage richtet sich nach den macOS-Einstellungen für den Sperrbildschirm.";
+"display_off_continue" = "Fortfahren und Display ausschalten";
+"display_off_failed_title" = "Display kann nicht ausgeschaltet werden";
+"display_off_failed_message" = "Das Display konnte nicht ausgeschaltet werden. Prüfe den aktuellen Status von Weakup und versuche es erneut.";
 
 // Notifications
 "notifications" = "Benachrichtigungen";

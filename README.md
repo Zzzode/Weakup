@@ -20,6 +20,7 @@ A high-performance, lightweight macOS utility to prevent your Mac from sleeping.
 ## Features
 
 - **One-Toggle Control** - Enable/disable sleep prevention with a single click
+- **Turn Off Display** - Switch off the display immediately while keeping your Mac and background tasks running
 - **Menu Bar App** - Lives in menu bar, no dock clutter
 - **Timer Mode** - Set auto-shutdown timer (15min, 30min, 1hr, 2hrs, 3hrs, or custom duration up to 24 hours)
 - **Countdown in Menu Bar** - Optional timer countdown next to the status icon
@@ -81,9 +82,10 @@ The DMG and ZIP attached to v1.0.2 are legacy unsigned artifacts and are **not s
 ## Usage
 
 1. Click the menu bar icon to toggle sleep prevention
-2. Right-click or select "Settings" to access options
-3. Use `Cmd + Ctrl + 0` keyboard shortcut to toggle from anywhere
-4. Switch language instantly in the settings panel
+2. Right-click and choose "Turn Off Display" to keep your Mac running with the display off
+3. Right-click or select "Settings" to access options
+4. Use `Cmd + Ctrl + 0` keyboard shortcut to toggle from anywhere
+5. Switch language instantly in the settings panel
 
 ### Settings Options
 
