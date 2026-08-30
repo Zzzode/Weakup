@@ -106,10 +106,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let config = hotkeyManager.currentConfig
             let modifiers = event.modifierFlags
             var carbonModifiers: UInt32 = 0
-            if modifiers.contains(.command) { carbonModifiers |= UInt32(cmdKey) }
-            if modifiers.contains(.control) { carbonModifiers |= UInt32(controlKey) }
-            if modifiers.contains(.option) { carbonModifiers |= UInt32(optionKey) }
-            if modifiers.contains(.shift) { carbonModifiers |= UInt32(shiftKey) }
+            if modifiers.contains(.command) {
+                carbonModifiers |= UInt32(cmdKey)
+            }
+            if modifiers.contains(.control) {
+                carbonModifiers |= UInt32(controlKey)
+            }
+            if modifiers.contains(.option) {
+                carbonModifiers |= UInt32(optionKey)
+            }
+            if modifiers.contains(.shift) {
+                carbonModifiers |= UInt32(shiftKey)
+            }
 
             if UInt32(event.keyCode) == config.keyCode, carbonModifiers == config.modifiers {
                 Task { @MainActor [weak self] in
