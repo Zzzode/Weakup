@@ -1,70 +1,42 @@
 # Weakup v1.1.0 Release Notes
 
-> Historical planning artifact: v1.1.0 was not published. The current public release is v1.0.3; see the root `CHANGELOG.md` for released changes.
+**Release Date:** August 30, 2026
 
-**Release Date:** February 22, 2026
+Weakup v1.1.0 adds **Turn Off Display**, a one-click action for leaving long-running work active while switching off the display.
 
-We're excited to announce Weakup v1.1.0! This release focuses on quality, testing, and new features to make Weakup even more reliable and useful.
+## Turn Off Display
 
-## What's New
+- Open the menu bar context menu and choose **Turn Off Display**, or use the same action in Settings.
+- Weakup keeps the Mac and background tasks running while macOS turns off the display.
+- Move the mouse or press a key to wake the display.
+- Existing keep-awake timers continue from their current remaining time. Starting the action while Weakup is inactive starts a normal keep-awake session.
+- The action is available in all eight supported languages.
 
-### Keyboard Shortcut Conflict Detection
-Weakup now warns you when your chosen keyboard shortcut conflicts with system shortcuts (like Cmd+C) or common app shortcuts. Conflicts are categorized by severity with helpful suggestions for alternatives.
+## Security and Power Boundaries
 
-### Launch at Login
-Start Weakup automatically when you log in to your Mac. Enable this in Settings to ensure sleep prevention is always just a click away.
+- Whether waking the display requires a password is controlled by macOS Lock Screen settings or device-management policy. Weakup does not change or bypass those settings.
+- Weakup prevents sleep caused by user inactivity. Closing a MacBook lid, choosing Sleep manually, or critical battery conditions can still put the Mac to sleep.
 
-### Activity History Export & Import
-- **Export** your session history to CSV or JSON format for backup or analysis
-- **Import** previously exported data to restore your history on a new machine
+## Reliability Improvements
 
-### Enhanced History View
-- **Filter** sessions by: Today, This Week, This Month, Timer Only, Manual Only
-- **Sort** by date or duration (ascending/descending)
-- **Search** through your session history
-- **Daily Chart** showing your activity over the past 7 days
-
-## Quality Improvements
-
-### Comprehensive Test Suite
-- **462 tests** covering all components - **100% pass rate**
-- **90% coverage** on core business logic
-- **Integration tests** for end-to-end flows
-- **Automated CI/CD** with coverage reports
-
-### Code Quality
-- Centralized constants and configuration
-- Improved logging and error handling
-- Cleaner architecture with better separation of concerns
-- Comprehensive API documentation
-
-## Bug Fixes
-- Improved timer accuracy under system load
-- More reliable hotkey registration
-- Fixed memory leaks in timer callbacks
+- Display-sleep requests run asynchronously so the interface remains responsive.
+- Power assertion creation, rollback, cleanup, repeated requests, and concurrent state changes are covered by regression tests.
+- Keep-awake startup is idempotent and no longer risks leaking assertions when invoked repeatedly.
 
 ## Installation
 
-### Homebrew
-```bash
-brew upgrade weakup
-```
+Building from source remains the supported installation method unless the GitHub Release includes signed and notarized prebuilt downloads.
 
-### Direct Download
-Download `Weakup-1.1.0.dmg` from the assets below.
-
-### From Source
 ```bash
-git clone https://github.com/Zzzode/weakup.git
-cd weakup && ./build.sh
+git clone --branch v1.1.0 --depth 1 https://github.com/Zzzode/weakup.git
+cd weakup
+./build.sh
+open Weakup.app
 ```
 
 ## Requirements
-- macOS 13.0 or later
 
-## Full Changelog
-See [CHANGELOG.md](https://github.com/Zzzode/weakup/blob/main/CHANGELOG.md) for complete details.
+- macOS 13 or later
+- Xcode with Swift 6.2.3 or later
 
----
-
-**Thank you** to everyone who contributed to this release!
+See [CHANGELOG.md](../../CHANGELOG.md) for the complete version history.

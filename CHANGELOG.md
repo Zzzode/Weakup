@@ -4,6 +4,23 @@ All notable changes to Weakup are documented here. The project follows [Keep a C
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-30
+
+### Added
+- **Turn Off Display** immediately switches off the display while keeping the Mac and background tasks running
+- The new action is available from both the menu bar context menu and Settings
+- First-use guidance explains how to wake the display and that password requirements follow macOS Lock Screen or device-management policy
+- All new user-facing text is available in all eight supported languages
+
+### Changed
+- Existing active and timed keep-awake sessions continue without restarting when the display is turned off
+- Power assertion lifecycle is now transactional, idempotent, and protected against concurrent state changes
+- Display-sleep requests run asynchronously and report failures without blocking the interface
+
+### Fixed
+- Failed display-sleep requests now restore or retain power assertion handles for safe cleanup retries
+- SwiftPM test runs now avoid initializing the system notification center in unsupported test-bundle contexts
+
 ## [1.0.3] - 2026-07-18
 
 ### Added
@@ -137,6 +154,8 @@ Maintenance release with versioning and release-workflow corrections.
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| 1.1.0 | 2026-08-30 | Turn off the display while keeping the Mac running |
+| 1.0.3 | 2026-07-18 | Release hardening, source archives, and new app icon |
 | 1.0.2 | 2026-02-23 | Display sleep prevention and Swift Testing migration |
 | 1.0.1 | 2026-02-23 | Release metadata maintenance |
 | 1.0.0 | 2026-02-21 | Initial release with full feature set |

@@ -31,7 +31,7 @@ This directory contains all technical documentation for the Weakup project.
 
 Release-specific documentation for each version:
 
-### Current Public Release: v1.0.3
+### Current Public Release: v1.1.0
 
 - **[CHANGELOG.md](../CHANGELOG.md)** - Published version history
 - **[GitHub Releases](https://github.com/Zzzode/Weakup/releases)** - Public release artifacts
@@ -126,4 +126,4 @@ Historical documents that have been superseded:
 ---
 
 **Last Updated**: 2026-07-18
-**Project Version**: 1.0.3
+**Project Version**: 1.1.0
